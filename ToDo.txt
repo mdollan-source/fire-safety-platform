@@ -1,0 +1,58 @@
+Who has access to what - Can you create an MD with an explanation?
+Which role has access to which feature?
+Task generation based on legal requirements 
+Email reminders/app notifications for reminders.
+Ensuring local first functionality - can work locally and backup when back in signal.
+QR code management - How do we print and attach to assets effectively?  Maybe the filename needs to be more descriptive too?
+Update the reports section with ALL the features and functions - check and update.
+Offline PWA Support
+
+As far as different pricing (to be worked out) do we need multiple versions?  
+-Single Site
+-Multi Site
+-Agency?
+
+Super Admin for the owner of the app to help manage the application and provide details of all signed up accounts.
+
+How will we manage updates?  I'm guessing the app won't be on the app stores - just downloadable?
+
+Demo Data to test for
+-Single Site
+-Multi Site
+-Agency
+
+Show a years worth of demo data.
+
+Data Migration - We need to setup the permissions and security to ensure no one can access anyone else data!
+
+Polish!
+
+  Option 3: Polish & Enhancement
+
+  QR Code Scanning
+
+  - Print QR codes for assets
+  - Scan to quickly access asset details
+  - Mobile-optimized scanner
+
+  Enhanced Dashboard
+
+  - More chart types
+  - Export data to CSV/Excel
+  - Custom date range filtering
+
+  User Management Improvements
+
+  - Invite users via email
+  - Password requirements
+  - MFA (two-factor authentication)
+
+Do we need to connect to github for deployment to my server?
+When the domain name changes - will everything break?
+
+Monthly or yearly packages?
+
+Stripe setup?
+
+Billing section for the owner?
+

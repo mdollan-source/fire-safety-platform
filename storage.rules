@@ -1,0 +1,118 @@
+rules_version = '2';
+
+// Firebase Storage Security Rules for Evidence Files
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Get user's org ID from custom claims
+    function getUserOrgId() {
+      return request.auth.token.orgId;
+    }
+
+    // ==========================================================================
+    // EVIDENCE FILES (Photos, Documents, Certificates)
+    // ==========================================================================
+
+    match /evidence/{orgId}/{allPaths=**} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // Write: authenticated users in the same org
+      // Max file size: 25MB for photos/documents
+      allow create: if isAuthenticated() &&
+                      getUserOrgId() == orgId &&
+                      request.resource.size <= 25 * 1024 * 1024 &&
+                      request.resource.contentType.matches('image/.*|application/pdf|video/.*');
+
+      // No updates or deletes (immutable evidence)
+      allow update, delete: if false;
+    }
+
+    // ==========================================================================
+    // COMPLIANCE PACKS (Generated PDFs)
+    // ==========================================================================
+
+    match /compliance_packs/{orgId}/{allPaths=**} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // Write: only via Cloud Functions (no direct uploads)
+      allow write: if false;
+    }
+
+    // ==========================================================================
+    // REPORTS (Generated PDFs)
+    // ==========================================================================
+
+    match /reports/{orgId}/{allPaths=**} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // Write: any authenticated user in the same org (for generating reports)
+      allow create: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // Delete: RP or super admin only
+      allow delete: if isAuthenticated() &&
+                      getUserOrgId() == orgId &&
+                      request.auth.token.role in ['responsible_person', 'super_admin'];
+
+      // No updates
+      allow update: if false;
+    }
+
+    // ==========================================================================
+    // ORGANISATION BRANDING (Logos)
+    // ==========================================================================
+
+    match /branding/{orgId}/{allPaths=**} {
+      // Read: anyone (public branding)
+      allow read: if true;
+
+      // Write: RP or super admin only
+      allow create, update: if isAuthenticated() &&
+                              getUserOrgId() == orgId &&
+                              request.auth.token.role in ['responsible_person', 'super_admin'] &&
+                              request.resource.size <= 2 * 1024 * 1024 &&
+                              request.resource.contentType.matches('image/.*');
+
+      allow delete: if isAuthenticated() &&
+                      getUserOrgId() == orgId &&
+                      request.auth.token.role in ['responsible_person', 'super_admin'];
+    }
+
+    // ==========================================================================
+    // DOCUMENTS (Certificates, Manuals, Plans, etc.)
+    // ==========================================================================
+
+    match /documents/{orgId}/{allPaths=**} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // Create: authenticated users in the same org
+      // Max file size: 10MB for documents
+      allow create: if isAuthenticated() &&
+                      getUserOrgId() == orgId &&
+                      request.resource.size <= 10 * 1024 * 1024 &&
+                      request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd\\..*');
+
+      // Delete: authenticated users in the same org
+      allow delete: if isAuthenticated() && getUserOrgId() == orgId;
+
+      // No updates (immutable files)
+      allow update: if false;
+    }
+
+    // ==========================================================================
+    // DEFAULT: Deny all other access
+    // ==========================================================================
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

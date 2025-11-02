@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Safety - Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .icon-preview {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .icon-box {
+            text-align: center;
+        }
+        .icon-box h3 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        canvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #333;
+        }
+        .instructions {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1a1a1a;
+            margin-top: 30px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #1a1a1a;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+            color: #333;
+        }
+        .success {
+            color: #10b981;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Fire Safety Icon Generator</h1>
+        <p class="subtitle">Generate notification icons for your Fire Safety app</p>
+
+        <div class="icon-preview">
+            <div class="icon-box">
+                <h3>Main Icon (192x192)</h3>
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <br>
+                <button onclick="downloadIcon('icon192', 'icon-192x192.png')">Download PNG</button>
+            </div>
+
+            <div class="icon-box">
+                <h3>Badge Icon (72x72)</h3>
+                <canvas id="badge72" width="72" height="72"></canvas>
+                <br>
+                <button onclick="downloadIcon('badge72', 'badge-72x72.png')">Download PNG</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="downloadBoth()" style="background: #10b981; font-size: 16px; padding: 15px 30px;">
+                📥 Download Both Icons
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li>Click the green <strong>"Download Both Icons"</strong> button above</li>
+                <li>Two PNG files will be downloaded to your Downloads folder:
+                    <ul>
+                        <li><code>icon-192x192.png</code></li>
+                        <li><code>badge-72x72.png</code></li>
+                    </ul>
+                </li>
+                <li>Move these files to: <code>Fire/public/icons/</code></li>
+                <li>Done! Your notifications will now use these icons 🎉</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Draw main icon (192x192)
+        function drawMainIcon() {
+            const canvas = document.getElementById('icon192');
+            const ctx = canvas.getContext('2d');
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 192, 192);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#333333');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 192, 192);
+
+            // Fire symbol (simplified flame)
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(96, 40);
+            ctx.bezierCurveTo(120, 40, 130, 60, 130, 80);
+            ctx.bezierCurveTo(130, 100, 120, 120, 96, 140);
+            ctx.bezierCurveTo(72, 120, 62, 100, 62, 80);
+            ctx.bezierCurveTo(62, 60, 72, 40, 96, 40);
+            ctx.fill();
+
+            // Inner flame
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.moveTo(96, 60);
+            ctx.bezierCurveTo(108, 60, 115, 70, 115, 85);
+            ctx.bezierCurveTo(115, 100, 108, 110, 96, 120);
+            ctx.bezierCurveTo(84, 110, 77, 100, 77, 85);
+            ctx.bezierCurveTo(77, 70, 84, 60, 96, 60);
+            ctx.fill();
+
+            // Text "FS"
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('FS', 96, 160);
+
+            // Subtle border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, 190, 190);
+        }
+
+        // Draw badge icon (72x72) - monochrome
+        function drawBadgeIcon() {
+            const canvas = document.getElementById('badge72');
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background
+            ctx.clearRect(0, 0, 72, 72);
+
+            // White flame symbol
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.moveTo(36, 10);
+            ctx.bezierCurveTo(48, 10, 54, 22, 54, 32);
+            ctx.bezierCurveTo(54, 42, 48, 52, 36, 62);
+            ctx.bezierCurveTo(24, 52, 18, 42, 18, 32);
+            ctx.bezierCurveTo(18, 22, 24, 10, 36, 10);
+            ctx.fill();
+        }
+
+        // Download single icon
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Download both icons
+        function downloadBoth() {
+            setTimeout(() => downloadIcon('icon192', 'icon-192x192.png'), 100);
+            setTimeout(() => downloadIcon('badge72', 'badge-72x72.png'), 300);
+
+            // Show success message
+            alert('✅ Downloaded both icons!\n\nCheck your Downloads folder for:\n• icon-192x192.png\n• badge-72x72.png\n\nMove these to: Fire/public/icons/');
+        }
+
+        // Draw icons on page load
+        window.onload = function() {
+            drawMainIcon();
+            drawBadgeIcon();
+        };
+    </script>
+</body>
+</html>

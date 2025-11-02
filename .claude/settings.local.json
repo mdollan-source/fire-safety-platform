@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm install)",
+      "Bash(firebase:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(nul)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm install:*)",
+      "Bash(powershell -Command \"Get-Content ''src\\data\\check-templates.ts'' | Select-Object -Last 50\")",
+      "Bash(powershell -Command:*)",
+      "Bash(dir:*)",
+      "Bash(cat:*)",
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(NUL)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

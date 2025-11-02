@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Professional fire safety icon - clean, no gradients -->
+  <rect width="512" height="512" fill="#171717"/>
+
+  <!-- Shield outline -->
+  <path d="M256 64L128 112V240C128 336 192 416 256 448C320 416 384 336 384 240V112L256 64Z"
+        stroke="#FFFFFF"
+        stroke-width="16"
+        fill="none"/>
+
+  <!-- Fire symbol inside shield -->
+  <path d="M256 160C256 160 224 192 224 224C224 241.673 237.327 256 256 256C274.673 256 288 241.673 288 224C288 192 256 160 256 160Z"
+        fill="#dc2626"/>
+
+  <!-- Checkmark -->
+  <path d="M240 304L216 280L208 288L240 320L304 256L296 248L240 304Z"
+        fill="#16a34a"
+        stroke="#16a34a"
+        stroke-width="4"/>
+</svg>

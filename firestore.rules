@@ -1,0 +1,389 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================================================
+    // HELPER FUNCTIONS
+    // ==========================================================================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Get user's custom claims
+    function getUserClaims() {
+      return request.auth.token;
+    }
+
+    // Check if user belongs to organisation
+    function isOrgMember(orgId) {
+      return isAuthenticated() &&
+             getUserClaims().orgId == orgId;
+    }
+
+    // Check if user has specific role
+    function hasRole(role) {
+      return isAuthenticated() &&
+             getUserClaims().role == role;
+    }
+
+    // Check if user has any of the roles
+    function hasAnyRole(roles) {
+      return isAuthenticated() &&
+             getUserClaims().role in roles;
+    }
+
+    // Check if user can access site
+    function canAccessSite(siteId) {
+      return isAuthenticated() && (
+        hasRole('super_admin') ||
+        hasRole('responsible_person') ||
+        siteId in getUserClaims().siteIds ||
+        getUserClaims().siteIds == null  // null = all sites
+      );
+    }
+
+    // ==========================================================================
+    // ORGANISATIONS
+    // ==========================================================================
+
+    match /organisations/{orgId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(orgId);
+
+      // Create: any authenticated user (for first-time organisation setup)
+      allow create: if isAuthenticated();
+
+      // Update: RP or super admin in the same org
+      allow update: if isOrgMember(orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+
+      // Delete: super admin only (dangerous operation)
+      allow delete: if isOrgMember(orgId) && hasRole('super_admin');
+    }
+
+    // ==========================================================================
+    // USERS
+    // ==========================================================================
+
+    match /users/{userId} {
+      // Read: self + org members with manager roles
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        (isOrgMember(resource.data.orgId) && hasAnyRole(['responsible_person', 'site_manager', 'super_admin']))
+      );
+
+      // Create: Allow users to create their own account during signup
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+
+      // Update: self (limited fields) or managers
+      allow update: if isAuthenticated() && (
+        (request.auth.uid == userId && (
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'orgId', 'siteIds']) ||
+          // Allow setting orgId for first time (organisation setup)
+          (!('orgId' in resource.data) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['orgId', 'updatedAt']))
+        )) ||
+        (isOrgMember(resource.data.orgId) && hasAnyRole(['responsible_person', 'super_admin']))
+      );
+
+      // Delete: RP + super admins
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+
+      // FCM Tokens subcollection
+      match /fcmTokens/{tokenId} {
+        // Allow user to read/write their own FCM tokens
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+
+      // Notification Settings subcollection
+      match /settings/{settingId} {
+        // Allow user to read/write their own settings
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+
+    // ==========================================================================
+    // SITES
+    // ==========================================================================
+
+    match /sites/{siteId} {
+      // Read: authenticated users (MVP - will add org filtering after migration)
+      allow read: if isAuthenticated();
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin (MVP - will add org filtering after migration)
+      allow update: if isAuthenticated() &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isAuthenticated() &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // ASSETS
+    // ==========================================================================
+
+    match /assets/{assetId} {
+      // Read: authenticated users (MVP - will add org filtering after migration)
+      allow read: if isAuthenticated();
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
+
+      // Update: any authenticated user (MVP - will add org filtering after migration)
+      allow update: if isAuthenticated();
+
+      // Delete: RP or super admin
+      allow delete: if isAuthenticated() && hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // CHECK TEMPLATES
+    // ==========================================================================
+
+    match /check_templates/{templateId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin
+      allow update: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // CHECK SCHEDULES
+    // ==========================================================================
+
+    match /check_schedules/{scheduleId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin
+      allow update: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // SCHEDULES & TASKS
+    // ==========================================================================
+
+    match /schedules/{scheduleId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin
+      allow update: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    match /tasks/{taskId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
+
+      // Update: any authenticated user in the same org (for completing checks)
+      allow update: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // ENTRIES (Completed Checks) - IMMUTABLE
+    // ==========================================================================
+
+    match /entries/{entryId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
+
+      // Update: limited updates allowed (for corrections/notes)
+      allow update: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Delete: NEVER (immutable records for compliance)
+      allow delete: if false;
+    }
+
+    // ==========================================================================
+    // EVIDENCE
+    // ==========================================================================
+
+    match /evidence/{evidenceId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+                      request.resource.data.uploadedBy == request.auth.uid;
+      allow update, delete: if false;  // Immutable
+    }
+
+    // ==========================================================================
+    // DEFECTS
+    // ==========================================================================
+
+    match /defects/{defectId} {
+      // Read: authenticated users (MVP - will add org filtering after migration)
+      allow read: if isAuthenticated();
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
+
+      // Update: any authenticated user (MVP - will add org filtering after migration)
+      allow update: if isAuthenticated();
+
+      // Delete: RP or super admin only
+      allow delete: if isAuthenticated() &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // REPORTS
+    // ==========================================================================
+
+    match /reports/{reportId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+
+      // Update: not allowed (reports are immutable once generated)
+      allow update: if false;
+    }
+
+    // ==========================================================================
+    // TRAINING & VISITS
+    // ==========================================================================
+
+    match /training_records/{recordId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin
+      allow update: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    match /inspector_visits/{visitId} {
+      allow read: if isAuthenticated() && canAccessSite(resource.data.siteId);
+      allow create, update: if hasAnyRole(['responsible_person', 'site_manager', 'super_admin']) &&
+                              canAccessSite(request.resource.data.siteId);
+      allow delete: if hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    match /fire_drills/{drillId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: RP, site manager, or super admin
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Update: RP, site manager, or super admin
+      allow update: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+
+      // Delete: RP or super admin only
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
+    }
+
+    // ==========================================================================
+    // AUDIT EVENTS - READ ONLY (Created via Cloud Functions)
+    // ==========================================================================
+
+    match /audit_events/{eventId} {
+      allow read: if isAuthenticated() &&
+                    isOrgMember(resource.data.orgId) &&
+                    hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
+      allow write: if false;  // Only Cloud Functions can write
+    }
+
+    // ==========================================================================
+    // KPI SNAPSHOTS - READ ONLY (Created via Cloud Functions)
+    // ==========================================================================
+
+    match /kpi_snapshots/{snapshotId} {
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+      allow write: if false;  // Only Cloud Functions can write
+    }
+
+    // ==========================================================================
+    // DOCUMENTS
+    // ==========================================================================
+
+    match /documents/{documentId} {
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: any authenticated user in the same org
+      allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
+                      request.resource.data.uploadedBy == request.auth.uid;
+
+      // Update: uploader or managers (for expiry notifications)
+      allow update: if isOrgMember(resource.data.orgId) && (
+        resource.data.uploadedBy == request.auth.uid ||
+        hasAnyRole(['responsible_person', 'super_admin'])
+      );
+
+      // Delete: uploader or managers
+      allow delete: if isOrgMember(resource.data.orgId) && (
+        resource.data.uploadedBy == request.auth.uid ||
+        hasAnyRole(['responsible_person', 'super_admin'])
+      );
+    }
+  }
+}
