@@ -142,6 +142,7 @@ export interface Floor {
 
 export interface Asset {
   id: string;
+  orgId: string;
   siteId: string;
   buildingId?: string;
   floorId?: string;
