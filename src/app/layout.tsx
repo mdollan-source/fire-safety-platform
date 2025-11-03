@@ -3,13 +3,13 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'Fire Safety Log Book',
+  title: 'Fire Safety Log',
   description: 'Digital fire safety compliance platform for UK premises',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Fire Safety',
+    title: 'Fire Safety Log',
   },
 };
 

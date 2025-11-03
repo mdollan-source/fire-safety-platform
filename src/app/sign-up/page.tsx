@@ -167,7 +167,7 @@ export default function SignUpPage() {
       <div className="min-h-screen bg-brand-50 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-brand-900">Fire Safety Log Book</h1>
+            <h1 className="text-2xl font-bold text-brand-900">Fire Safety Log</h1>
           </div>
           <Card className="border-l-4 border-l-red-500">
             <Card.Content>

@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     const emailResponse = await resend.emails.send({
       from: process.env.EMAIL_FROM || 'Fire Safety <onboarding@resend.dev>',
       to: [email],
-      subject: 'You\'ve been invited to Fire Safety Log Book',
+      subject: 'You\'ve been invited to Fire Safety Log',
       html: generateInvitationEmail(name, roleLabel, invitationUrl, invitedBy),
     });
 
@@ -121,7 +121,7 @@ function generateInvitationEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fire Safety Log Book Invitation</title>
+  <title>Fire Safety Log Invitation</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;">
@@ -131,7 +131,7 @@ function generateInvitationEmail(
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; background-color: #000000; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log Book</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log</h1>
             </td>
           </tr>
 
@@ -145,11 +145,11 @@ function generateInvitationEmail(
               </p>
 
               <p style="margin: 0 0 16px 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                ${invitedBy} has invited you to join their organisation on Fire Safety Log Book as a <strong>${roleLabel}</strong>.
+                ${invitedBy} has invited you to join their organisation on Fire Safety Log as a <strong>${roleLabel}</strong>.
               </p>
 
               <p style="margin: 0 0 24px 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                Fire Safety Log Book helps you manage fire safety compliance, track inspections, and maintain comprehensive records for regulatory requirements.
+                Fire Safety Log helps you manage fire safety compliance, track inspections, and maintain comprehensive records for regulatory requirements.
               </p>
 
               <!-- CTA Button -->
@@ -184,7 +184,7 @@ function generateInvitationEmail(
           <tr>
             <td style="padding: 24px 40px; background-color: #f9f9f9; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="margin: 0; color: #8a8a8a; font-size: 12px; line-height: 1.5;">
-                © ${new Date().getFullYear()} Fire Safety Log Book. All rights reserved.
+                © ${new Date().getFullYear()} Fire Safety Log. All rights reserved.
               </p>
             </td>
           </tr>

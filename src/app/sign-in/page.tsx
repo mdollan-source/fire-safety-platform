@@ -38,7 +38,7 @@ export default function SignInPage() {
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-brand-900">Fire Safety Log Book</h1>
+          <h1 className="text-2xl font-bold text-brand-900">Fire Safety Log</h1>
           <p className="text-sm text-brand-600 mt-2">Digital compliance platform</p>
         </div>
 

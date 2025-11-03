@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     const emailResponse = await resend.emails.send({
       from: process.env.EMAIL_FROM || 'Fire Safety <onboarding@resend.dev>',
       to: [email],
-      subject: 'Reset Your Password - Fire Safety Log Book',
+      subject: 'Reset Your Password - Fire Safety Log',
       html: generatePasswordResetEmail(userData.name || 'User', resetUrl),
     });
 
@@ -128,7 +128,7 @@ function generatePasswordResetEmail(userName: string, resetUrl: string): string 
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; background-color: #000000; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log Book</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log</h1>
             </td>
           </tr>
 
@@ -142,7 +142,7 @@ function generatePasswordResetEmail(userName: string, resetUrl: string): string 
               </p>
 
               <p style="margin: 0 0 16px 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                We received a request to reset your password for your Fire Safety Log Book account. Click the button below to create a new password.
+                We received a request to reset your password for your Fire Safety Log account. Click the button below to create a new password.
               </p>
 
               <!-- Security Warning -->
@@ -189,7 +189,7 @@ function generatePasswordResetEmail(userName: string, resetUrl: string): string 
           <tr>
             <td style="padding: 24px 40px; background-color: #f9f9f9; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="margin: 0; color: #8a8a8a; font-size: 12px; line-height: 1.5;">
-                © ${new Date().getFullYear()} Fire Safety Log Book. All rights reserved.
+                © ${new Date().getFullYear()} Fire Safety Log. All rights reserved.
               </p>
             </td>
           </tr>

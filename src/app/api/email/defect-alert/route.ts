@@ -128,7 +128,7 @@ function generateDefectAlertEmail(
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; background-color: #000000; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log Book</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Fire Safety Log</h1>
             </td>
           </tr>
 
@@ -246,7 +246,7 @@ function generateDefectAlertEmail(
           <tr>
             <td style="padding: 24px 40px; background-color: #f9f9f9; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="margin: 0; color: #8a8a8a; font-size: 12px; line-height: 1.5;">
-                © ${new Date().getFullYear()} Fire Safety Log Book. All rights reserved.
+                © ${new Date().getFullYear()} Fire Safety Log. All rights reserved.
               </p>
             </td>
           </tr>

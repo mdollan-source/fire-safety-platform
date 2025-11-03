@@ -1,6 +1,6 @@
 {
-  "name": "Fire Safety Log Book",
-  "short_name": "Fire Safety",
+  "name": "Fire Safety Log",
+  "short_name": "Fire Safety Log",
   "description": "Digital fire safety compliance platform for UK premises",
   "start_url": "/",
   "display": "standalone",

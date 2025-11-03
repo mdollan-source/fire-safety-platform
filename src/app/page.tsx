@@ -33,7 +33,7 @@ export default function Home() {
       <header className="bg-white border-b border-brand-200">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-brand-900">Fire Safety Log Book</h1>
+            <h1 className="text-xl font-bold text-brand-900">Fire Safety Log</h1>
             <p className="text-sm text-brand-600">Digital compliance platform</p>
           </div>
           <div className="flex gap-2">
@@ -50,7 +50,7 @@ export default function Home() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Card>
-          <Card.Header>Welcome to Fire Safety Log Book</Card.Header>
+          <Card.Header>Welcome to Fire Safety Log</Card.Header>
           <Card.Content>
             <div className="space-y-4">
               <p className="text-sm text-brand-700">
