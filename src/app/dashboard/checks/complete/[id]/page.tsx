@@ -101,10 +101,12 @@ export default function CompleteCheckPage() {
 
       setTask(taskData);
 
-      // Fetch asset
-      const assetDoc = await getDoc(doc(db, 'assets', taskData.assetId));
-      if (assetDoc.exists()) {
-        setAsset(assetDoc.data() as Asset);
+      // Fetch asset if assetId exists
+      if (taskData.assetId) {
+        const assetDoc = await getDoc(doc(db, 'assets', taskData.assetId));
+        if (assetDoc.exists()) {
+          setAsset(assetDoc.data() as Asset);
+        }
       }
     } catch (err) {
       console.error('Error fetching task:', err);
