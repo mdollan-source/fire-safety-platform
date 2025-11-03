@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase/config';
+import { db, auth } from '@/lib/firebase/config';
 import { doc, getDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -54,14 +54,27 @@ export default function AssetDetailPage() {
     try {
       setLoading(true);
 
-      // Fetch asset
-      const assetDoc = await getDoc(doc(db, 'assets', assetId));
-      if (!assetDoc.exists()) {
-        setError('Asset not found');
+      // Get ID token for API authentication
+      const idToken = await auth.currentUser?.getIdToken();
+      if (!idToken) {
+        setError('Not authenticated');
         return;
       }
 
-      const assetData = assetDoc.data() as Asset;
+      // Fetch asset via API (bypasses Firestore security rules issue)
+      const assetResponse = await fetch(`/api/assets/${assetId}`, {
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+        },
+      });
+
+      if (!assetResponse.ok) {
+        const errorData = await assetResponse.json();
+        setError(errorData.error || 'Failed to load asset');
+        return;
+      }
+
+      const assetData = await assetResponse.json() as Asset;
       setAsset(assetData);
 
       // Fetch site

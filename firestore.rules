@@ -20,6 +20,7 @@ service cloud.firestore {
     // Check if user belongs to organisation
     function isOrgMember(orgId) {
       return isAuthenticated() &&
+             ('orgId' in getUserClaims()) &&
              getUserClaims().orgId == orgId;
     }
 

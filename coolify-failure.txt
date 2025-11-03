@@ -1,308 +1,176 @@
-2025-Nov-03 13:10:13.599479
 Oops something is not okay, are you okay? 😢
-2025-Nov-03 13:10:13.606616
 #0 building with "default" instance using docker driver
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #1 [internal] load build definition from Dockerfile
-2025-Nov-03 13:10:13.606616
 #1 transferring dockerfile: 2.61kB done
-2025-Nov-03 13:10:13.606616
 #1 DONE 0.0s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #2 [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
-2025-Nov-03 13:10:13.606616
-#2 DONE 0.4s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
+#2 DONE 0.6s
 #3 [internal] load .dockerignore
-2025-Nov-03 13:10:13.606616
 #3 transferring context: 2B done
-2025-Nov-03 13:10:13.606616
 #3 DONE 0.0s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #4 [stage-0  1/11] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
-2025-Nov-03 13:10:13.606616
 #4 DONE 0.0s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #5 [internal] load build context
-2025-Nov-03 13:10:13.606616
-#5 transferring context: 2.24MB 0.0s done
-2025-Nov-03 13:10:13.606616
-#5 DONE 0.1s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
+#5 transferring context: 2.25MB 0.0s done
+#5 DONE 0.0s
 #6 [stage-0  2/11] WORKDIR /app/
-2025-Nov-03 13:10:13.606616
 #6 CACHED
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #7 [stage-0  3/11] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
-2025-Nov-03 13:10:13.606616
 #7 CACHED
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #8 [stage-0  4/11] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
-2025-Nov-03 13:10:13.606616
 #8 CACHED
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #9 [stage-0  5/11] RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends curl wget
-2025-Nov-03 13:10:13.606616
 #9 CACHED
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #10 [stage-0  6/11] COPY . /app/.
-2025-Nov-03 13:10:13.606616
 #10 DONE 0.1s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 #11 [stage-0  7/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-/root/npm,target=/root/.npm npm ci
-2025-Nov-03 13:10:13.606616
-#11 0.171 npm warn config production Use `--omit=dev` instead.
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   package: '@firebase/component@0.7.0',
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   package: '@firebase/database@1.1.0',
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.075 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   package: '@firebase/database-compat@2.1.0',
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   package: '@firebase/logger@0.5.0',
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.076 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 1.077 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.077 npm warn EBADENGINE   package: '@firebase/util@1.13.0',
-2025-Nov-03 13:10:13.606616
-#11 1.077 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.077 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.077 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 1.079 npm warn EBADENGINE Unsupported engine {
-2025-Nov-03 13:10:13.606616
-#11 1.079 npm warn EBADENGINE   package: 'pdfjs-dist@5.4.296',
-2025-Nov-03 13:10:13.606616
-#11 1.079 npm warn EBADENGINE   required: { node: '>=20.16.0 || >=22.3.0' },
-2025-Nov-03 13:10:13.606616
-#11 1.079 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-2025-Nov-03 13:10:13.606616
-#11 1.079 npm warn EBADENGINE }
-2025-Nov-03 13:10:13.606616
-#11 8.312 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-2025-Nov-03 13:10:13.606616
-#11 8.414 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
-2025-Nov-03 13:10:13.606616
-#11 8.469 npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
-2025-Nov-03 13:10:13.606616
-#11 8.666 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-Nov-03 13:10:13.606616
-#11 8.678 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-Nov-03 13:10:13.606616
-#11 8.680 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-2025-Nov-03 13:10:13.606616
-#11 8.812 npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
-2025-Nov-03 13:10:13.606616
-#11 9.196 npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
-2025-Nov-03 13:10:13.606616
-#11 9.276 npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
-2025-Nov-03 13:10:13.606616
-#11 9.278 npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
-2025-Nov-03 13:10:13.606616
-#11 27.21
-2025-Nov-03 13:10:13.606616
-#11 27.21 added 979 packages, and audited 980 packages in 27s
-2025-Nov-03 13:10:13.606616
-#11 27.21
-2025-Nov-03 13:10:13.606616
-#11 27.21 163 packages are looking for funding
-2025-Nov-03 13:10:13.606616
-#11 27.21   run `npm fund` for details
-2025-Nov-03 13:10:13.606616
-#11 28.37
-2025-Nov-03 13:10:13.606616
-#11 28.37 13 vulnerabilities (11 moderate, 2 high)
-2025-Nov-03 13:10:13.606616
-#11 28.37
-2025-Nov-03 13:10:13.606616
-#11 28.37 To address issues that do not require attention, run:
-2025-Nov-03 13:10:13.606616
-#11 28.37   npm audit fix
-2025-Nov-03 13:10:13.606616
-#11 28.37
-2025-Nov-03 13:10:13.606616
-#11 28.37 To address all issues possible (including breaking changes), run:
-2025-Nov-03 13:10:13.606616
-#11 28.37   npm audit fix --force
-2025-Nov-03 13:10:13.606616
-#11 28.37
-2025-Nov-03 13:10:13.606616
-#11 28.37 Some issues need review, and may require choosing
-2025-Nov-03 13:10:13.606616
-#11 28.37 a different dependency.
-2025-Nov-03 13:10:13.606616
-#11 28.37
-2025-Nov-03 13:10:13.606616
-#11 28.37 Run `npm audit` for details.
-2025-Nov-03 13:10:13.606616
-#11 DONE 28.9s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
+#11 0.182 npm warn config production Use `--omit=dev` instead.
+#11 1.161 npm warn EBADENGINE Unsupported engine {
+#11 1.161 npm warn EBADENGINE   package: '@firebase/component@0.7.0',
+#11 1.161 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.161 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.161 npm warn EBADENGINE }
+#11 1.161 npm warn EBADENGINE Unsupported engine {
+#11 1.161 npm warn EBADENGINE   package: '@firebase/database@1.1.0',
+#11 1.161 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.161 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.161 npm warn EBADENGINE }
+#11 1.162 npm warn EBADENGINE Unsupported engine {
+#11 1.162 npm warn EBADENGINE   package: '@firebase/database-compat@2.1.0',
+#11 1.162 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.162 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.162 npm warn EBADENGINE }
+#11 1.162 npm warn EBADENGINE Unsupported engine {
+#11 1.162 npm warn EBADENGINE   package: '@firebase/logger@0.5.0',
+#11 1.162 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.162 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.162 npm warn EBADENGINE }
+#11 1.163 npm warn EBADENGINE Unsupported engine {
+#11 1.163 npm warn EBADENGINE   package: '@firebase/util@1.13.0',
+#11 1.163 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.163 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.163 npm warn EBADENGINE }
+#11 1.166 npm warn EBADENGINE Unsupported engine {
+#11 1.166 npm warn EBADENGINE   package: 'pdfjs-dist@5.4.296',
+#11 1.166 npm warn EBADENGINE   required: { node: '>=20.16.0 || >=22.3.0' },
+#11 1.166 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.166 npm warn EBADENGINE }
+#11 8.079 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 8.193 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+#11 8.257 npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+#11 8.490 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 8.491 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 8.491 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 8.626 npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+#11 9.028 npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+#11 9.082 npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+#11 9.084 npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
+#11 26.80
+#11 26.80 added 980 packages, and audited 981 packages in 27s
+#11 26.80
+#11 26.80 163 packages are looking for funding
+#11 26.80   run `npm fund` for details
+#11 27.89
+#11 27.89 13 vulnerabilities (11 moderate, 2 high)
+#11 27.89
+#11 27.89 To address issues that do not require attention, run:
+#11 27.89   npm audit fix
+#11 27.89
+#11 27.89 To address all issues possible (including breaking changes), run:
+#11 27.89   npm audit fix --force
+#11 27.89
+#11 27.89 Some issues need review, and may require choosing
+#11 27.89 a different dependency.
+#11 27.89
+#11 27.89 Run `npm audit` for details.
+#11 DONE 28.6s
 #12 [stage-0  8/11] COPY . /app/.
-2025-Nov-03 13:10:13.606616
-#12 DONE 0.1s
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
+#12 DONE 0.0s
 #13 [stage-0  9/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build
-2025-Nov-03 13:10:13.606616
-#13 0.204 npm warn config production Use `--omit=dev` instead.
-2025-Nov-03 13:10:13.606616
-#13 0.231
-2025-Nov-03 13:10:13.606616
-#13 0.231 > fire-safety-log@0.1.0 build
-2025-Nov-03 13:10:13.606616
-#13 0.231 > next build
-2025-Nov-03 13:10:13.606616
-#13 0.231
-2025-Nov-03 13:10:13.606616
-#13 1.616   ▲ Next.js 14.2.33
-2025-Nov-03 13:10:13.606616
-#13 1.618
-2025-Nov-03 13:10:13.606616
-#13 1.669    Creating an optimized production build ...
-2025-Nov-03 13:10:13.606616
-#13 2.110 > [PWA] Compile server
-2025-Nov-03 13:10:13.606616
-#13 2.111 > [PWA] Compile server
-2025-Nov-03 13:10:13.606616
-#13 2.112 > [PWA] Compile client (static)
-2025-Nov-03 13:10:13.606616
-#13 2.112 > [PWA] Auto register service worker with: /app/node_modules/next-pwa/register.js
-2025-Nov-03 13:10:13.606616
-#13 2.112 > [PWA] Service worker: /app/public/sw.js
-2025-Nov-03 13:10:13.606616
-#13 2.112 > [PWA]   url: /sw.js
-2025-Nov-03 13:10:13.606616
-#13 2.112 > [PWA]   scope: /
-2025-Nov-03 13:10:13.606616
-#13 19.15  ✓ Compiled successfully
-2025-Nov-03 13:10:13.606616
-#13 19.15    Linting and checking validity of types ...
-2025-Nov-03 13:10:13.606616
-#13 33.53 Failed to compile.
-2025-Nov-03 13:10:13.606616
-#13 33.53
-2025-Nov-03 13:10:13.606616
-#13 33.53 ./src/app/dashboard/checks/complete/[id]/page.tsx:257:28
-2025-Nov-03 13:10:13.606616
-#13 33.53 Type error: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
-2025-Nov-03 13:10:13.606616
-#13 33.53   Type 'undefined' is not assignable to type 'string'.
-2025-Nov-03 13:10:13.606616
-#13 33.53
-2025-Nov-03 13:10:13.606616
-#13 33.53   255 |           };
-2025-Nov-03 13:10:13.606616
-#13 33.53   256 |
-2025-Nov-03 13:10:13.606616
-#13 33.53 > 257 |           await saveDefect(task.assetId, defectData, photos);
-2025-Nov-03 13:10:13.606616
-#13 33.53       |                            ^
-2025-Nov-03 13:10:13.606616
-#13 33.53   258 |         }
-2025-Nov-03 13:10:13.606616
-#13 33.53   259 |
-2025-Nov-03 13:10:13.606616
-#13 33.53   260 |         alert('Check saved offline. It will sync automatically when you\'re back online.');
-2025-Nov-03 13:10:13.606616
-#13 33.62 Next.js build worker exited with code: 1 and signal: null
-2025-Nov-03 13:10:13.606616
+#13 0.163 npm warn config production Use `--omit=dev` instead.
+#13 0.185
+#13 0.185 > fire-safety-log@0.1.0 build
+#13 0.185 > next build
+#13 0.185
+#13 1.578   ▲ Next.js 14.2.33
+#13 1.578
+#13 1.627    Creating an optimized production build ...
+#13 2.072 > [PWA] Compile server
+#13 2.073 > [PWA] Compile server
+#13 2.074 > [PWA] Compile client (static)
+#13 2.074 > [PWA] Auto register service worker with: /app/node_modules/next-pwa/register.js
+#13 2.074 > [PWA] Service worker: /app/public/sw.js
+#13 2.074 > [PWA]   url: /sw.js
+#13 2.074 > [PWA]   scope: /
+#13 17.53  ✓ Compiled successfully
+#13 17.53    Linting and checking validity of types ...
+#13 30.74    Collecting page data ...
+#13 36.54    Generating static pages (0/42) ...
+#13 37.84    Generating static pages (10/42)
+#13 38.16    Generating static pages (20/42)
+#13 38.41    Generating static pages (31/42)
+#13 38.56  ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/sign-up". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+#13 38.56     at s (/app/.next/server/chunks/9429.js:3:220778)
+#13 38.56     at c (/app/.next/server/chunks/9429.js:3:231800)
+#13 38.56     at b (/app/.next/server/app/sign-up/page.js:1:4668)
+#13 38.56     at nj (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:46252)
+#13 38.56     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47572)
+#13 38.56     at nN (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:64547)
+#13 38.56     at nI (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47011)
+#13 38.56     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47718)
+#13 38.56     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:61547)
+#13 38.56     at nN (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:64547)
+#13 38.56
+#13 38.56 Error occurred prerendering page "/sign-up". Read more: https://nextjs.org/docs/messages/prerender-error
+#13 38.56
+#13 38.57  ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/reset-password". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+#13 38.57     at s (/app/.next/server/chunks/9429.js:3:220778)
+#13 38.57     at c (/app/.next/server/chunks/9429.js:3:231800)
+#13 38.57     at p (/app/.next/server/app/reset-password/page.js:1:4681)
+#13 38.57     at nj (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:46252)
+#13 38.57     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47572)
+#13 38.57     at nN (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:64547)
+#13 38.57     at nI (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47011)
+#13 38.57     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:47718)
+#13 38.57     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:61547)
+#13 38.57     at nN (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:64547)
+#13 38.57
+#13 38.57 Error occurred prerendering page "/reset-password". Read more: https://nextjs.org/docs/messages/prerender-error
+#13 38.57
+#13 38.76  ✓ Generating static pages (42/42)
+#13 38.78
+#13 38.78 > Export encountered errors on following paths:
+#13 38.78 	/reset-password/page: /reset-password
+#13 38.78 	/sign-up/page: /sign-up
 #13 ERROR: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
-2025-Nov-03 13:10:13.606616
 ------
-2025-Nov-03 13:10:13.606616
 > [stage-0  9/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build:
-2025-Nov-03 13:10:13.606616
-33.53   Type 'undefined' is not assignable to type 'string'.
-2025-Nov-03 13:10:13.606616
-33.53
-2025-Nov-03 13:10:13.606616
-33.53   255 |           };
-2025-Nov-03 13:10:13.606616
-33.53   256 |
-2025-Nov-03 13:10:13.606616
-33.53 > 257 |           await saveDefect(task.assetId, defectData, photos);
-2025-Nov-03 13:10:13.606616
-33.53       |                            ^
-2025-Nov-03 13:10:13.606616
-33.53   258 |         }
-2025-Nov-03 13:10:13.606616
-33.53   259 |
-2025-Nov-03 13:10:13.606616
-33.53   260 |         alert('Check saved offline. It will sync automatically when you\'re back online.');
-2025-Nov-03 13:10:13.606616
-33.62 Next.js build worker exited with code: 1 and signal: null
-2025-Nov-03 13:10:13.606616
+38.57     at nM (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:61547)
+38.57     at nN (/app/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:64547)
+38.57
+38.57 Error occurred prerendering page "/reset-password". Read more: https://nextjs.org/docs/messages/prerender-error
+38.57
+38.76  ✓ Generating static pages (42/42)
+38.78
+38.78 > Export encountered errors on following paths:
+38.78 	/reset-password/page: /reset-password
+38.78 	/sign-up/page: /sign-up
 ------
-2025-Nov-03 13:10:13.606616
-2025-Nov-03 13:10:13.606616
 1 warning found (use docker --debug to expand):
-2025-Nov-03 13:10:13.606616
 - UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 18)
-2025-Nov-03 13:10:13.606616
 Dockerfile:24
-2025-Nov-03 13:10:13.606616
 --------------------
-2025-Nov-03 13:10:13.606616
 22 |     # build phase
-2025-Nov-03 13:10:13.606616
 23 |     COPY . /app/.
-2025-Nov-03 13:10:13.606616
 24 | >>> RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build
-2025-Nov-03 13:10:13.606616
 25 |
-2025-Nov-03 13:10:13.606616
 26 |
-2025-Nov-03 13:10:13.606616
 --------------------
-2025-Nov-03 13:10:13.606616
 ERROR: failed to build: failed to solve: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
-2025-Nov-03 13:10:13.606616
 exit status 1
-2025-Nov-03 13:10:13.613235
 Deployment failed. Removing the new version of your application.
+Gracefully shutting down build container: d40w8w80skwg4ooogw8w4o48
+[CMD]: docker stop --time=30 d40w8w80skwg4ooogw8w4o48
+d40w8w80skwg4ooogw8w4o48
+[CMD]: docker rm -f d40w8w80skwg4ooogw8w4o48
+Error response from daemon: No such container: d40w8w80skwg4ooogw8w4o48
