@@ -83,7 +83,7 @@ export default function CompleteCheckPage() {
 
       // Auto-claim task if not claimed or claim expired
       const shouldClaim = !taskData.claimedBy ||
-        (taskData.claimedAt && differenceInHours(new Date(), taskData.claimedAt instanceof Date ? taskData.claimedAt : taskData.claimedAt.toDate()) >= 4);
+        (taskData.claimedAt && differenceInHours(new Date(), taskData.claimedAt instanceof Date ? taskData.claimedAt : (taskData.claimedAt as any).toDate()) >= 4);
 
       if (shouldClaim && userData) {
         await updateDoc(doc(db, 'tasks', taskId), {
@@ -422,7 +422,7 @@ export default function CompleteCheckPage() {
   }
 
   const assetType = asset ? getAssetTypeDefinition(asset.type) : null;
-  const dueDate = task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate();
+  const dueDate = task.dueDate instanceof Date ? task.dueDate : (task.dueDate as any).toDate();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-8">
