@@ -110,20 +110,20 @@ service cloud.firestore {
     // ==========================================================================
 
     match /sites/{siteId} {
-      // Read: authenticated users (MVP - will add org filtering after migration)
-      allow read: if isAuthenticated();
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
 
-      // Create: RP, site manager, or super admin
+      // Create: RP, site manager, or super admin in the same org
       allow create: if isAuthenticated() &&
                       isOrgMember(request.resource.data.orgId) &&
                       hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
 
-      // Update: RP, site manager, or super admin (MVP - will add org filtering after migration)
-      allow update: if isAuthenticated() &&
+      // Update: RP, site manager, or super admin in the same org
+      allow update: if isOrgMember(resource.data.orgId) &&
                       hasAnyRole(['responsible_person', 'site_manager', 'super_admin']);
 
-      // Delete: RP or super admin only
-      allow delete: if isAuthenticated() &&
+      // Delete: RP or super admin in the same org
+      allow delete: if isOrgMember(resource.data.orgId) &&
                       hasAnyRole(['responsible_person', 'super_admin']);
     }
 
@@ -132,17 +132,18 @@ service cloud.firestore {
     // ==========================================================================
 
     match /assets/{assetId} {
-      // Read: authenticated users (MVP - will add org filtering after migration)
-      allow read: if isAuthenticated();
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
 
       // Create: any authenticated user in the same org
       allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
 
-      // Update: any authenticated user (MVP - will add org filtering after migration)
-      allow update: if isAuthenticated();
+      // Update: any authenticated user in the same org
+      allow update: if isAuthenticated() && isOrgMember(resource.data.orgId);
 
-      // Delete: RP or super admin
-      allow delete: if isAuthenticated() && hasAnyRole(['responsible_person', 'super_admin']);
+      // Delete: RP or super admin in the same org
+      allow delete: if isOrgMember(resource.data.orgId) &&
+                      hasAnyRole(['responsible_person', 'super_admin']);
     }
 
     // ==========================================================================
@@ -249,10 +250,16 @@ service cloud.firestore {
     // ==========================================================================
 
     match /evidence/{evidenceId} {
-      allow read: if isAuthenticated();
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
+
+      // Create: authenticated user uploading their own evidence in their org
       allow create: if isAuthenticated() &&
+                      isOrgMember(request.resource.data.orgId) &&
                       request.resource.data.uploadedBy == request.auth.uid;
-      allow update, delete: if false;  // Immutable
+
+      // Update/Delete: Immutable evidence
+      allow update, delete: if false;
     }
 
     // ==========================================================================
@@ -260,17 +267,17 @@ service cloud.firestore {
     // ==========================================================================
 
     match /defects/{defectId} {
-      // Read: authenticated users (MVP - will add org filtering after migration)
-      allow read: if isAuthenticated();
+      // Read: authenticated users in the same org
+      allow read: if isAuthenticated() && isOrgMember(resource.data.orgId);
 
       // Create: any authenticated user in the same org
       allow create: if isAuthenticated() && isOrgMember(request.resource.data.orgId);
 
-      // Update: any authenticated user (MVP - will add org filtering after migration)
-      allow update: if isAuthenticated();
+      // Update: any authenticated user in the same org
+      allow update: if isAuthenticated() && isOrgMember(resource.data.orgId);
 
-      // Delete: RP or super admin only
-      allow delete: if isAuthenticated() &&
+      // Delete: RP or super admin in the same org
+      allow delete: if isOrgMember(resource.data.orgId) &&
                       hasAnyRole(['responsible_person', 'super_admin']);
     }
 

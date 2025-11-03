@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth/AuthContext';
+import { OfflineIndicator } from '@/components/offline/OfflineIndicator';
+import { SyncStatus } from '@/components/offline/SyncStatus';
+import { ServiceWorkerRegistration } from '@/components/offline/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   title: 'Fire Safety Log',
@@ -30,6 +33,9 @@ export default function RootLayout({
     <html lang="en-GB">
       <body className="antialiased">
         <AuthProvider>
+          <OfflineIndicator />
+          <SyncStatus />
+          <ServiceWorkerRegistration />
           {children}
         </AuthProvider>
       </body>

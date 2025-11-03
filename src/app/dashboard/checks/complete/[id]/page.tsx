@@ -28,12 +28,16 @@ import {
 } from 'lucide-react';
 import { formatUKDate } from '@/lib/utils/date';
 import { differenceInHours } from 'date-fns';
+import { useOfflineEntry } from '@/hooks/useOfflineEntry';
+import { useOfflineDefect } from '@/hooks/useOfflineDefect';
 
 export default function CompleteCheckPage() {
   const params = useParams();
   const router = useRouter();
   const { user, userData } = useAuth();
   const taskId = params.id as string;
+  const { isOnline, saveEntry } = useOfflineEntry();
+  const { saveDefect } = useOfflineDefect();
 
   const [task, setTask] = useState<CheckTask | null>(null);
   const [asset, setAsset] = useState<Asset | null>(null);
@@ -189,6 +193,74 @@ export default function CompleteCheckPage() {
         throw new Error('GPS location is required. Please capture your location.');
       }
 
+      // OFFLINE MODE: Save locally and sync later
+      if (!isOnline) {
+        // Prepare entry data for offline storage
+        const entryData: any = {
+          orgId: userData.orgId,
+          siteId: task.siteId,
+          assetId: task.assetId,
+          taskId: task.id,
+          scheduleId: task.scheduleId || null,
+          templateId: task.templateId,
+          completedAt: new Date(),
+          completedBy: user.uid,
+          completedByName: userData.name,
+          fieldValues: fieldValues,
+          gpsLocation: gpsLocation,
+          signatureDataUrl: signatureDataUrl, // Store data URL for later upload
+          version: 1,
+        };
+
+        // Save entry offline with photos
+        const result = await saveEntry(task.id, task.assetId, entryData, photos);
+
+        // Handle defect offline if needed
+        if (raiseDefect) {
+          if (!defectTitle.trim()) {
+            throw new Error('Please provide a defect title');
+          }
+
+          const now = new Date();
+          let targetDate;
+          switch (defectSeverity) {
+            case 'critical':
+              targetDate = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+              break;
+            case 'high':
+              targetDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+              break;
+            case 'medium':
+              targetDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+              break;
+            case 'low':
+              targetDate = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+              break;
+          }
+
+          const defectData = {
+            orgId: userData.orgId,
+            siteId: task.siteId,
+            assetId: task.assetId,
+            sourceEntryId: result?.id,
+            severity: defectSeverity,
+            title: defectTitle,
+            description: defectDescription,
+            status: 'open',
+            targetDate: targetDate,
+            createdBy: user.uid,
+            createdAt: new Date(),
+          };
+
+          await saveDefect(task.assetId, defectData, photos);
+        }
+
+        alert('Check saved offline. It will sync automatically when you\'re back online.');
+        router.push('/dashboard/checks');
+        return;
+      }
+
+      // ONLINE MODE: Upload to Firebase immediately
       // Upload photos
       const evidenceUrls: string[] = [];
       for (let i = 0; i < photos.length; i++) {

@@ -18,7 +18,15 @@
       "Bash(git init:*)",
       "Bash(git config:*)",
       "Bash(git add:*)",
-      "Bash(NUL)"
+      "Bash(NUL)",
+      "Bash(git commit:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(npm run build:*)",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(npx tsc:*)",
+      "Bash(ping:*)"
     ],
     "deny": [],
     "ask": []

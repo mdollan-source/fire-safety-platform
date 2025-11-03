@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Safety Log - PWA Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .icon-preview {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .icon-box {
+            text-align: center;
+        }
+        .icon-box h3 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        canvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #333;
+        }
+        .download-all {
+            background: #10b981 !important;
+            font-size: 16px !important;
+            padding: 15px 30px !important;
+        }
+        .download-all:hover {
+            background: #059669 !important;
+        }
+        .instructions {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1a1a1a;
+            margin-top: 30px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #1a1a1a;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Fire Safety Log - PWA Icon Generator</h1>
+        <p class="subtitle">Generate PWA icons for offline app support</p>
+
+        <div class="icon-preview">
+            <div class="icon-box">
+                <h3>192x192 Icon</h3>
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <br>
+                <button onclick="downloadIcon('icon192', 'icon-192.png')">Download</button>
+            </div>
+
+            <div class="icon-box">
+                <h3>512x512 Icon</h3>
+                <canvas id="icon512" width="512" height="512" style="max-width: 256px; height: auto;"></canvas>
+                <br>
+                <button onclick="downloadIcon('icon512', 'icon-512.png')">Download</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="downloadAll()" class="download-all">
+                📥 Download Both PWA Icons
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li>Click the green <strong>"Download Both PWA Icons"</strong> button above</li>
+                <li>Two PNG files will be downloaded:
+                    <ul>
+                        <li><code>icon-192.png</code></li>
+                        <li><code>icon-512.png</code></li>
+                    </ul>
+                </li>
+                <li>Move these files to: <code>Fire/public/</code> (root of public folder)</li>
+                <li>Done! Your PWA will now have proper icons 🎉</li>
+            </ol>
+            <p><strong>Note:</strong> These icons are referenced in your <code>manifest.json</code> for Progressive Web App functionality.</p>
+        </div>
+    </div>
+
+    <script>
+        // Draw icon with shield and fire design
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const scale = size / 512;
+
+            // Background
+            ctx.fillStyle = '#171717';
+            ctx.fillRect(0, 0, size, size);
+
+            // Shield outline
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 16 * scale;
+            ctx.beginPath();
+
+            const centerX = size / 2;
+            const shieldTop = 64 * scale;
+            const shieldWidth = 256 * scale;
+            const shieldHeight = 384 * scale;
+
+            // Draw shield path
+            ctx.moveTo(centerX, shieldTop);
+            ctx.lineTo(centerX - shieldWidth/2, shieldTop + 48 * scale);
+            ctx.lineTo(centerX - shieldWidth/2, shieldTop + 176 * scale);
+            ctx.quadraticCurveTo(
+                centerX - shieldWidth/2,
+                shieldTop + shieldHeight,
+                centerX,
+                shieldTop + shieldHeight
+            );
+            ctx.quadraticCurveTo(
+                centerX + shieldWidth/2,
+                shieldTop + shieldHeight,
+                centerX + shieldWidth/2,
+                shieldTop + 176 * scale
+            );
+            ctx.lineTo(centerX + shieldWidth/2, shieldTop + 48 * scale);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Fire symbol
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            const fireX = centerX;
+            const fireY = 160 * scale;
+            const fireSize = 96 * scale;
+
+            ctx.moveTo(fireX, fireY);
+            ctx.bezierCurveTo(
+                fireX - fireSize/2, fireY + fireSize/3,
+                fireX - fireSize/2, fireY + fireSize * 0.66,
+                fireX, fireY + fireSize
+            );
+            ctx.bezierCurveTo(
+                fireX + fireSize/2, fireY + fireSize * 0.66,
+                fireX + fireSize/2, fireY + fireSize/3,
+                fireX, fireY
+            );
+            ctx.fill();
+
+            // Checkmark
+            ctx.strokeStyle = '#16a34a';
+            ctx.fillStyle = '#16a34a';
+            ctx.lineWidth = 8 * scale;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(centerX - 48 * scale, centerX + 48 * scale);
+            ctx.lineTo(centerX - 24 * scale, centerX + 64 * scale);
+            ctx.lineTo(centerX + 48 * scale, centerX);
+            ctx.stroke();
+        }
+
+        // Download single icon
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Download all icons
+        function downloadAll() {
+            setTimeout(() => downloadIcon('icon192', 'icon-192.png'), 100);
+            setTimeout(() => downloadIcon('icon512', 'icon-512.png'), 300);
+
+            alert('✅ Downloaded PWA icons!\n\nCheck your Downloads folder for:\n• icon-192.png\n• icon-512.png\n\nMove these to: Fire/public/');
+        }
+
+        // Draw icons on page load
+        window.onload = function() {
+            drawIcon('icon192', 192);
+            drawIcon('icon512', 512);
+        };
+    </script>
+</body>
+</html>
