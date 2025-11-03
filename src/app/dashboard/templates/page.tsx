@@ -576,7 +576,7 @@ export default function TemplatesPage() {
                         </h3>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge variant={isDefault ? 'pending' : 'completed'}>
+                        <Badge variant={isDefault ? 'pending' : 'pass'}>
                           {isDefault ? 'System' : 'Custom'}
                         </Badge>
                         <Badge variant="pending">{template.frequency}</Badge>

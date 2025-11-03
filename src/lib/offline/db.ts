@@ -33,7 +33,7 @@ interface OfflineDB extends DBSchema {
     value: {
       id: string;
       taskId: string;
-      assetId: string;
+      assetId?: string;
       data: any;
       photos: Blob[];
       createdAt: number;
@@ -45,7 +45,7 @@ interface OfflineDB extends DBSchema {
     key: string;
     value: {
       id: string;
-      assetId: string;
+      assetId?: string;
       data: any;
       photos: Blob[];
       createdAt: number;
@@ -176,7 +176,7 @@ export async function saveOfflineEntry(
   await db.add('offlineEntries', {
     id,
     taskId,
-    assetId,
+    ...(assetId && { assetId }),
     data,
     photos,
     createdAt: Date.now(),
@@ -206,7 +206,7 @@ export async function saveOfflineDefect(
 
   await db.add('offlineDefects', {
     id,
-    assetId,
+    ...(assetId && { assetId }),
     data,
     photos,
     createdAt: Date.now(),

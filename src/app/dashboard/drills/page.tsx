@@ -687,7 +687,7 @@ export default function DrillsPage() {
                           <span className="text-xs text-brand-600">
                             {formatUKDate(drill.date, 'dd/MM/yyyy')} at {drill.startTime}
                           </span>
-                          <Badge variant={drill.allAccountedFor ? 'completed' : 'overdue'}>
+                          <Badge variant={drill.allAccountedFor ? 'pass' : 'fail'}>
                             {drill.allAccountedFor ? 'All Accounted' : 'Missing Personnel'}
                           </Badge>
                         </div>

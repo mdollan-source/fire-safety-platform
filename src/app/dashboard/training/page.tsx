@@ -252,7 +252,7 @@ export default function TrainingPage() {
       type: record.type,
       syllabus: record.syllabus,
       assessor: record.assessor,
-      attendees: record.attendees || '',
+      attendees: record.attendeeIds?.join(', ') || '',
       duration: record.duration?.toString() || '',
       outcomes: record.outcomes || '',
       nextDue: record.nextDue ? formatUKDate(record.nextDue, 'yyyy-MM-dd') : '',
@@ -561,14 +561,14 @@ export default function TrainingPage() {
                         )}
                       </div>
 
-                      {record.attendees && (
+                      {record.attendeeIds && record.attendeeIds.length > 0 && (
                         <div className="text-xs text-brand-600 mb-2">
                           <div className="flex items-center gap-1 mb-1">
                             <Users className="w-3 h-3" />
                             <span className="font-medium">Attendees:</span>
                           </div>
                           <div className="pl-4">
-                            {record.attendees}
+                            {record.attendeeIds.length} attendee(s)
                           </div>
                         </div>
                       )}

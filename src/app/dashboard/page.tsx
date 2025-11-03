@@ -72,7 +72,7 @@ export default function DashboardPage() {
         const data = doc.data();
         return {
           ...data,
-          dueDate: data.dueDate?.toDate(),
+          dueAt: data.dueAt?.toDate(),
           completedAt: data.completedAt?.toDate(),
           createdAt: data.createdAt?.toDate(),
         } as CheckTask;
@@ -131,8 +131,7 @@ export default function DashboardPage() {
       'Asset': getAssetName(task.assetId),
       'Site': getSiteName(task.siteId),
       'Status': task.status,
-      'Priority': task.priority || 'Normal',
-      'Due Date': task.dueDate ? formatUKDate(task.dueDate) : '',
+      'Due Date': task.dueAt ? formatUKDate(task.dueAt) : '',
       'Completed At': task.completedAt ? formatUKDate(task.completedAt) : '',
       'Created At': task.createdAt ? formatUKDate(task.createdAt) : '',
     }));
@@ -195,7 +194,7 @@ export default function DashboardPage() {
   const getDueTodayTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
-      const dueDate = task.dueDate;
+      const dueDate = task.dueAt;
       return dueDate && isToday(dueDate);
     });
   };
@@ -203,7 +202,7 @@ export default function DashboardPage() {
   const getOverdueTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
-      const dueDate = task.dueDate;
+      const dueDate = task.dueAt;
       return dueDate && isPast(startOfDay(dueDate)) && !isToday(dueDate);
     });
   };
@@ -212,7 +211,7 @@ export default function DashboardPage() {
     const nextWeek = addDays(new Date(), 7);
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
-      const dueDate = task.dueDate;
+      const dueDate = task.dueAt;
       if (!dueDate) return false;
       return isFuture(dueDate) && !isToday(dueDate) && isWithinInterval(dueDate, {
         start: new Date(),
@@ -279,7 +278,8 @@ export default function DashboardPage() {
       .slice(0, 5);
   };
 
-  const getAssetName = (assetId: string) => {
+  const getAssetName = (assetId: string | undefined) => {
+    if (!assetId) return 'N/A';
     const asset = assets.find((a) => a.id === assetId);
     return asset?.name || 'Unknown Asset';
   };
@@ -826,11 +826,24 @@ export default function DashboardPage() {
                         {getAssetName(task.assetId)}
                       </p>
                       <p className="text-xs text-brand-600 mt-1">
-                        Due: {formatUKDate(task.dueDate, 'dd/MM/yyyy')}
+                        Due: {formatUKDate(task.dueAt, 'dd/MM/yyyy')}
                       </p>
                     </div>
-                    <Badge variant="pending" className="flex-shrink-0">
-                      {task.priority || 'Normal'}
+                    <Badge
+                      variant={
+                        isPast(startOfDay(task.dueAt)) && !isToday(task.dueAt)
+                          ? 'fail'
+                          : isToday(task.dueAt)
+                          ? 'warning'
+                          : 'pending'
+                      }
+                      className="flex-shrink-0"
+                    >
+                      {isPast(startOfDay(task.dueAt)) && !isToday(task.dueAt)
+                        ? 'Overdue'
+                        : isToday(task.dueAt)
+                        ? 'Today'
+                        : 'Upcoming'}
                     </Badge>
                   </div>
                 ))}
@@ -982,7 +995,7 @@ export default function DashboardPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"

@@ -187,7 +187,7 @@ export default function ProfilePage() {
 
       setExportProgress('Fetching documents data...');
       const documentsSnapshot = await getDocs(query(collection(db, 'documents'), where('orgId', '==', userData.orgId)));
-      const documentsData = documentsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const documentsData = documentsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as any[];
 
       setExportProgress('Fetching users data...');
       const usersSnapshot = await getDocs(query(collection(db, 'users'), where('orgId', '==', userData.orgId)));

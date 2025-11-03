@@ -230,7 +230,7 @@ export default function NewSitePage() {
                   label="Postcode"
                   type="text"
                   value={postcode}
-                  onChange={(e) => setPostcode(e.target.value).toUpperCase()}
+                  onChange={(e) => setPostcode(e.target.value.toUpperCase())}
                   placeholder="SW1A 1AA"
                   required
                   disabled={loading}

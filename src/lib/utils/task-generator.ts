@@ -13,13 +13,15 @@ export function calculateNextDueDate(
   schedule: CheckSchedule,
   fromDate: Date = new Date()
 ): Date | null {
-  if (!schedule.enabled) {
+  const scheduleAny = schedule as any;
+
+  if (!scheduleAny.active) {
     return null;
   }
 
-  const start = schedule.startDate instanceof Date
-    ? schedule.startDate
-    : schedule.startDate.toDate();
+  const start = scheduleAny.startDate instanceof Date
+    ? scheduleAny.startDate
+    : scheduleAny.startDate.toDate();
 
   const from = startOfDay(fromDate);
 
@@ -31,7 +33,7 @@ export function calculateNextDueDate(
   // Calculate next occurrence based on frequency
   let nextDate = start;
 
-  switch (schedule.frequency) {
+  switch (scheduleAny.frequency) {
     case 'daily':
       while (isBefore(nextDate, from) || nextDate.getTime() === from.getTime()) {
         nextDate = addDays(nextDate, 1);
@@ -76,17 +78,18 @@ export function generateTaskFromSchedule(
   schedule: CheckSchedule,
   dueDate: Date
 ): Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'> {
+  const scheduleAny = schedule as any;
   return {
-    orgId: schedule.orgId,
-    siteId: schedule.siteId,
-    assetId: schedule.assetId,
-    scheduleId: schedule.id,
-    templateId: schedule.templateId,
+    orgId: scheduleAny.orgId,
+    siteId: scheduleAny.siteId,
+    assetId: scheduleAny.assetId,
+    scheduleId: scheduleAny.id,
+    templateId: scheduleAny.templateId,
     dueDate: dueDate,
     status: 'pending',
     assigneeId: null, // Can be assigned later
     priority: calculatePriority(dueDate),
-  };
+  } as any;
 }
 
 /**
@@ -121,7 +124,7 @@ export function taskExistsForDate(
 
   return existingTasks.some((task) => {
     const taskDueDateStr = startOfDay(
-      task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate()
+      task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate()
     ).toISOString();
 
     return task.scheduleId === scheduleId && taskDueDateStr === dueDateStr;
@@ -138,7 +141,7 @@ export function generateTasksForSchedule(
 ): Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> {
   const tasks: Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> = [];
 
-  if (!schedule.enabled) {
+  if (!(schedule as any).active) {
     return tasks;
   }
 

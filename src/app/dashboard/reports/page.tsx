@@ -603,15 +603,17 @@ export default function ReportsPage() {
             id: viewingReport.id,
             title: getReportTypeLabel(viewingReport.type),
             fileName: viewingReport.fileName,
+            fileType: viewingReport.fileName.split('.').pop() || 'pdf',
             storageUrl: viewingReport.fileUri,
             fileSize: viewingReport.sizeBytes,
             uploadedAt: viewingReport.generatedAt,
             uploadedBy: viewingReport.generatedBy,
             uploadedByName: viewingReport.generatedByName,
             orgId: viewingReport.orgId,
-            category: 'report',
+            category: 'report' as any,
             entityType: 'report' as any,
             entityId: viewingReport.id,
+            updatedAt: viewingReport.generatedAt,
           }}
           onClose={() => setViewingReport(null)}
         />

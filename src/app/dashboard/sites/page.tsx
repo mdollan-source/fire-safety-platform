@@ -290,7 +290,7 @@ export default function SitesPage() {
                           {site.name}
                         </h3>
                       </div>
-                      <Badge variant={site.status === 'active' ? 'completed' : 'overdue'}>
+                      <Badge variant={site.status === 'active' ? 'pass' : 'fail'}>
                         {site.status}
                       </Badge>
                     </div>

@@ -365,10 +365,10 @@ export default function DefectsPage() {
                         )}
                         <span>•</span>
                         <span>Raised: {formatUKDate(defect.createdAt, 'dd/MM/yyyy')}</span>
-                        {defect.raisedByName && (
+                        {defect.createdBy && (
                           <>
                             <span>•</span>
-                            <span>By: {defect.raisedByName}</span>
+                            <span>By: {defect.createdBy}</span>
                           </>
                         )}
                       </div>

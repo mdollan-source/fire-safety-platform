@@ -590,12 +590,12 @@ export default function SiteDetailPage() {
                       onClick={() => router.push(`/dashboard/assets/${asset.id}`)}
                     >
                       <div className="flex-1">
-                        <p className="font-medium text-brand-900">{asset.name || asset.identifier}</p>
+                        <p className="font-medium text-brand-900">{asset.name || asset.tag}</p>
                         <p className="text-xs text-brand-600">
-                          {asset.type.replace(/_/g, ' ')} • {asset.identifier}
+                          {asset.type.replace(/_/g, ' ')} • {asset.tag}
                         </p>
                       </div>
-                      <Badge variant={asset.status === 'operational' ? 'pass' : asset.status === 'faulty' ? 'fail' : 'pending'}>
+                      <Badge variant={asset.status === 'active' ? 'pass' : asset.status === 'inactive' ? 'warning' : 'pending'}>
                         {asset.status}
                       </Badge>
                     </div>
@@ -639,7 +639,8 @@ export default function SiteDetailPage() {
                       </div>
                       <Badge variant={
                         defect.severity === 'critical' ? 'fail' :
-                        defect.severity === 'major' ? 'warning' :
+                        defect.severity === 'high' ? 'fail' :
+                        defect.severity === 'medium' ? 'warning' :
                         'pending'
                       }>
                         {defect.severity}

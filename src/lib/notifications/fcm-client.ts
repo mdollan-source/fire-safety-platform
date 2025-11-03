@@ -151,10 +151,8 @@ function showNotification(
     body,
     icon: '/icons/icon-192x192.png',
     badge: '/icons/badge-72x72.png',
-    ...(image && { image }),
     data,
     requireInteraction: true,
-    vibrate: [200, 100, 200],
   };
 
   new Notification(title, options);

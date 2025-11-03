@@ -23,14 +23,12 @@ export default function ForegroundMessageListener() {
       const title = payload.notification?.title || 'Fire Safety';
       const body = payload.notification?.body || '';
       const icon = payload.notification?.icon || '/icons/icon-192x192.png';
-      const image = payload.notification?.image;
 
       // Show browser notification (even though tab is open)
       if ('Notification' in window && Notification.permission === 'granted') {
         const notification = new Notification(title, {
           body,
           icon,
-          image,
           badge: '/icons/badge-72x72.png',
           requireInteraction: true,
           data: payload.data,
