@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminDb } from '@/lib/firebase/admin';
 
-// Initialize Firebase Admin
-if (!getApps().length) {
-  try {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
-  }
-}
-
-const adminDb = getFirestore();
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by email and token using Admin SDK
-    const usersSnapshot = await adminDb.collection('users')
+    const usersSnapshot = await adminDb().collection('users')
       .where('email', '==', email.toLowerCase())
       .where('resetToken', '==', token)
       .limit(1)

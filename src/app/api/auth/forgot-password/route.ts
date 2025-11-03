@@ -1,26 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminDb } from '@/lib/firebase/admin';
+
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Initialize Firebase Admin
-if (!getApps().length) {
-  try {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
-  }
-}
-
-const adminDb = getFirestore();
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by email using Admin SDK
-    const usersSnapshot = await adminDb.collection('users')
+    const usersSnapshot = await adminDb().collection('users')
       .where('email', '==', email.toLowerCase())
       .limit(1)
       .get();
@@ -58,7 +43,7 @@ export async function POST(request: NextRequest) {
     const resetExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     // Update user document with reset token using Admin SDK
-    await adminDb.collection('users').doc(userDoc.id).update({
+    await adminDb().collection('users').doc(userDoc.id).update({
       resetToken,
       resetExpiry,
       updatedAt: new Date(),
