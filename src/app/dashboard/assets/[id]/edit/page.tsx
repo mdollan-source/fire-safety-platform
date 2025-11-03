@@ -86,7 +86,7 @@ export default function EditAssetPage() {
 
       // Pre-fill type-specific fields
       if (asset.typeSpecific) {
-        if (asset.type === 'fire_extinguisher') {
+        if (asset.type === 'extinguisher') {
           setExtinguisherType(asset.typeSpecific.extinguisherType || 'water');
           setCapacity(asset.typeSpecific.capacity || '');
         } else if (asset.type === 'fire_door') {
@@ -153,7 +153,7 @@ export default function EditAssetPage() {
       // Build type-specific attributes
       const typeSpecific: any = {};
 
-      if (assetType === 'fire_extinguisher') {
+      if (assetType === 'extinguisher') {
         typeSpecific.extinguisherType = extinguisherType;
         if (capacity) typeSpecific.capacity = capacity;
       } else if (assetType === 'fire_door') {
@@ -327,7 +327,7 @@ export default function EditAssetPage() {
             />
 
             {/* Type-Specific Fields */}
-            {assetType === 'fire_extinguisher' && (
+            {assetType === 'extinguisher' && (
               <>
                 <div>
                   <label className="block text-sm font-medium text-brand-900 mb-2">

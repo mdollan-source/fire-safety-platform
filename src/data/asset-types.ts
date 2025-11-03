@@ -8,7 +8,7 @@ export type AssetType =
   | 'fire_alarm'
   | 'call_point'
   | 'emergency_lighting'
-  | 'fire_extinguisher'
+  | 'extinguisher'
   | 'sprinkler_system'
   | 'fire_blanket'
   | 'dry_riser'
@@ -59,7 +59,7 @@ export const ASSET_TYPES: AssetTypeDefinition[] = [
 
   // Fire Suppression
   {
-    id: 'fire_extinguisher',
+    id: 'extinguisher',
     name: 'Fire Extinguisher',
     category: 'suppression',
     icon: 'Flame',

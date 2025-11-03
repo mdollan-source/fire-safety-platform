@@ -90,7 +90,7 @@ export default function NewAssetPage() {
       // Build type-specific attributes
       const typeSpecific: any = {};
 
-      if (assetType === 'fire_extinguisher') {
+      if (assetType === 'extinguisher') {
         typeSpecific.extinguisherType = extinguisherType;
         if (capacity) typeSpecific.capacity = capacity;
       } else if (assetType === 'fire_door') {
@@ -265,7 +265,7 @@ export default function NewAssetPage() {
             />
 
             {/* Type-Specific Fields */}
-            {assetType === 'fire_extinguisher' && (
+            {assetType === 'extinguisher' && (
               <>
                 <div>
                   <label className="block text-sm font-medium text-brand-900 mb-2">
