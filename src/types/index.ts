@@ -140,9 +140,11 @@ export interface Asset {
   buildingId?: string;
   floorId?: string;
   type: AssetType;
+  name?: string;                      // Optional asset name/description
   tag: string;                        // Asset identifier (e.g., "FD-001", "EXT-G-01")
   location: string;                   // Human-readable location
   attributes: Record<string, any>;    // Type-specific attributes
+  typeSpecific?: any;                 // Legacy field for type-specific data
   serviceDates?: {
     installed?: Date;
     lastService?: Date;
