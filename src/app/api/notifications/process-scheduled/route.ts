@@ -7,6 +7,9 @@ import {
 } from '@/lib/notifications/notification-service';
 import { differenceInHours, differenceInDays, addHours } from 'date-fns';
 
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
+
 /**
  * Process scheduled notifications for task reminders and overdue alerts
  * This endpoint should be called by a cron job (e.g., every hour)

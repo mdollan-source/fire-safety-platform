@@ -1,6 +1,6 @@
 import { sendEmail, emailTemplates } from './email';
 import { sendPushNotification, sendMulticastPushNotification } from './fcm-admin';
-import * as admin from 'firebase-admin';
+import { adminDb } from '@/lib/firebase/admin';
 
 export interface NotificationRecipient {
   userId: string;
@@ -8,25 +8,12 @@ export interface NotificationRecipient {
   name: string;
 }
 
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
-
-const adminDb = admin.firestore();
-
 /**
  * Get all FCM tokens for a user (using Admin SDK for server-side)
  */
 async function getUserFCMTokens(userId: string): Promise<string[]> {
   try {
-    const tokensSnapshot = await adminDb
+    const tokensSnapshot = await adminDb()
       .collection('users')
       .doc(userId)
       .collection('fcmTokens')
@@ -376,7 +363,7 @@ export async function notifyResponsiblePersonsAboutDefect({
 }) {
   try {
     // Get all responsible persons in the organization using Admin SDK
-    const usersSnapshot = await adminDb
+    const usersSnapshot = await adminDb()
       .collection('users')
       .where('orgId', '==', orgId)
       .where('role', 'in', ['responsible_person', 'super_admin'])
