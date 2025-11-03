@@ -27,6 +27,32 @@ export function getAdminApp(): App {
   }
 
   // Initialize with service account credentials
+  // Support two methods:
+  // 1. FIREBASE_SERVICE_ACCOUNT_BASE64 - base64 encoded JSON (preferred)
+  // 2. Individual environment variables (fallback)
+
+  const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+
+  if (serviceAccountBase64) {
+    console.log('=== Firebase Admin: Using base64 service account ===');
+    try {
+      const serviceAccountJson = Buffer.from(serviceAccountBase64, 'base64').toString('utf8');
+      const serviceAccount = JSON.parse(serviceAccountJson);
+
+      adminApp = initializeApp({
+        credential: cert(serviceAccount),
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      });
+
+      console.log('Firebase Admin: Initialized successfully with base64 service account');
+      return adminApp;
+    } catch (error) {
+      console.error('Firebase Admin: Failed to parse base64 service account:', error);
+      throw error;
+    }
+  }
+
+  // Fallback to individual environment variables
   const rawPrivateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
   const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -56,7 +82,7 @@ export function getAdminApp(): App {
 
     throw new Error(
       'Firebase Admin: Missing required environment variables. ' +
-      'Please add FIREBASE_ADMIN_PRIVATE_KEY and FIREBASE_ADMIN_CLIENT_EMAIL'
+      'Please add FIREBASE_SERVICE_ACCOUNT_BASE64 or individual credentials'
     );
   }
 
