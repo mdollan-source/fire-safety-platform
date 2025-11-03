@@ -1,15 +1,5 @@
-import * as admin from 'firebase-admin';
-
-// Initialize Firebase Admin SDK (if not already initialized)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
+import { getAdminApp } from '@/lib/firebase/admin';
+import { getMessaging, Message, MulticastMessage } from 'firebase-admin/messaging';
 
 export interface PushNotification {
   token: string;
@@ -38,7 +28,7 @@ export async function sendPushNotification({
   imageUrl,
 }: PushNotification) {
   try {
-    const message: admin.messaging.Message = {
+    const message: Message = {
       token,
       notification: {
         title,
@@ -48,7 +38,7 @@ export async function sendPushNotification({
       data: data || {},
       // Android-specific options
       android: {
-        priority: 'high',
+        priority: 'high' as const,
         notification: {
           sound: 'default',
           channelId: 'fire-safety-alerts',
@@ -75,7 +65,7 @@ export async function sendPushNotification({
       },
     };
 
-    const response = await admin.messaging().send(message);
+    const response = await getMessaging(getAdminApp()).send(message);
     console.log('Push notification sent successfully:', response);
     return response;
   } catch (error) {
@@ -100,7 +90,7 @@ export async function sendMulticastPushNotification({
       return { successCount: 0, failureCount: 0 };
     }
 
-    const message: admin.messaging.MulticastMessage = {
+    const message: MulticastMessage = {
       tokens,
       notification: {
         title,
@@ -109,7 +99,7 @@ export async function sendMulticastPushNotification({
       },
       data: data || {},
       android: {
-        priority: 'high',
+        priority: 'high' as const,
         notification: {
           sound: 'default',
           channelId: 'fire-safety-alerts',
@@ -134,7 +124,7 @@ export async function sendMulticastPushNotification({
       },
     };
 
-    const response = await admin.messaging().sendEachForMulticast(message);
+    const response = await getMessaging(getAdminApp()).sendEachForMulticast(message);
     console.log(
       `Multicast notification sent: ${response.successCount} successful, ${response.failureCount} failed`
     );
@@ -164,7 +154,7 @@ export async function sendMulticastPushNotification({
  */
 export async function subscribeToTopic(tokens: string[], topic: string) {
   try {
-    const response = await admin.messaging().subscribeToTopic(tokens, topic);
+    const response = await getMessaging(getAdminApp()).subscribeToTopic(tokens, topic);
     console.log(`Successfully subscribed to topic ${topic}:`, response);
     return response;
   } catch (error) {
@@ -178,7 +168,7 @@ export async function subscribeToTopic(tokens: string[], topic: string) {
  */
 export async function unsubscribeFromTopic(tokens: string[], topic: string) {
   try {
-    const response = await admin.messaging().unsubscribeFromTopic(tokens, topic);
+    const response = await getMessaging(getAdminApp()).unsubscribeFromTopic(tokens, topic);
     console.log(`Successfully unsubscribed from topic ${topic}:`, response);
     return response;
   } catch (error) {
@@ -197,7 +187,7 @@ export async function sendTopicNotification(
   data?: Record<string, string>
 ) {
   try {
-    const message: admin.messaging.Message = {
+    const message: Message = {
       topic,
       notification: {
         title,
@@ -205,7 +195,7 @@ export async function sendTopicNotification(
       },
       data: data || {},
       android: {
-        priority: 'high',
+        priority: 'high' as const,
         notification: {
           sound: 'default',
           channelId: 'fire-safety-alerts',
@@ -222,7 +212,7 @@ export async function sendTopicNotification(
       },
     };
 
-    const response = await admin.messaging().send(message);
+    const response = await getMessaging(getAdminApp()).send(message);
     console.log(`Topic notification sent to ${topic}:`, response);
     return response;
   } catch (error) {
