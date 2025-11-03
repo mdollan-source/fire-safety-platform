@@ -53,9 +53,33 @@ export async function GET(
       );
     }
 
+    // Fetch related site
+    let siteData = null;
+    if (assetData?.siteId) {
+      const siteDoc = await adminDb().collection('sites').doc(assetData.siteId).get();
+      if (siteDoc.exists) {
+        siteData = { id: siteDoc.id, ...siteDoc.data() };
+      }
+    }
+
+    // Fetch related defects
+    const defectsSnapshot = await adminDb()
+      .collection('defects')
+      .where('assetId', '==', params.id)
+      .get();
+
+    const defects = defectsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
     return NextResponse.json({
-      id: assetDoc.id,
-      ...assetData,
+      asset: {
+        id: assetDoc.id,
+        ...assetData,
+      },
+      site: siteData,
+      defects: defects,
     });
   } catch (error: any) {
     console.error('Error fetching asset:', error);

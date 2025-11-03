@@ -61,7 +61,7 @@ export default function AssetDetailPage() {
         return;
       }
 
-      // Fetch asset via API (bypasses Firestore security rules issue)
+      // Fetch asset, site, and defects via API (bypasses Firestore security rules issue)
       const assetResponse = await fetch(`/api/assets/${assetId}`, {
         headers: {
           'Authorization': `Bearer ${idToken}`,
@@ -74,31 +74,24 @@ export default function AssetDetailPage() {
         return;
       }
 
-      const assetData = await assetResponse.json() as Asset;
-      setAsset(assetData);
+      const responseData = await assetResponse.json();
 
-      // Fetch site
-      const siteDoc = await getDoc(doc(db, 'sites', assetData.siteId));
-      if (siteDoc.exists()) {
-        setSite(siteDoc.data() as Site);
+      // Set asset
+      setAsset(responseData.asset as Asset);
+
+      // Set site
+      if (responseData.site) {
+        setSite(responseData.site as Site);
       }
 
-      // Fetch defects for this asset
-      const defectsQuery = query(
-        collection(db, 'defects'),
-        where('assetId', '==', assetId)
-      );
-      const defectsSnapshot = await getDocs(defectsQuery);
-      const defectsData = defectsSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          ...data,
-          createdAt: data.createdAt?.toDate(),
-          updatedAt: data.updatedAt?.toDate(),
-          targetDate: data.targetDate?.toDate(),
-          resolvedAt: data.resolvedAt?.toDate(),
-        } as Defect;
-      });
+      // Set defects with proper date conversion
+      const defectsData = responseData.defects.map((defect: any) => ({
+        ...defect,
+        createdAt: defect.createdAt?._seconds ? new Date(defect.createdAt._seconds * 1000) : null,
+        updatedAt: defect.updatedAt?._seconds ? new Date(defect.updatedAt._seconds * 1000) : null,
+        targetDate: defect.targetDate?._seconds ? new Date(defect.targetDate._seconds * 1000) : null,
+        resolvedAt: defect.resolvedAt?._seconds ? new Date(defect.resolvedAt._seconds * 1000) : null,
+      }));
       setDefects(defectsData);
     } catch (err: any) {
       console.error('Error fetching asset:', err);
