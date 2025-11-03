@@ -100,32 +100,32 @@ export default function EditAssetPage() {
         setSerialNumber(asset.typeSpecific.serialNumber || '');
 
         if (asset.typeSpecific.installDate) {
-          const installDateObj = asset.typeSpecific.installDate.toDate
-            ? asset.typeSpecific.installDate.toDate()
+          const installDateObj = (asset.typeSpecific.installDate as any).toDate
+            ? (asset.typeSpecific.installDate as any).toDate()
             : asset.typeSpecific.installDate;
-          setInstallDate(installDateObj.toISOString().split('T')[0]);
+          setInstallDate((installDateObj as Date).toISOString().split('T')[0]);
         }
       }
 
       // Pre-fill service dates
       if (asset.serviceDates) {
         if (asset.serviceDates.installed) {
-          const installedObj = asset.serviceDates.installed.toDate
-            ? asset.serviceDates.installed.toDate()
+          const installedObj = (asset.serviceDates.installed as any).toDate
+            ? (asset.serviceDates.installed as any).toDate()
             : asset.serviceDates.installed;
-          setInstallDate(installedObj.toISOString().split('T')[0]);
+          setInstallDate((installedObj as Date).toISOString().split('T')[0]);
         }
         if (asset.serviceDates.lastService) {
-          const lastServiceObj = asset.serviceDates.lastService.toDate
-            ? asset.serviceDates.lastService.toDate()
+          const lastServiceObj = (asset.serviceDates.lastService as any).toDate
+            ? (asset.serviceDates.lastService as any).toDate()
             : asset.serviceDates.lastService;
-          setLastServiceDate(lastServiceObj.toISOString().split('T')[0]);
+          setLastServiceDate((lastServiceObj as Date).toISOString().split('T')[0]);
         }
         if (asset.serviceDates.nextService) {
-          const nextServiceObj = asset.serviceDates.nextService.toDate
-            ? asset.serviceDates.nextService.toDate()
+          const nextServiceObj = (asset.serviceDates.nextService as any).toDate
+            ? (asset.serviceDates.nextService as any).toDate()
             : asset.serviceDates.nextService;
-          setNextServiceDate(nextServiceObj.toISOString().split('T')[0]);
+          setNextServiceDate((nextServiceObj as Date).toISOString().split('T')[0]);
         }
       }
     } catch (err) {

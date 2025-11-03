@@ -294,7 +294,7 @@ export default function AssetDetailPage() {
                     <div>
                       <div className="text-sm text-brand-600">Registered</div>
                       <div className="font-medium text-brand-900">
-                        {formatUKDate(asset.createdAt.toDate())}
+                        {formatUKDate((asset.createdAt as any).toDate ? (asset.createdAt as any).toDate() : asset.createdAt)}
                       </div>
                     </div>
                   </div>
