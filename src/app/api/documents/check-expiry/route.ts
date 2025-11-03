@@ -1,27 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminDb } from '@/lib/firebase/admin';
 import { addDays, differenceInDays } from 'date-fns';
 
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Initialize Firebase Admin
-if (!getApps().length) {
-  try {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
-  }
-}
-
-const adminDb = getFirestore();
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,7 +20,7 @@ export async function POST(request: NextRequest) {
     const ninetyDaysFromNow = addDays(today, 90);
 
     // Find all documents with expiry dates within the next 90 days that haven't been notified
-    const expiringDocsSnapshot = await adminDb.collection('documents')
+    const expiringDocsSnapshot = await adminDb().collection('documents')
       .where('expiryDate', '<=', ninetyDaysFromNow)
       .where('expiryDate', '>=', today)
       .get();
@@ -128,7 +113,7 @@ export async function POST(request: NextRequest) {
 
       // Mark as notified (except for expired or very soon to expire - we'll keep notifying)
       if (daysUntilExpiry > 7 && !document.expiryNotified) {
-        await adminDb.collection('documents').doc(docSnapshot.id).update({
+        await adminDb().collection('documents').doc(docSnapshot.id).update({
           expiryNotified: true,
           updatedAt: new Date(),
         });
@@ -154,7 +139,7 @@ export async function POST(request: NextRequest) {
 async function getUsersToNotify(document: any): Promise<any[]> {
   try {
     // Get all org admins and responsible persons
-    const usersSnapshot = await adminDb.collection('users')
+    const usersSnapshot = await adminDb().collection('users')
       .where('orgId', '==', document.orgId)
       .where('status', '==', 'active')
       .get();

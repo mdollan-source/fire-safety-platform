@@ -1,24 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { adminDb, adminAuth } from '@/lib/firebase/admin';
 
-// Initialize Firebase Admin (server-side only)
-if (!getApps().length) {
-  try {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
-  }
-}
-
-const adminDb = getFirestore();
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by email and token using Admin SDK
-    const usersSnapshot = await adminDb.collection('users')
+    const usersSnapshot = await adminDb().collection('users')
       .where('email', '==', email.toLowerCase())
       .where('resetToken', '==', token)
       .limit(1)
@@ -68,8 +52,7 @@ export async function POST(request: NextRequest) {
 
     // Update password using Firebase Admin
     try {
-      const auth = getAuth();
-      await auth.updateUser(userDoc.id, {
+      await adminAuth().updateUser(userDoc.id, {
         password: newPassword,
       });
     } catch (authError: any) {
@@ -81,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Clear reset token from Firestore using Admin SDK
-    await adminDb.collection('users').doc(userDoc.id).update({
+    await adminDb().collection('users').doc(userDoc.id).update({
       resetToken: null,
       resetExpiry: null,
       updatedAt: new Date(),

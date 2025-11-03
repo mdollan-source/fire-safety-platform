@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminAuth, adminDb } from '@/lib/firebase/admin';
 
-// Initialize Firebase Admin
-if (!getApps().length) {
-  try {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
-  }
-}
-
-const adminAuth = getAuth();
-const adminDb = getFirestore();
+// Mark this route as dynamic (don't pre-render during build)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,7 +18,7 @@ export async function POST(request: NextRequest) {
     const idToken = authHeader.split('Bearer ')[1];
 
     // Verify the ID token
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    const decodedToken = await adminAuth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
 
     // Get the request body
@@ -45,7 +28,7 @@ export async function POST(request: NextRequest) {
     // Security: Users can only set their own claims OR admins can set anyone's claims
     if (uid !== userId) {
       // Check if the requesting user is an admin
-      const requestingUserDoc = await adminDb.collection('users').doc(uid).get();
+      const requestingUserDoc = await adminDb().collection('users').doc(uid).get();
       const requestingUser = requestingUserDoc.data();
 
       if (!requestingUser || !['responsible_person', 'super_admin'].includes(requestingUser.role)) {
@@ -57,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user data from Firestore
-    const userDoc = await adminDb.collection('users').doc(userId).get();
+    const userDoc = await adminDb().collection('users').doc(userId).get();
 
     if (!userDoc.exists) {
       return NextResponse.json(
@@ -78,7 +61,7 @@ export async function POST(request: NextRequest) {
     console.log('Setting custom claims for user:', userId, customClaims);
 
     // Set custom claims
-    await adminAuth.setCustomUserClaims(userId, customClaims);
+    await adminAuth().setCustomUserClaims(userId, customClaims);
 
     return NextResponse.json({
       success: true,
