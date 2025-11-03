@@ -217,4 +217,5 @@ if (require.main === module) {
   });
 }
 
-export { auditFile, QueryIssue };
+export { auditFile };
+export type { QueryIssue };
