@@ -27,9 +27,26 @@ export function getAdminApp(): App {
   }
 
   // Initialize with service account credentials
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const rawPrivateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
   const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+  console.log('=== Firebase Admin Debug ===');
+  console.log('Raw key length:', rawPrivateKey?.length);
+  console.log('Raw key first 80 chars:', rawPrivateKey?.substring(0, 80));
+  console.log('Raw key has literal \\n:', rawPrivateKey?.includes('\\n'));
+  console.log('Raw key has actual newlines:', rawPrivateKey?.includes('\n'));
+
+  // Try replacing literal \n with actual newlines
+  const privateKey = rawPrivateKey?.replace(/\\n/g, '\n');
+
+  console.log('After replace - key length:', privateKey?.length);
+  console.log('After replace - first 80 chars:', privateKey?.substring(0, 80));
+  console.log('After replace - has literal \\n:', privateKey?.includes('\\n'));
+  console.log('After replace - has actual newlines:', privateKey?.includes('\n'));
+  console.log('After replace - starts with BEGIN:', privateKey?.startsWith('-----BEGIN'));
+  console.log('After replace - ends with KEY-----:', privateKey?.endsWith('KEY-----'));
+  console.log('===========================');
 
   if (!privateKey || !clientEmail || !projectId) {
     console.error('Firebase Admin: Missing required environment variables');
