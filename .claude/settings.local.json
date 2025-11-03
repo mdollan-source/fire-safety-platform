@@ -26,7 +26,12 @@
       "Bash(npm run build:*)",
       "Bash(timeout /t 2 /nobreak)",
       "Bash(npx tsc:*)",
-      "Bash(ping:*)"
+      "Bash(ping:*)",
+      "Bash(nslookup:*)",
+      "Bash(npm run security:migrate:check:*)",
+      "Bash(git log:*)",
+      "Bash(move \"src\\app\\api\\reports\\generate\\route.ts\" \"src\\app\\api\\reports\\generate\\route.tsx\")",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

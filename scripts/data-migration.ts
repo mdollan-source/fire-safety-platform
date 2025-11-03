@@ -7,6 +7,10 @@
 
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' });
 
 // Collections that MUST have orgId
 const COLLECTIONS_REQUIRING_ORG_ID = [
@@ -255,16 +259,22 @@ async function main() {
   }
 
   try {
-    // Initialize Firebase Admin (requires GOOGLE_APPLICATION_CREDENTIALS env var)
-    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      console.error('❌ Error: GOOGLE_APPLICATION_CREDENTIALS environment variable not set');
-      console.log('\nSet it to your service account key file:');
-      console.log('   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/serviceAccountKey.json"');
+    // Initialize Firebase Admin using environment variables
+    if (!process.env.FIREBASE_ADMIN_CLIENT_EMAIL || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+      console.error('❌ Error: Firebase Admin credentials not found in .env.local');
+      console.log('\nRequired variables:');
+      console.log('   FIREBASE_ADMIN_CLIENT_EMAIL');
+      console.log('   FIREBASE_ADMIN_PRIVATE_KEY');
+      console.log('   NEXT_PUBLIC_FIREBASE_PROJECT_ID');
       process.exit(1);
     }
 
     initializeApp({
-      credential: cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+      credential: cert({
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
     });
 
     const results = await checkDataMigration(dryRun);
@@ -277,7 +287,10 @@ async function main() {
 }
 
 // Run if executed directly
-if (require.main === module) {
+// Check if this file is being run directly (ES module version)
+const isMainModule = process.argv[1] && process.argv[1].endsWith('data-migration.ts');
+
+if (isMainModule) {
   main().then(() => {
     process.exit(0);
   }).catch((error) => {

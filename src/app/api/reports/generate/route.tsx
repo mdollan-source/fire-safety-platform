@@ -28,25 +28,25 @@ export async function POST(request: NextRequest) {
     switch (type) {
       case 'compliance_pack':
         pdfBuffer = await renderToBuffer(
-          CompliancePackDocument({ data, startDate: new Date(startDate), endDate: new Date(endDate) })
+          <CompliancePackDocument data={data} startDate={new Date(startDate)} endDate={new Date(endDate)} />
         );
         fileName = `compliance-pack-${Date.now()}.pdf`;
         break;
       case 'checks_report':
         pdfBuffer = await renderToBuffer(
-          ChecksReportDocument({ data, startDate: new Date(startDate), endDate: new Date(endDate) })
+          <ChecksReportDocument data={data} startDate={new Date(startDate)} endDate={new Date(endDate)} />
         );
         fileName = `checks-report-${Date.now()}.pdf`;
         break;
       case 'defects_report':
         pdfBuffer = await renderToBuffer(
-          DefectsReportDocument({ data, startDate: new Date(startDate), endDate: new Date(endDate) })
+          <DefectsReportDocument data={data} startDate={new Date(startDate)} endDate={new Date(endDate)} />
         );
         fileName = `defects-report-${Date.now()}.pdf`;
         break;
       case 'assets_report':
         pdfBuffer = await renderToBuffer(
-          AssetsReportDocument({ data, startDate: new Date(startDate), endDate: new Date(endDate) })
+          <AssetsReportDocument data={data} startDate={new Date(startDate)} endDate={new Date(endDate)} />
         );
         fileName = `assets-report-${Date.now()}.pdf`;
         break;
@@ -163,12 +163,42 @@ async function fetchReportData(
   const usersSnapshot = await usersQuery.get();
   const users = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
+  // Fetch drills
+  let drillsQuery = db
+    .collection('fire_drills')
+    .where('orgId', '==', orgId)
+    .where('createdAt', '>=', startDate)
+    .where('createdAt', '<=', endDate);
+
+  if (siteId) {
+    drillsQuery = drillsQuery.where('siteId', '==', siteId);
+  }
+
+  const drillsSnapshot = await drillsQuery.get();
+  const drills = drillsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  // Fetch training records
+  let trainingQuery = db
+    .collection('training_records')
+    .where('orgId', '==', orgId)
+    .where('createdAt', '>=', startDate)
+    .where('createdAt', '<=', endDate);
+
+  if (siteId) {
+    trainingQuery = trainingQuery.where('siteId', '==', siteId);
+  }
+
+  const trainingSnapshot = await trainingQuery.get();
+  const training = trainingSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
   return {
     org,
     sites,
     assets,
     entries,
     defects,
+    drills,
+    training,
     users,
   };
 }
