@@ -9,9 +9,10 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { Asset, Site } from '@/types';
 import { ASSET_TYPES, getAssetTypeDefinition } from '@/data/asset-types';
-import { Plus, Package, MapPin, Filter } from 'lucide-react';
+import { Plus, Package, MapPin, Filter, QrCode, Printer } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
+import { generateSimpleQRLabelsPDF } from '@/lib/utils/qr-label-generator';
 
 export default function AssetsPage() {
   const { userData } = useAuth();
@@ -21,6 +22,8 @@ export default function AssetsPage() {
   const [selectedSite, setSelectedSite] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [selectedAssets, setSelectedAssets] = useState<Set<string>>(new Set());
+  const [selectionMode, setSelectionMode] = useState(false);
 
   useEffect(() => {
     if (userData?.orgId) {
@@ -82,6 +85,60 @@ export default function AssetsPage() {
     return IconComponent ? <IconComponent className="w-5 h-5" /> : <Package className="w-5 h-5" />;
   };
 
+  const toggleAssetSelection = (assetId: string) => {
+    setSelectedAssets((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(assetId)) {
+        newSet.delete(assetId);
+      } else {
+        newSet.add(assetId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedAssets.size === filteredAssets.length) {
+      setSelectedAssets(new Set());
+    } else {
+      setSelectedAssets(new Set(filteredAssets.map((a) => a.id)));
+    }
+  };
+
+  const handleBulkPrint = async () => {
+    if (selectedAssets.size === 0) return;
+
+    const selectedAssetData = assets.filter((asset) => selectedAssets.has(asset.id));
+
+    // Prepare label data
+    const labelData = selectedAssetData.map((asset) => {
+      const site = sites.find((s) => s.id === asset.siteId);
+      const typeDefinition = getAssetTypeDefinition(asset.type);
+      const siteName = site?.name || 'Unknown Site';
+      const assetName = asset?.name || typeDefinition?.name || 'Unknown Asset';
+      const assetType = typeDefinition?.name;
+      const location = asset?.location || 'Unknown Location';
+      const qrUrl = `${window.location.origin}/dashboard/assets/${asset.id}`;
+
+      return {
+        id: asset.id,
+        siteName,
+        assetName,
+        assetType,
+        location,
+        url: qrUrl,
+      };
+    });
+
+    // Generate PDF
+    try {
+      await generateSimpleQRLabelsPDF(labelData);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate QR labels PDF');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -100,10 +157,46 @@ export default function AssetsPage() {
             Fire safety equipment and systems across your sites
           </p>
         </div>
-        <Button variant="primary" onClick={() => router.push('/dashboard/assets/new')}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Asset
-        </Button>
+        <div className="flex items-center gap-2">
+          {selectionMode ? (
+            <>
+              <span className="text-sm text-brand-600">
+                {selectedAssets.size} selected
+              </span>
+              <Button
+                variant="secondary"
+                onClick={handleBulkPrint}
+                disabled={selectedAssets.size === 0}
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Print Labels
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSelectionMode(false);
+                  setSelectedAssets(new Set());
+                }}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => setSelectionMode(true)}
+              >
+                <QrCode className="w-4 h-4 mr-2" />
+                Print QR Labels
+              </Button>
+              <Button variant="primary" onClick={() => router.push('/dashboard/assets/new')}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Asset
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Filters */}
@@ -213,55 +306,97 @@ export default function AssetsPage() {
           </Card.Content>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAssets.map((asset) => {
-            const typeDefinition = getAssetTypeDefinition(asset.type);
-            return (
-              <Card key={asset.id}>
-                <Card.Content>
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => router.push(`/dashboard/assets/${asset.id}`)}
-                  >
+        <>
+          {/* Select All Controls - Only show in selection mode */}
+          {selectionMode && (
+            <div className="flex items-center gap-3 py-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedAssets.size === filteredAssets.length && filteredAssets.length > 0}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 text-brand-600 border-brand-300 focus:ring-brand-500"
+                />
+                <span className="text-sm text-brand-700">
+                  Select All ({filteredAssets.length})
+                </span>
+              </label>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredAssets.map((asset) => {
+              const typeDefinition = getAssetTypeDefinition(asset.type);
+              const isSelected = selectedAssets.has(asset.id);
+              return (
+                <Card key={asset.id}>
+                  <Card.Content>
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-brand-100 text-brand-700">
-                        {getAssetIcon(asset.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-brand-900 mb-1 truncate">
-                          {asset.name || typeDefinition?.name}
-                        </h3>
-                        <p className="text-xs text-brand-600 mb-2">
-                          {typeDefinition?.name}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-brand-600 mb-2">
-                          <MapPin className="w-3 h-3" />
-                          <span className="truncate">{getSiteName(asset.siteId)}</span>
+                      {/* Only show checkbox in selection mode */}
+                      {selectionMode && (
+                        <div className="flex items-center pt-1">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              toggleAssetSelection(asset.id);
+                            }}
+                            className="w-4 h-4 text-brand-600 border-brand-300 focus:ring-brand-500"
+                          />
                         </div>
-                        {asset.location && (
-                          <p className="text-xs text-brand-600 mb-2 truncate">
-                            {asset.location}
-                          </p>
-                        )}
-                        <Badge
-                          variant={
-                            asset.status === 'active'
-                              ? 'pass'
-                              : asset.status === 'inactive'
-                              ? 'pending'
-                              : 'fail'
+                      )}
+                      <div
+                        className="flex-1 cursor-pointer"
+                        onClick={() => {
+                          if (selectionMode) {
+                            toggleAssetSelection(asset.id);
+                          } else {
+                            router.push(`/dashboard/assets/${asset.id}`);
                           }
-                        >
-                          {asset.status}
-                        </Badge>
+                        }}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 bg-brand-100 text-brand-700">
+                            {getAssetIcon(asset.type)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-brand-900 mb-1 truncate">
+                              {asset.name || typeDefinition?.name}
+                            </h3>
+                            <p className="text-xs text-brand-600 mb-2">
+                              {typeDefinition?.name}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs text-brand-600 mb-2">
+                              <MapPin className="w-3 h-3" />
+                              <span className="truncate">{getSiteName(asset.siteId)}</span>
+                            </div>
+                            {asset.location && (
+                              <p className="text-xs text-brand-600 mb-2 truncate">
+                                {asset.location}
+                              </p>
+                            )}
+                            <Badge
+                              variant={
+                                asset.status === 'active'
+                                  ? 'pass'
+                                  : asset.status === 'inactive'
+                                  ? 'pending'
+                                  : 'fail'
+                              }
+                            >
+                              {asset.status}
+                            </Badge>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card.Content>
-              </Card>
-            );
-          })}
-        </div>
+                  </Card.Content>
+                </Card>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );

@@ -21,12 +21,15 @@ import {
   Activity,
   Plus,
   BarChart3,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
+  Download,
+  Filter
 } from 'lucide-react';
 import { CheckTask, Defect, Asset, Site } from '@/types';
 import { formatUKDate } from '@/lib/utils/date';
-import { isToday, isPast, startOfDay, isFuture, isWithinInterval, addDays, subDays, format, eachDayOfInterval } from 'date-fns';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { isToday, isPast, startOfDay, isFuture, isWithinInterval, addDays, subDays, format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import * as XLSX from 'xlsx';
 
 export default function DashboardPage() {
   const { user, userData } = useAuth();
@@ -38,6 +41,11 @@ export default function DashboardPage() {
   const [defects, setDefects] = useState<Defect[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
+
+  // Date range filter state
+  const [dateRange, setDateRange] = useState<'7days' | '30days' | '90days' | 'thisMonth' | 'custom'>('30days');
+  const [customStartDate, setCustomStartDate] = useState<string>('');
+  const [customEndDate, setCustomEndDate] = useState<string>('');
 
   useEffect(() => {
     if (userData?.orgId) {
@@ -89,6 +97,98 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Get date range based on selected filter
+  const getDateRangeForFilter = (): { start: Date; end: Date } => {
+    const now = new Date();
+    switch (dateRange) {
+      case '7days':
+        return { start: subDays(now, 7), end: now };
+      case '30days':
+        return { start: subDays(now, 30), end: now };
+      case '90days':
+        return { start: subDays(now, 90), end: now };
+      case 'thisMonth':
+        return { start: startOfMonth(now), end: endOfMonth(now) };
+      case 'custom':
+        if (customStartDate && customEndDate) {
+          return { start: new Date(customStartDate), end: new Date(customEndDate) };
+        }
+        return { start: subDays(now, 30), end: now };
+      default:
+        return { start: subDays(now, 30), end: now };
+    }
+  };
+
+  // Export dashboard data to Excel
+  const exportToExcel = () => {
+    const workbook = XLSX.utils.book_new();
+
+    // Export Tasks
+    const tasksExport = tasks.map((task) => ({
+      'Task ID': task.id,
+      'Asset': getAssetName(task.assetId),
+      'Site': getSiteName(task.siteId),
+      'Status': task.status,
+      'Priority': task.priority || 'Normal',
+      'Due Date': task.dueDate ? formatUKDate(task.dueDate) : '',
+      'Completed At': task.completedAt ? formatUKDate(task.completedAt) : '',
+      'Created At': task.createdAt ? formatUKDate(task.createdAt) : '',
+    }));
+    const tasksSheet = XLSX.utils.json_to_sheet(tasksExport);
+    XLSX.utils.book_append_sheet(workbook, tasksSheet, 'Tasks');
+
+    // Export Defects
+    const defectsExport = defects.map((defect) => ({
+      'Defect ID': defect.id,
+      'Title': defect.title,
+      'Description': defect.description,
+      'Severity': defect.severity,
+      'Status': defect.status,
+      'Asset': getAssetName(defect.assetId),
+      'Site': getSiteName(defect.siteId),
+      'Created At': formatUKDate(defect.createdAt),
+      'Target Date': defect.targetDate ? formatUKDate(defect.targetDate) : '',
+      'Resolved At': defect.resolvedAt ? formatUKDate(defect.resolvedAt) : '',
+    }));
+    const defectsSheet = XLSX.utils.json_to_sheet(defectsExport);
+    XLSX.utils.book_append_sheet(workbook, defectsSheet, 'Defects');
+
+    // Export Assets
+    const assetsExport = assets.map((asset) => ({
+      'Asset ID': asset.id,
+      'Name': asset.name,
+      'Type': asset.type,
+      'Status': asset.status,
+      'Location': asset.location || '',
+      'Site': getSiteName(asset.siteId),
+    }));
+    const assetsSheet = XLSX.utils.json_to_sheet(assetsExport);
+    XLSX.utils.book_append_sheet(workbook, assetsSheet, 'Assets');
+
+    // Export summary stats
+    const summaryData = [
+      { 'Metric': 'Total Sites', 'Value': sites.length },
+      { 'Metric': 'Total Assets', 'Value': assets.length },
+      { 'Metric': 'Total Tasks', 'Value': tasks.length },
+      { 'Metric': 'Completed Tasks', 'Value': getCompletedTasks().length },
+      { 'Metric': 'Overdue Tasks', 'Value': getOverdueTasks().length },
+      { 'Metric': 'Open Defects', 'Value': getOpenDefects().length },
+      { 'Metric': 'Critical Defects', 'Value': getCriticalDefects().length },
+      { 'Metric': 'Completion Rate', 'Value': `${getCompletionRate()}%` },
+    ];
+    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+    // Save file
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HHmm');
+    XLSX.writeFile(workbook, `Dashboard-Export-${timestamp}.xlsx`);
+  };
+
+  const getSiteName = (siteId: string) => {
+    const site = sites.find((s) => s.id === siteId);
+    return site?.name || 'Unknown Site';
   };
 
   // Calculate metrics
@@ -186,12 +286,10 @@ export default function DashboardPage() {
 
   // Chart data generators
   const getChecksCompletedData = () => {
-    const days = 30;
-    const endDate = new Date();
-    const startDate = subDays(endDate, days);
-    const dateRange = eachDayOfInterval({ start: startDate, end: endDate });
+    const range = getDateRangeForFilter();
+    const dateRangeArray = eachDayOfInterval({ start: range.start, end: range.end });
 
-    return dateRange.map((date) => {
+    return dateRangeArray.map((date) => {
       const completedOnDate = tasks.filter((task) => {
         if (task.status !== 'completed' || !task.completedAt) return false;
         const completedDate = startOfDay(task.completedAt);
@@ -245,6 +343,31 @@ export default function DashboardPage() {
     ].filter((item) => item.count > 0);
   };
 
+  const getDefectsCreatedData = () => {
+    const range = getDateRangeForFilter();
+    const dateRangeArray = eachDayOfInterval({ start: range.start, end: range.end });
+
+    return dateRangeArray.map((date) => {
+      const createdOnDate = defects.filter((defect) => {
+        if (!defect.createdAt) return false;
+        const createdDate = startOfDay(defect.createdAt);
+        return createdDate.getTime() === startOfDay(date).getTime();
+      }).length;
+
+      const resolvedOnDate = defects.filter((defect) => {
+        if (!defect.resolvedAt) return false;
+        const resolvedDate = startOfDay(defect.resolvedAt);
+        return resolvedDate.getTime() === startOfDay(date).getTime();
+      }).length;
+
+      return {
+        date: format(date, 'dd MMM'),
+        created: createdOnDate,
+        resolved: resolvedOnDate,
+      };
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -264,14 +387,105 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome header */}
-      <div>
-        <h1 className="text-2xl font-bold text-brand-900">
-          Welcome back, {userData?.name || user?.displayName}
-        </h1>
-        <p className="text-sm text-brand-600 mt-1">
-          Fire safety compliance dashboard
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-brand-900">
+            Welcome back, {userData?.name || user?.displayName}
+          </h1>
+          <p className="text-sm text-brand-600 mt-1">
+            Fire safety compliance dashboard
+          </p>
+        </div>
+        <Button
+          variant="secondary"
+          onClick={exportToExcel}
+          disabled={tasks.length === 0 && defects.length === 0}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Export to Excel
+        </Button>
       </div>
+
+      {/* Date Range Filter */}
+      <Card>
+        <Card.Content>
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-brand-500" />
+              <span className="text-sm font-medium text-brand-700">Date Range:</span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setDateRange('7days')}
+                className={`px-3 py-1 text-sm rounded ${
+                  dateRange === '7days'
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Last 7 Days
+              </button>
+              <button
+                onClick={() => setDateRange('30days')}
+                className={`px-3 py-1 text-sm rounded ${
+                  dateRange === '30days'
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Last 30 Days
+              </button>
+              <button
+                onClick={() => setDateRange('90days')}
+                className={`px-3 py-1 text-sm rounded ${
+                  dateRange === '90days'
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Last 90 Days
+              </button>
+              <button
+                onClick={() => setDateRange('thisMonth')}
+                className={`px-3 py-1 text-sm rounded ${
+                  dateRange === 'thisMonth'
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                This Month
+              </button>
+              <button
+                onClick={() => setDateRange('custom')}
+                className={`px-3 py-1 text-sm rounded ${
+                  dateRange === 'custom'
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Custom
+              </button>
+            </div>
+            {dateRange === 'custom' && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="px-3 py-1 text-sm border border-brand-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+                <span className="text-sm text-brand-600">to</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="px-3 py-1 text-sm border border-brand-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+            )}
+          </div>
+        </Card.Content>
+      </Card>
 
       {/* Setup notice if no org */}
       {!userData?.orgId && (
@@ -633,13 +847,19 @@ export default function DashboardPage() {
           <Card.Header>
             <div className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5" />
-              Checks Completed (Last 30 Days)
+              Checks Completed
             </div>
           </Card.Header>
           <Card.Content>
             {getChecksCompletedData().some((d) => d.completed > 0) ? (
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={getChecksCompletedData()}>
+                <AreaChart data={getChecksCompletedData()}>
+                  <defs>
+                    <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis
                     dataKey="date"
@@ -658,19 +878,88 @@ export default function DashboardPage() {
                       borderRadius: '6px',
                     }}
                   />
-                  <Line
+                  <Area
                     type="monotone"
                     dataKey="completed"
                     stroke="#10B981"
                     strokeWidth={2}
-                    dot={{ fill: '#10B981', r: 4 }}
-                    activeDot={{ r: 6 }}
+                    fillOpacity={1}
+                    fill="url(#colorCompleted)"
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-[250px] text-brand-600 text-sm">
-                No checks completed in the last 30 days
+                No data available for selected date range
+              </div>
+            )}
+          </Card.Content>
+        </Card>
+
+        {/* Defects Created vs Resolved */}
+        <Card>
+          <Card.Header>
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Defects Created vs Resolved
+            </div>
+          </Card.Header>
+          <Card.Content>
+            {getDefectsCreatedData().some((d) => d.created > 0 || d.resolved > 0) ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={getDefectsCreatedData()}>
+                  <defs>
+                    <linearGradient id="colorCreated" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#EF4444" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="colorResolved" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12 }}
+                    stroke="#6B7280"
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    stroke="#6B7280"
+                    allowDecimals={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#FFF',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '6px',
+                    }}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="created"
+                    name="Created"
+                    stroke="#EF4444"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorCreated)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="resolved"
+                    name="Resolved"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorResolved)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[250px] text-brand-600 text-sm">
+                No defect activity for selected date range
               </div>
             )}
           </Card.Content>

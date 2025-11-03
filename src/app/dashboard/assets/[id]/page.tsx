@@ -30,6 +30,7 @@ import { formatUKDate } from '@/lib/utils/date';
 import DocumentUpload from '@/components/documents/DocumentUpload';
 import DocumentList from '@/components/documents/DocumentList';
 import { QRCodeSVG } from 'qrcode.react';
+import { generateSimpleQRLabelsPDF } from '@/lib/utils/qr-label-generator';
 
 export default function AssetDetailPage() {
   const params = useParams();
@@ -126,13 +127,47 @@ export default function AssetDetailPage() {
       ctx?.drawImage(img, 0, 0);
       const pngFile = canvas.toDataURL('image/png');
 
+      // Generate descriptive filename
+      const siteName = site?.name.replace(/[^a-z0-9]/gi, '_') || 'Site';
+      const assetName = (asset?.name || typeDefinition?.name || 'Asset').replace(/[^a-z0-9]/gi, '_');
+      const location = asset?.location?.replace(/[^a-z0-9]/gi, '_') || '';
+      const filename = location
+        ? `${siteName}_${assetName}_${location}_QR.png`
+        : `${siteName}_${assetName}_QR.png`;
+
       const downloadLink = document.createElement('a');
-      downloadLink.download = `asset-${assetId}-qr.png`;
+      downloadLink.download = filename;
       downloadLink.href = pngFile;
       downloadLink.click();
     };
 
     img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+  };
+
+  const handlePrintLabel = async () => {
+    if (!asset || !site) return;
+
+    const siteName = site?.name || 'Unknown Site';
+    const assetName = asset?.name || typeDefinition?.name || 'Unknown Asset';
+    const assetType = typeDefinition?.name;
+    const location = asset?.location || 'Unknown Location';
+    const qrUrl = `${window.location.origin}/dashboard/assets/${assetId}`;
+
+    const labelData = [{
+      id: assetId,
+      siteName,
+      assetName,
+      assetType,
+      location,
+      url: qrUrl,
+    }];
+
+    try {
+      await generateSimpleQRLabelsPDF(labelData);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate QR label PDF');
+    }
   };
 
   if (loading) {
@@ -546,6 +581,13 @@ export default function AssetDetailPage() {
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="flex-1"
+                  onClick={handlePrintLabel}
+                >
+                  Print Label
                 </Button>
                 <Button
                   variant="primary"
