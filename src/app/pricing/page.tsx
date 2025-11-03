@@ -15,7 +15,7 @@ export default function PricingPage() {
               Simple, transparent pricing
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed">
-              Choose the plan that fits your organisation. All plans include a 30-day free trial.
+              Choose the plan that fits your organisation. All plans are currently free.
             </p>
           </div>
         </div>
@@ -25,21 +25,21 @@ export default function PricingPage() {
       <section className="border-b border-black">
         <div className="max-w-7xl mx-auto px-6 py-24">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black">
-            {/* Starter */}
+            {/* Single Site */}
             <div className="bg-white p-12">
-              <h3 className="text-2xl font-bold text-black mb-4">Starter</h3>
+              <h3 className="text-2xl font-bold text-black mb-4">Single Site</h3>
               <p className="text-gray-600 mb-8">For single sites and small organisations</p>
               <div className="mb-8">
-                <div className="text-5xl font-bold text-black mb-2">£49</div>
-                <div className="text-sm text-gray-600">per month</div>
+                <div className="text-5xl font-bold text-black mb-2">Free</div>
+                <div className="text-sm text-gray-600">for now</div>
               </div>
               <Link href="/sign-up">
                 <Button variant="primary" className="w-full mb-8 bg-black text-white hover:bg-gray-900">
-                  Start Free Trial
+                  Get Started
                 </Button>
               </Link>
               <ul className="space-y-4">
-                <li className="text-gray-600">— 1 site</li>
+                <li className="text-gray-600">— 1 site/location</li>
                 <li className="text-gray-600">— Unlimited assets</li>
                 <li className="text-gray-600">— Unlimited users</li>
                 <li className="text-gray-600">— Digital checks & inspections</li>
@@ -50,27 +50,27 @@ export default function PricingPage() {
               </ul>
             </div>
 
-            {/* Professional */}
+            {/* Multi-Site */}
             <div className="bg-black text-white p-12 relative">
               <div className="absolute top-0 right-0 bg-white text-black px-4 py-1 text-xs font-bold">
                 POPULAR
               </div>
-              <h3 className="text-2xl font-bold mb-4">Professional</h3>
+              <h3 className="text-2xl font-bold mb-4">Multi-Site</h3>
               <p className="text-gray-300 mb-8">For multi-site organisations</p>
               <div className="mb-8">
-                <div className="text-5xl font-bold mb-2">£149</div>
-                <div className="text-sm text-gray-300">per month</div>
+                <div className="text-5xl font-bold mb-2">Free</div>
+                <div className="text-sm text-gray-300">for now</div>
               </div>
               <Link href="/sign-up">
                 <Button variant="primary" className="w-full mb-8 bg-white text-black hover:bg-gray-100">
-                  Start Free Trial
+                  Get Started
                 </Button>
               </Link>
               <ul className="space-y-4">
-                <li className="text-gray-300">— Up to 10 sites</li>
+                <li className="text-gray-300">— Up to 5 sites/locations</li>
                 <li className="text-gray-300">— Unlimited assets</li>
                 <li className="text-gray-300">— Unlimited users</li>
-                <li className="text-gray-300">— Everything in Starter, plus:</li>
+                <li className="text-gray-300">— Everything in Single Site, plus:</li>
                 <li className="text-white font-medium">— Multi-site dashboard</li>
                 <li className="text-white font-medium">— Site-specific permissions</li>
                 <li className="text-white font-medium">— Advanced analytics</li>
@@ -83,19 +83,19 @@ export default function PricingPage() {
               <h3 className="text-2xl font-bold text-black mb-4">Enterprise</h3>
               <p className="text-gray-600 mb-8">For agencies and large portfolios</p>
               <div className="mb-8">
-                <div className="text-5xl font-bold text-black mb-2">Custom</div>
-                <div className="text-sm text-gray-600">contact us</div>
+                <div className="text-5xl font-bold text-black mb-2">Free</div>
+                <div className="text-sm text-gray-600">for now</div>
               </div>
-              <Link href="/contact">
+              <Link href="/sign-up">
                 <Button variant="primary" className="w-full mb-8 border border-black bg-white text-black hover:bg-black hover:text-white">
-                  Contact Sales
+                  Get Started
                 </Button>
               </Link>
               <ul className="space-y-4">
-                <li className="text-gray-600">— Unlimited sites</li>
+                <li className="text-gray-600">— Unlimited sites/locations</li>
                 <li className="text-gray-600">— Unlimited assets</li>
                 <li className="text-gray-600">— Unlimited users</li>
-                <li className="text-gray-600">— Everything in Professional, plus:</li>
+                <li className="text-gray-600">— Everything in Multi-Site, plus:</li>
                 <li className="text-black font-medium">— Custom integrations</li>
                 <li className="text-black font-medium">— Dedicated account manager</li>
                 <li className="text-black font-medium">— Custom SLA</li>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useRouter } from 'next/navigation';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -14,7 +14,10 @@ import Link from 'next/link';
 
 export default function NewSitePage() {
   const [loading, setLoading] = useState(false);
+  const [checkingLimit, setCheckingLimit] = useState(true);
   const [error, setError] = useState('');
+  const [limitReached, setLimitReached] = useState(false);
+  const [planInfo, setPlanInfo] = useState<any>(null);
 
   const [siteName, setSiteName] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
@@ -24,6 +27,60 @@ export default function NewSitePage() {
 
   const { user, userData } = useAuth();
   const router = useRouter();
+
+  // Check site limit on page load
+  useEffect(() => {
+    if (userData?.orgId) {
+      checkSiteLimit();
+    }
+  }, [userData]);
+
+  const checkSiteLimit = async () => {
+    try {
+      setCheckingLimit(true);
+
+      // Fetch organisation to get plan
+      const orgDoc = await getDoc(doc(db, 'organisations', userData!.orgId));
+      if (!orgDoc.exists()) {
+        throw new Error('Organisation not found');
+      }
+
+      const orgData = orgDoc.data();
+      const maxSites = orgData.plan?.maxSites;
+
+      // If maxSites is null (enterprise), no limit
+      if (maxSites === null) {
+        setPlanInfo({ maxSites: null, currentCount: 0, planName: orgData.plan?.name || 'Enterprise' });
+        setCheckingLimit(false);
+        return;
+      }
+
+      // Count existing sites
+      const sitesQuery = query(
+        collection(db, 'sites'),
+        where('orgId', '==', userData!.orgId)
+      );
+      const sitesSnapshot = await getDocs(sitesQuery);
+      const currentCount = sitesSnapshot.size;
+
+      setPlanInfo({
+        maxSites,
+        currentCount,
+        planName: orgData.plan?.name || 'Unknown'
+      });
+
+      // Check if limit reached
+      if (currentCount >= maxSites) {
+        setLimitReached(true);
+        setError(`You have reached the maximum number of sites (${maxSites}) for your ${orgData.plan?.name || ''} plan. Please upgrade your plan to add more sites.`);
+      }
+    } catch (err: any) {
+      console.error('Error checking site limit:', err);
+      setError('Failed to verify site limit');
+    } finally {
+      setCheckingLimit(false);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -89,14 +146,41 @@ export default function NewSitePage() {
       {/* Form */}
       <Card>
         <Card.Header>
-          <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
-            Site Details
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-5 h-5" />
+              Site Details
+            </div>
+            {planInfo && planInfo.maxSites !== null && (
+              <div className="text-sm text-brand-600">
+                {planInfo.currentCount} / {planInfo.maxSites} sites used
+              </div>
+            )}
           </div>
         </Card.Header>
         <Card.Content>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <FormError message={error} />}
+          {checkingLimit ? (
+            <div className="text-center py-8 text-brand-600">
+              Checking site limit...
+            </div>
+          ) : limitReached ? (
+            <div className="space-y-4">
+              <FormError message={error} />
+              <div className="bg-yellow-50 border border-yellow-200 p-4 text-sm">
+                <p className="font-medium text-yellow-900 mb-2">Upgrade Required</p>
+                <p className="text-yellow-800">
+                  To add more sites, please upgrade your plan from {planInfo?.planName} to a higher tier.
+                </p>
+              </div>
+              <Link href="/dashboard/sites">
+                <Button variant="secondary" size="lg" className="w-full">
+                  Back to Sites
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && <FormError message={error} />}
 
             <Input
               label="Site name"
@@ -186,6 +270,7 @@ export default function NewSitePage() {
               </Button>
             </div>
           </form>
+          )}
         </Card.Content>
       </Card>
     </div>

@@ -9,12 +9,17 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
 import FormError from '@/components/ui/FormError';
-import { Building2, CheckCircle } from 'lucide-react';
+import { Building2, CheckCircle, Check } from 'lucide-react';
+
+type Plan = 'single_site' | 'multi_site' | 'enterprise';
 
 export default function OrganisationSetupPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Plan selection
+  const [selectedPlan, setSelectedPlan] = useState<Plan>('single_site');
 
   // Organisation details
   const [orgName, setOrgName] = useState('');
@@ -29,6 +34,23 @@ export default function OrganisationSetupPage() {
   const { user, refreshUserData } = useAuth();
   const router = useRouter();
 
+  const getPlanDetails = (plan: Plan) => {
+    switch (plan) {
+      case 'single_site':
+        return { name: 'Single Site', maxSites: 1, price: 0 };
+      case 'multi_site':
+        return { name: 'Multi-Site', maxSites: 5, price: 0 };
+      case 'enterprise':
+        return { name: 'Enterprise', maxSites: null, price: 0 }; // null = unlimited
+      default:
+        return { name: 'Single Site', maxSites: 1, price: 0 };
+    }
+  };
+
+  const handleSelectPlan = () => {
+    setStep(2);
+  };
+
   const handleCreateOrganisation = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
@@ -42,10 +64,21 @@ export default function OrganisationSetupPage() {
       // Generate org ID
       const orgId = `org_${Date.now()}`;
 
+      // Get plan details
+      const planDetails = getPlanDetails(selectedPlan);
+
       // Create organisation document
       await setDoc(doc(db, 'organisations', orgId), {
         id: orgId,
         name: orgName,
+        plan: {
+          type: selectedPlan,
+          name: planDetails.name,
+          maxSites: planDetails.maxSites,
+          price: planDetails.price,
+          startedAt: new Date(),
+          status: 'active',
+        },
         settings: {
           retentionYears: 6,
           timezone: 'Europe/London',
@@ -88,7 +121,7 @@ export default function OrganisationSetupPage() {
       }
 
       // Move to next step (add first site)
-      setStep(2);
+      setStep(3);
     } catch (err: any) {
       setError(err.message || 'Failed to create organisation. Please try again.');
     } finally {
@@ -143,7 +176,7 @@ export default function OrganisationSetupPage() {
       });
 
       // Move to success step
-      setStep(3);
+      setStep(4);
     } catch (err: any) {
       setError(err.message || 'Failed to create site. Please try again.');
     } finally {
@@ -162,7 +195,7 @@ export default function OrganisationSetupPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-brand-900">Setup Your Organisation</h1>
           <p className="text-sm text-brand-600 mt-2">
-            Step {step} of 3: {step === 1 ? 'Organisation Details' : step === 2 ? 'First Site' : 'Complete'}
+            Step {step} of 4: {step === 1 ? 'Choose Plan' : step === 2 ? 'Organisation Details' : step === 3 ? 'First Site' : 'Complete'}
           </p>
         </div>
 
@@ -173,22 +206,161 @@ export default function OrganisationSetupPage() {
           }`}>
             {step > 1 ? '✓' : '1'}
           </div>
-          <div className={`h-px w-16 ${step >= 2 ? 'bg-brand-900' : 'bg-brand-200'}`} />
+          <div className={`h-px w-12 ${step >= 2 ? 'bg-brand-900' : 'bg-brand-200'}`} />
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
             step >= 2 ? 'bg-brand-900 text-white' : 'bg-brand-200 text-brand-600'
           }`}>
             {step > 2 ? '✓' : '2'}
           </div>
-          <div className={`h-px w-16 ${step >= 3 ? 'bg-brand-900' : 'bg-brand-200'}`} />
+          <div className={`h-px w-12 ${step >= 3 ? 'bg-brand-900' : 'bg-brand-200'}`} />
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
             step >= 3 ? 'bg-brand-900 text-white' : 'bg-brand-200 text-brand-600'
           }`}>
             {step > 3 ? '✓' : '3'}
           </div>
+          <div className={`h-px w-12 ${step >= 4 ? 'bg-brand-900' : 'bg-brand-200'}`} />
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+            step >= 4 ? 'bg-brand-900 text-white' : 'bg-brand-200 text-brand-600'
+          }`}>
+            {step > 4 ? '✓' : '4'}
+          </div>
         </div>
 
-        {/* Step 1: Organisation Details */}
+        {/* Step 1: Plan Selection */}
         {step === 1 && (
+          <Card>
+            <Card.Header>Choose Your Plan</Card.Header>
+            <Card.Content>
+              <div className="space-y-4">
+                <div className="bg-brand-50 border border-brand-200 p-4 text-sm text-brand-700">
+                  <p className="font-medium mb-2">Select a plan to get started</p>
+                  <p>
+                    All plans are currently free. Choose the plan that best fits your organisation's needs.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {/* Single Site */}
+                  <div
+                    onClick={() => setSelectedPlan('single_site')}
+                    className={`border-2 p-4 cursor-pointer transition-all ${
+                      selectedPlan === 'single_site'
+                        ? 'border-brand-900 bg-brand-50'
+                        : 'border-brand-200 hover:border-brand-400'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-lg font-bold text-brand-900">Single Site</h3>
+                          {selectedPlan === 'single_site' && (
+                            <div className="w-5 h-5 bg-brand-900 rounded-full flex items-center justify-center">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-brand-600 mb-3">
+                          Perfect for managing a single location
+                        </p>
+                        <ul className="text-sm text-brand-700 space-y-1">
+                          <li>• 1 site/location</li>
+                          <li>• Unlimited assets</li>
+                          <li>• Unlimited users</li>
+                          <li>• All features included</li>
+                        </ul>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold text-brand-900">Free</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Multi-Site */}
+                  <div
+                    onClick={() => setSelectedPlan('multi_site')}
+                    className={`border-2 p-4 cursor-pointer transition-all ${
+                      selectedPlan === 'multi_site'
+                        ? 'border-brand-900 bg-brand-50'
+                        : 'border-brand-200 hover:border-brand-400'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-lg font-bold text-brand-900">Multi-Site</h3>
+                          {selectedPlan === 'multi_site' && (
+                            <div className="w-5 h-5 bg-brand-900 rounded-full flex items-center justify-center">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-brand-600 mb-3">
+                          Ideal for organisations with multiple locations
+                        </p>
+                        <ul className="text-sm text-brand-700 space-y-1">
+                          <li>• Up to 5 sites/locations</li>
+                          <li>• Unlimited assets</li>
+                          <li>• Unlimited users</li>
+                          <li>• All features included</li>
+                        </ul>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold text-brand-900">Free</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enterprise */}
+                  <div
+                    onClick={() => setSelectedPlan('enterprise')}
+                    className={`border-2 p-4 cursor-pointer transition-all ${
+                      selectedPlan === 'enterprise'
+                        ? 'border-brand-900 bg-brand-50'
+                        : 'border-brand-200 hover:border-brand-400'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-lg font-bold text-brand-900">Enterprise</h3>
+                          {selectedPlan === 'enterprise' && (
+                            <div className="w-5 h-5 bg-brand-900 rounded-full flex items-center justify-center">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-brand-600 mb-3">
+                          For large portfolios and agencies
+                        </p>
+                        <ul className="text-sm text-brand-700 space-y-1">
+                          <li>• Unlimited sites/locations</li>
+                          <li>• Unlimited assets</li>
+                          <li>• Unlimited users</li>
+                          <li>• All features included</li>
+                        </ul>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold text-brand-900">Free</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleSelectPlan}
+                >
+                  Continue with {getPlanDetails(selectedPlan).name}
+                </Button>
+              </div>
+            </Card.Content>
+          </Card>
+        )}
+
+        {/* Step 2: Organisation Details */}
+        {step === 2 && (
           <Card>
             <Card.Header>
               <div className="flex items-center gap-2">
@@ -236,8 +408,8 @@ export default function OrganisationSetupPage() {
           </Card>
         )}
 
-        {/* Step 2: First Site */}
-        {step === 2 && (
+        {/* Step 3: First Site */}
+        {step === 3 && (
           <Card>
             <Card.Header>
               <div className="flex items-center gap-2">
@@ -310,7 +482,7 @@ export default function OrganisationSetupPage() {
                     type="button"
                     variant="secondary"
                     size="lg"
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(2)}
                     disabled={loading}
                   >
                     Back
@@ -331,8 +503,8 @@ export default function OrganisationSetupPage() {
           </Card>
         )}
 
-        {/* Step 3: Success */}
-        {step === 3 && (
+        {/* Step 4: Success */}
+        {step === 4 && (
           <Card>
             <Card.Content>
               <div className="text-center py-8">
@@ -369,7 +541,7 @@ export default function OrganisationSetupPage() {
         )}
 
         {/* Footer */}
-        {step < 3 && (
+        {step < 4 && (
           <div className="mt-6 text-center text-xs text-brand-500">
             <p>You can add more sites and manage settings from your dashboard later</p>
           </div>
