@@ -126,7 +126,7 @@ export default function PricingPage() {
             <div className="border-b border-gray-200 pb-8">
               <h3 className="text-xl font-bold text-black mb-3">What happens to my data if I cancel?</h3>
               <p className="text-gray-600 leading-relaxed">
-                Your data is retained for 90 days after cancellation. You can export all records before cancelling or reactivate your account within 90 days.
+                Before cancelling, use the "Export All Data" feature in your Profile settings to download a complete copy of your data (Excel file, all documents, and photos in a ZIP file). Your data is retained for 90 days after cancellation, allowing you to reactivate if needed. After 90 days, all data is permanently deleted.
               </p>
             </div>
             <div className="border-b border-gray-200 pb-8">

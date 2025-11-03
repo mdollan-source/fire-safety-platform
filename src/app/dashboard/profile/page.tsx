@@ -11,7 +11,13 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import FormError from '@/components/ui/FormError';
 import NotificationPreferences from '@/components/notifications/NotificationPreferences';
-import { User, Mail, Building2, Shield, CheckCircle2, Edit2, X, Lock } from 'lucide-react';
+import { User, Mail, Building2, Shield, CheckCircle2, Edit2, X, Lock, Download, Database, AlertCircle } from 'lucide-react';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase/config';
+import * as XLSX from 'xlsx';
+import JSZip from 'jszip';
+import { formatUKDate } from '@/lib/utils/date';
 
 export default function ProfilePage() {
   const { user, userData } = useAuth();
@@ -31,6 +37,10 @@ export default function ProfilePage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+
+  // Export data state
+  const [exporting, setExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState('');
 
   const handleEditProfile = () => {
     setEditName(userData?.name || user?.displayName || '');
@@ -131,6 +141,250 @@ export default function ProfilePage() {
       }
     } finally {
       setChangingPassword(false);
+    }
+  };
+
+  const handleExportAllData = async () => {
+    if (!userData?.orgId) {
+      alert('Organisation ID not found');
+      return;
+    }
+
+    try {
+      setExporting(true);
+      setExportProgress('Preparing export...');
+
+      const zip = new JSZip();
+
+      // Fetch all data from Firestore
+      setExportProgress('Fetching sites data...');
+      const sitesSnapshot = await getDocs(query(collection(db, 'sites'), where('orgId', '==', userData.orgId)));
+      const sitesData = sitesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching assets data...');
+      const assetsSnapshot = await getDocs(query(collection(db, 'assets'), where('orgId', '==', userData.orgId)));
+      const assetsData = assetsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching checks data...');
+      const checksSnapshot = await getDocs(query(collection(db, 'tasks'), where('orgId', '==', userData.orgId)));
+      const checksData = checksSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching entries data...');
+      const entriesSnapshot = await getDocs(query(collection(db, 'entries'), where('orgId', '==', userData.orgId)));
+      const entriesData = entriesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching defects data...');
+      const defectsSnapshot = await getDocs(query(collection(db, 'defects'), where('orgId', '==', userData.orgId)));
+      const defectsData = defectsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching drills data...');
+      const drillsSnapshot = await getDocs(query(collection(db, 'fire_drills'), where('orgId', '==', userData.orgId)));
+      const drillsData = drillsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching training data...');
+      const trainingSnapshot = await getDocs(query(collection(db, 'training_records'), where('orgId', '==', userData.orgId)));
+      const trainingData = trainingSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching documents data...');
+      const documentsSnapshot = await getDocs(query(collection(db, 'documents'), where('orgId', '==', userData.orgId)));
+      const documentsData = documentsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      setExportProgress('Fetching users data...');
+      const usersSnapshot = await getDocs(query(collection(db, 'users'), where('orgId', '==', userData.orgId)));
+      const usersData = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      // Create Excel workbook with all data
+      setExportProgress('Creating Excel workbook...');
+      const workbook = XLSX.utils.book_new();
+
+      // Sites sheet
+      const sitesExport = sitesData.map((site: any) => ({
+        'Site ID': site.id,
+        'Name': site.name,
+        'Address': site.address,
+        'Postcode': site.postcode,
+        'Created': site.createdAt ? formatUKDate(site.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sitesExport), 'Sites');
+
+      // Assets sheet
+      const assetsExport = assetsData.map((asset: any) => ({
+        'Asset ID': asset.id,
+        'Type': asset.type,
+        'Name': asset.name || '',
+        'Location': asset.location || '',
+        'Serial Number': asset.serialNumber || '',
+        'Site ID': asset.siteId,
+        'Status': asset.status || '',
+        'Created': asset.createdAt ? formatUKDate(asset.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(assetsExport), 'Assets');
+
+      // Checks sheet
+      const checksExport = checksData.map((check: any) => ({
+        'Check ID': check.id,
+        'Asset ID': check.assetId,
+        'Template ID': check.templateId,
+        'Status': check.status,
+        'Due Date': check.dueDate ? formatUKDate(check.dueDate.toDate(), 'dd/MM/yyyy') : '',
+        'Completed Date': check.completedAt ? formatUKDate(check.completedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Completed By': check.completedByName || '',
+        'Site ID': check.siteId,
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(checksExport), 'Checks');
+
+      // Entries sheet
+      const entriesExport = entriesData.map((entry: any) => ({
+        'Entry ID': entry.id,
+        'Asset ID': entry.assetId,
+        'Task ID': entry.taskId,
+        'Outcome': entry.outcome,
+        'Notes': entry.notes || '',
+        'Completed': entry.completedAt ? formatUKDate(entry.completedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Completed By': entry.completedByName || '',
+        'Site ID': entry.siteId,
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(entriesExport), 'Entries');
+
+      // Defects sheet
+      const defectsExport = defectsData.map((defect: any) => ({
+        'Defect ID': defect.id,
+        'Asset ID': defect.assetId,
+        'Title': defect.title,
+        'Description': defect.description || '',
+        'Severity': defect.severity,
+        'Status': defect.status,
+        'Created': defect.createdAt ? formatUKDate(defect.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Target Date': defect.targetDate ? formatUKDate(defect.targetDate.toDate(), 'dd/MM/yyyy') : '',
+        'Resolved': defect.resolvedAt ? formatUKDate(defect.resolvedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Site ID': defect.siteId,
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(defectsExport), 'Defects');
+
+      // Drills sheet
+      const drillsExport = drillsData.map((drill: any) => ({
+        'Drill ID': drill.id,
+        'Date': drill.date ? formatUKDate(drill.date.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Duration (minutes)': drill.durationMinutes || '',
+        'Participants': drill.participantsCount || '',
+        'Notes': drill.notes || '',
+        'Site ID': drill.siteId,
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(drillsExport), 'Fire Drills');
+
+      // Training sheet
+      const trainingExport = trainingData.map((training: any) => ({
+        'Training ID': training.id,
+        'Type': training.type,
+        'Date': training.date ? formatUKDate(training.date.toDate(), 'dd/MM/yyyy') : '',
+        'Trainer': training.trainerName || '',
+        'Attendees': training.attendeeNames ? training.attendeeNames.join(', ') : '',
+        'Notes': training.notes || '',
+        'Site ID': training.siteId,
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(trainingExport), 'Training');
+
+      // Documents sheet
+      const documentsExport = documentsData.map((doc: any) => ({
+        'Document ID': doc.id,
+        'Title': doc.title,
+        'Category': doc.category || '',
+        'File Name': doc.fileName,
+        'Entity Type': doc.entityType,
+        'Entity ID': doc.entityId,
+        'Uploaded': doc.uploadedAt ? formatUKDate(doc.uploadedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Uploaded By': doc.uploadedByName || '',
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(documentsExport), 'Documents');
+
+      // Users sheet
+      const usersExport = usersData.map((usr: any) => ({
+        'User ID': usr.id,
+        'Name': usr.name,
+        'Email': usr.email,
+        'Role': usr.role,
+        'Site IDs': usr.siteIds ? usr.siteIds.join(', ') : 'All',
+        'Created': usr.createdAt ? formatUKDate(usr.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(usersExport), 'Users');
+
+      // Write Excel to buffer
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      zip.file('data-export.xlsx', excelBuffer);
+
+      // Fetch uploaded files from Storage
+      setExportProgress('Fetching uploaded files...');
+      const documentsFolder = zip.folder('documents');
+      let filesDownloaded = 0;
+
+      for (const document of documentsData) {
+        try {
+          const fileRef = ref(storage, document.storageUrl);
+          const downloadURL = await getDownloadURL(fileRef);
+          const response = await fetch(downloadURL);
+          const blob = await response.blob();
+          documentsFolder?.file(document.fileName, blob);
+          filesDownloaded++;
+          setExportProgress(`Downloading files... (${filesDownloaded}/${documentsData.length})`);
+        } catch (err) {
+          console.error(`Failed to download ${document.fileName}:`, err);
+        }
+      }
+
+      // Create README
+      setExportProgress('Creating README...');
+      const readme = `Fire Safety Log - Data Export
+================================
+
+Export Date: ${formatUKDate(new Date(), 'dd/MM/yyyy HH:mm')}
+Organisation ID: ${userData.orgId}
+Exported By: ${userData.name} (${user?.email})
+
+Contents:
+---------
+- data-export.xlsx: Complete data export with the following sheets:
+  * Sites: All site locations
+  * Assets: All fire safety assets
+  * Checks: All scheduled checks
+  * Entries: All completed check entries
+  * Defects: All defect records
+  * Fire Drills: All fire drill records
+  * Training: All training records
+  * Documents: List of uploaded documents
+  * Users: All user accounts
+
+- documents/: Folder containing all uploaded documents and photos
+
+Notes:
+------
+- Dates are formatted in UK format (DD/MM/YYYY)
+- Times are in 24-hour format
+- This export includes all data for your organisation
+- File sizes may vary depending on the number of uploaded documents
+
+For questions or support, please contact support@firesafetylog.co.uk
+`;
+      zip.file('README.txt', readme);
+
+      // Generate and download ZIP
+      setExportProgress('Creating ZIP file...');
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+      setExportProgress('Downloading...');
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `fire-safety-log-export-${Date.now()}.zip`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+      setExportProgress('');
+      alert('Data export completed successfully!');
+    } catch (err: any) {
+      console.error('Export error:', err);
+      alert(`Failed to export data: ${err.message}`);
+    } finally {
+      setExporting(false);
+      setExportProgress('');
     }
   };
 
@@ -388,6 +642,76 @@ export default function ProfilePage() {
 
       {/* Notification Preferences */}
       <NotificationPreferences />
+
+      {/* Data Export */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Database className="w-5 h-5" />
+            Data Export & Account
+          </div>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-6">
+            {/* Export All Data */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Download className="w-4 h-4 text-brand-600" />
+                <div className="text-sm font-medium text-brand-900">Export All Data</div>
+              </div>
+              <p className="text-sm text-brand-600 mb-4">
+                Download a complete copy of all your organisation's data including assets, checks, defects, training records, and all uploaded documents.
+                Perfect for backup, migration, or account closure.
+              </p>
+
+              {exportProgress && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                  <div className="flex items-center gap-2 text-blue-900 text-sm">
+                    <div className="loading-spinner w-4 h-4" />
+                    {exportProgress}
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-brand-50 border border-brand-200 p-4 rounded mb-4">
+                <p className="text-sm font-medium text-brand-900 mb-2">Export includes:</p>
+                <ul className="text-sm text-brand-600 space-y-1">
+                  <li>• Excel file with all data tables (Sites, Assets, Checks, Defects, Drills, Training, Users)</li>
+                  <li>• All uploaded documents and photos in a documents/ folder</li>
+                  <li>• README file explaining the contents</li>
+                  <li>• Everything packaged in a single ZIP file</li>
+                </ul>
+              </div>
+
+              <Button
+                variant="primary"
+                onClick={handleExportAllData}
+                isLoading={exporting}
+                disabled={exporting}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {exporting ? 'Exporting...' : 'Export All Data'}
+              </Button>
+            </div>
+
+            {/* Account Closure Warning */}
+            <div className="pt-6 border-t border-brand-200">
+              <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded">
+                <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-900 mb-1">
+                    Closing your account?
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    Make sure to export all your data before closing your account. Once your account is closed,
+                    your data will be retained for 90 days, after which it will be permanently deleted and cannot be recovered.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
     </div>
   );
 }
