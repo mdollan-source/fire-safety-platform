@@ -20,9 +20,8 @@ const ASSET_TYPE_OPTIONS: { value: AssetType | 'none'; label: string }[] = [
   { value: 'fire_door', label: 'Fire Door' },
   { value: 'extinguisher', label: 'Fire Extinguisher' },
   { value: 'hose_reel', label: 'Hose Reel' },
-  { value: 'sprinkler', label: 'Sprinkler System' },
+  { value: 'sprinkler_system', label: 'Sprinkler System' },
   { value: 'dry_riser', label: 'Dry Riser' },
-  { value: 'wet_riser', label: 'Wet Riser' },
 ];
 
 const FREQUENCY_OPTIONS = [

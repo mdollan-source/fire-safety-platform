@@ -304,7 +304,7 @@ export const EXTINGUISHER_MONTHLY_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' |
 export const SPRINKLER_WEEKLY_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> = {
   name: 'Sprinkler System – Weekly Check',
   description: 'Weekly inspection of sprinkler installation as per BS EN 12845',
-  assetType: 'sprinkler',
+  assetType: 'sprinkler_system',
   frequency: 'weekly',
   rrule: 'FREQ=WEEKLY;BYDAY=MO',
   requiresEvidence: false,

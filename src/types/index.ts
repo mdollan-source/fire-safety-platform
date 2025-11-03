@@ -10,14 +10,20 @@ export type UserRole =
   | 'auditor';              // Read-only access
 
 export type AssetType =
-  | 'fire_alarm'
-  | 'emergency_lighting'
   | 'fire_door'
+  | 'fire_alarm'
+  | 'call_point'
+  | 'emergency_lighting'
   | 'extinguisher'
-  | 'hose_reel'
-  | 'sprinkler'
+  | 'sprinkler_system'
+  | 'fire_blanket'
   | 'dry_riser'
-  | 'wet_riser';
+  | 'hose_reel'
+  | 'smoke_vent'
+  | 'fire_curtain'
+  | 'evacuation_chair'
+  | 'assembly_point'
+  | 'other';
 
 export type CheckFrequency = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual';
 
