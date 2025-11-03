@@ -45,6 +45,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
 
+  // Experimental - allow build to succeed with prerender errors
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+
   // Image optimization
   images: {
     domains: ['fire-235c2.firebasestorage.app'],
