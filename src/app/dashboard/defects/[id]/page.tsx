@@ -398,7 +398,7 @@ export default function DefectDetailPage() {
                   <div>
                     <div className="text-xs text-brand-600">Raised By</div>
                     <div className="text-sm font-medium text-brand-900">
-                      {defect.raisedByName || 'Unknown'}
+                      {defect.createdBy || 'Unknown'}
                     </div>
                   </div>
                 </div>

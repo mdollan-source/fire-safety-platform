@@ -424,7 +424,7 @@ export default function CompleteCheckPage() {
   }
 
   const assetType = asset ? getAssetTypeDefinition(asset.type) : null;
-  const dueDate = task.dueDate instanceof Date ? task.dueDate : (task.dueDate as any).toDate();
+  const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-8">

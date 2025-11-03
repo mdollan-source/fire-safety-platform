@@ -197,7 +197,7 @@ export async function removeOfflineEntry(id: string) {
 
 // Offline Defects Operations
 export async function saveOfflineDefect(
-  assetId: string,
+  assetId: string | undefined,
   data: any,
   photos: Blob[] = []
 ) {

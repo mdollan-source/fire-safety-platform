@@ -10,7 +10,7 @@ export function useOfflineDefect() {
 
   const saveDefect = useCallback(
     async (
-      assetId: string,
+      assetId: string | undefined,
       defectData: any,
       photos: File[]
     ) => {

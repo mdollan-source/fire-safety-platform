@@ -53,10 +53,12 @@ export default function TaskDetailPage() {
       const taskData = taskDoc.data() as CheckTask;
       setTask(taskData);
 
-      // Fetch asset
-      const assetDoc = await getDoc(doc(db, 'assets', taskData.assetId));
-      if (assetDoc.exists()) {
-        setAsset(assetDoc.data() as Asset);
+      // Fetch asset if assetId exists
+      if (taskData.assetId) {
+        const assetDoc = await getDoc(doc(db, 'assets', taskData.assetId));
+        if (assetDoc.exists()) {
+          setAsset(assetDoc.data() as Asset);
+        }
       }
     } catch (err) {
       console.error('Error fetching task:', err);
@@ -120,7 +122,7 @@ export default function TaskDetailPage() {
 
   const template = DEFAULT_CHECK_TEMPLATES.find((t) => t.name === task.templateId);
   const assetType = asset ? getAssetTypeDefinition(asset.type) : null;
-  const dueDate = task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate();
+  const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
   const isDueToday = isToday(dueDate);
   const isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
   const isCompleted = task.status === 'completed';
@@ -215,17 +217,9 @@ export default function TaskDetailPage() {
                 <div className="flex items-start gap-3">
                   <Clock className="w-5 h-5 text-brand-500 mt-0.5" />
                   <div>
-                    <div className="text-sm text-brand-600">Priority</div>
-                    <Badge
-                      variant={
-                        task.priority === 'urgent'
-                          ? 'fail'
-                          : task.priority === 'high'
-                          ? 'warning'
-                          : 'pending'
-                      }
-                    >
-                      {task.priority}
+                    <div className="text-sm text-brand-600">Status</div>
+                    <Badge variant={isOverdue ? 'fail' : isDueToday ? 'warning' : 'pending'}>
+                      {isOverdue ? 'Overdue' : isDueToday ? 'Due Today' : task.status}
                     </Badge>
                   </div>
                 </div>
@@ -320,7 +314,7 @@ export default function TaskDetailPage() {
                         {formatUKDate(
                           task.completedAt instanceof Date
                             ? task.completedAt
-                            : task.completedAt.toDate(),
+                            : (task.completedAt as any).toDate(),
                           'dd/MM/yyyy HH:mm'
                         )}
                       </p>

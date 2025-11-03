@@ -64,7 +64,7 @@ export default function ChecksPage() {
       const releasePromises = tasksData
         .filter((task) => {
           if (!task.claimedAt || task.status !== 'pending') return false;
-          const claimedDate = task.claimedAt instanceof Date ? task.claimedAt : task.claimedAt.toDate();
+          const claimedDate = task.claimedAt instanceof Date ? task.claimedAt : (task.claimedAt as any).toDate();
           return differenceInHours(new Date(), claimedDate) >= 4;
         })
         .map((task) =>
@@ -164,11 +164,12 @@ export default function ChecksPage() {
 
   const isTaskClaimExpired = (task: CheckTask): boolean => {
     if (!task.claimedAt) return false;
-    const claimedDate = task.claimedAt instanceof Date ? task.claimedAt : task.claimedAt.toDate();
+    const claimedDate = task.claimedAt instanceof Date ? task.claimedAt : (task.claimedAt as any).toDate();
     return differenceInHours(new Date(), claimedDate) >= 4;
   };
 
-  const getAssetName = (assetId: string) => {
+  const getAssetName = (assetId: string | undefined) => {
+    if (!assetId) return 'N/A';
     const asset = assets.find((a) => a.id === assetId);
     return asset?.name || 'Unknown Asset';
   };
@@ -181,7 +182,7 @@ export default function ChecksPage() {
   const getDueTodayTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
-      const dueDate = task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate();
+      const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
       return isToday(dueDate);
     });
   };
@@ -189,7 +190,7 @@ export default function ChecksPage() {
   const getOverdueTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
-      const dueDate = task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate();
+      const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
       return isPast(startOfDay(dueDate)) && !isToday(dueDate);
     });
   };
@@ -372,14 +373,12 @@ export default function ChecksPage() {
                       {getTemplateName(schedule.templateId)}
                     </h4>
                     <div className="flex items-center gap-4 text-sm text-brand-600">
-                      <span>{getAssetName(schedule.assetId)}</span>
-                      <span>•</span>
-                      <span className="capitalize">{schedule.frequency}</span>
+                      <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : 'All assets'}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant={schedule.enabled ? 'pass' : 'pending'}>
-                      {schedule.enabled ? 'Active' : 'Paused'}
+                    <Badge variant={schedule.active ? 'pass' : 'pending'}>
+                      {schedule.active ? 'Active' : 'Paused'}
                     </Badge>
                     <Button variant="ghost" size="sm" disabled>
                       View
@@ -421,7 +420,7 @@ export default function ChecksPage() {
           ) : (
             <div className="space-y-3">
               {pendingTasks.slice(0, 10).map((task) => {
-                const dueDate = task.dueDate instanceof Date ? task.dueDate : task.dueDate.toDate();
+                const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
                 const isDueToday = isToday(dueDate);
                 const isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
                 const isClaimExpired = isTaskClaimExpired(task);
@@ -456,7 +455,7 @@ export default function ChecksPage() {
                       <Badge
                         variant={isOverdue ? 'fail' : isDueToday ? 'warning' : 'pending'}
                       >
-                        {isOverdue ? 'Overdue' : isDueToday ? 'Due Today' : task.priority}
+                        {isOverdue ? 'Overdue' : isDueToday ? 'Due Today' : 'Pending'}
                       </Badge>
 
                       {/* Show Complete button unless someone else is actively working on it */}
@@ -537,7 +536,7 @@ export default function ChecksPage() {
               {completedTasks.slice(0, 5).map((task) => {
                 const completedDate = task.completedAt instanceof Date
                   ? task.completedAt
-                  : task.completedAt?.toDate();
+                  : (task.completedAt as any)?.toDate();
 
                 return (
                   <div
