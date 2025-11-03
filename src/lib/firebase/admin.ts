@@ -11,6 +11,12 @@ let adminApp: App;
  * Only runs on server-side (API routes, server components)
  */
 export function getAdminApp(): App {
+  // During build time, return a mock app to prevent initialization errors
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log('Firebase Admin: Skipping initialization during build phase');
+    return {} as App;
+  }
+
   if (adminApp) {
     return adminApp;
   }
@@ -26,22 +32,33 @@ export function getAdminApp(): App {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
   if (!privateKey || !clientEmail || !projectId) {
+    console.error('Firebase Admin: Missing required environment variables');
+    console.error('FIREBASE_ADMIN_PRIVATE_KEY:', privateKey ? 'SET (length: ' + privateKey.length + ')' : 'MISSING');
+    console.error('FIREBASE_ADMIN_CLIENT_EMAIL:', clientEmail ? 'SET' : 'MISSING');
+    console.error('NEXT_PUBLIC_FIREBASE_PROJECT_ID:', projectId ? 'SET' : 'MISSING');
+
     throw new Error(
       'Firebase Admin: Missing required environment variables. ' +
-      'Please add FIREBASE_ADMIN_PRIVATE_KEY and FIREBASE_ADMIN_CLIENT_EMAIL to .env.local'
+      'Please add FIREBASE_ADMIN_PRIVATE_KEY and FIREBASE_ADMIN_CLIENT_EMAIL'
     );
   }
 
-  adminApp = initializeApp({
-    credential: cert({
-      projectId,
-      clientEmail,
-      privateKey,
-    }),
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  });
+  try {
+    adminApp = initializeApp({
+      credential: cert({
+        projectId,
+        clientEmail,
+        privateKey,
+      }),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    });
 
-  return adminApp;
+    console.log('Firebase Admin: Initialized successfully');
+    return adminApp;
+  } catch (error) {
+    console.error('Firebase Admin: Initialization failed:', error);
+    throw error;
+  }
 }
 
 // Export admin services
