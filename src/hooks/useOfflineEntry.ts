@@ -12,7 +12,7 @@ export function useOfflineEntry() {
   const saveEntry = useCallback(
     async (
       taskId: string,
-      assetId: string,
+      assetId: string | undefined,
       entryData: any,
       photos: File[]
     ) => {

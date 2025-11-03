@@ -166,7 +166,7 @@ export async function clearCachedData() {
 // Offline Entries Operations
 export async function saveOfflineEntry(
   taskId: string,
-  assetId: string,
+  assetId: string | undefined,
   data: any,
   photos: Blob[] = []
 ) {
