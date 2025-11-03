@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
+import { InstallButton, InstallBanner } from '@/components/pwa/InstallButton';
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -50,6 +51,10 @@ export default function Home() {
                   View Features
                 </Button>
               </Link>
+              <InstallButton
+                variant="ghost"
+                className="text-lg px-8 py-6 border border-black hover:bg-gray-50"
+              />
             </div>
           </div>
         </div>
@@ -167,6 +172,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Install Banner */}
+      <InstallBanner />
     </MarketingLayout>
   );
 }
