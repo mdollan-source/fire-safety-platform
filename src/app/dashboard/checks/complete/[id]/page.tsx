@@ -102,9 +102,14 @@ export default function CompleteCheckPage() {
       setTask(taskData);
 
       // Fetch asset if assetId exists
-      if (taskData.assetId) {
+      if (taskData.assetId && user) {
         try {
-          const response = await fetch(`/api/assets/${taskData.assetId}`);
+          const token = await user.getIdToken();
+          const response = await fetch(`/api/assets/${taskData.assetId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
           if (response.ok) {
             const data = await response.json();
             setAsset(data.asset);
@@ -430,7 +435,7 @@ export default function CompleteCheckPage() {
   }
 
   const assetType = asset ? getAssetTypeDefinition(asset.type) : null;
-  const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
+  const dueDate = task.dueAt ? (task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate()) : new Date();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-8">
