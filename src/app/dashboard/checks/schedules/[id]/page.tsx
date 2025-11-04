@@ -55,15 +55,19 @@ export default function ScheduleDetailPage() {
   const fetchScheduleDetails = async () => {
     try {
       setLoading(true);
+      console.log('Fetching schedule:', scheduleId);
 
       // Fetch schedule
       const scheduleDoc = await getDoc(doc(db, 'check_schedules', scheduleId));
+      console.log('Schedule doc exists:', scheduleDoc.exists());
+
       if (!scheduleDoc.exists()) {
         setError('Schedule not found');
         return;
       }
 
       const scheduleData = scheduleDoc.data() as CheckSchedule;
+      console.log('Schedule data:', scheduleData);
       setSchedule(scheduleData);
       setFrequency((scheduleData as any).frequency || 'weekly');
       setActive(scheduleData.active);
@@ -101,9 +105,9 @@ export default function ScheduleDetailPage() {
       const tasksSnapshot = await getDocs(tasksQuery);
       const tasksData = tasksSnapshot.docs.map((doc) => doc.data() as CheckTask);
       setRelatedTasks(tasksData);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching schedule:', err);
-      setError('Failed to load schedule details');
+      setError(`Failed to load schedule details: ${err.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
