@@ -122,9 +122,18 @@ export default function TaskDetailPage() {
 
   const template = DEFAULT_CHECK_TEMPLATES.find((t) => t.name === task.templateId);
   const assetType = asset ? getAssetTypeDefinition(asset.type) : null;
-  const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
-  const isDueToday = isToday(dueDate);
-  const isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
+
+  // Handle tasks with and without due dates
+  let dueDate = null;
+  let isDueToday = false;
+  let isOverdue = false;
+
+  if (task.dueAt) {
+    dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
+    isDueToday = isToday(dueDate);
+    isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
+  }
+
   const isCompleted = task.status === 'completed';
 
   return (
@@ -179,15 +188,27 @@ export default function TaskDetailPage() {
             </Card.Header>
             <Card.Content>
               <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-brand-500 mt-0.5" />
-                  <div>
-                    <div className="text-sm text-brand-600">Due Date</div>
-                    <div className="font-medium text-brand-900">
-                      {formatUKDate(dueDate, 'EEEE, dd MMMM yyyy')}
+                {dueDate && (
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-brand-500 mt-0.5" />
+                    <div>
+                      <div className="text-sm text-brand-600">Due Date</div>
+                      <div className="font-medium text-brand-900">
+                        {formatUKDate(dueDate, 'EEEE, dd MMMM yyyy')}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {!dueDate && (
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-brand-500 mt-0.5" />
+                    <div>
+                      <div className="text-sm text-brand-600">Due Date</div>
+                      <div className="font-medium text-brand-900">No due date set</div>
+                    </div>
+                  </div>
+                )}
 
                 {asset && (
                   <>
