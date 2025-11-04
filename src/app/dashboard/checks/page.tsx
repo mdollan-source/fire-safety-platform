@@ -430,11 +430,16 @@ export default function ChecksPage() {
           ) : (
             <div className="space-y-3">
               {pendingTasks.slice(0, 10).map((task) => {
-                // Skip tasks without due dates
-                if (!task.dueAt) return null;
-                const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
-                const isDueToday = isToday(dueDate);
-                const isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
+                // Handle tasks with and without due dates
+                let dueDate = null;
+                let isDueToday = false;
+                let isOverdue = false;
+
+                if (task.dueAt) {
+                  dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
+                  isDueToday = isToday(dueDate);
+                  isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
+                }
                 const isClaimExpired = isTaskClaimExpired(task);
                 const isClaimedByMe = task.claimedBy === userData?.id;
                 const isClaimedByOther = task.claimedBy && !isClaimedByMe && !isClaimExpired;
@@ -460,7 +465,7 @@ export default function ChecksPage() {
                       <div className="flex items-center gap-4 text-sm text-brand-600">
                         <span>{getAssetName(task.assetId)}</span>
                         <span>•</span>
-                        <span>Due: {formatUKDate(dueDate, 'dd/MM/yyyy')}</span>
+                        <span>{dueDate ? `Due: ${formatUKDate(dueDate, 'dd/MM/yyyy')}` : 'No due date set'}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -553,7 +558,8 @@ export default function ChecksPage() {
                 return (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between p-4 border border-brand-200"
+                    className="flex items-center justify-between p-4 border border-brand-200 hover:bg-brand-50 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/dashboard/checks/tasks/${task.id}`)}
                   >
                     <div className="flex-1">
                       <h4 className="font-semibold text-brand-900 mb-1">
