@@ -22,7 +22,7 @@ const Badge = ({ variant, children, className }: BadgeProps) => {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2 py-0.5 text-xs font-medium uppercase tracking-wide',
+        'inline-flex items-center px-2 py-0.5 text-xs font-medium tracking-wide',
         variants[variant],
         className
       )}
