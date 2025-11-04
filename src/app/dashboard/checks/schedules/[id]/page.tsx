@@ -118,7 +118,8 @@ export default function ScheduleDetailPage() {
       console.log('Fetching tasks for schedule:', scheduleId);
       const tasksQuery = query(
         collection(db, 'tasks'),
-        where('scheduleId', '==', scheduleId)
+        where('scheduleId', '==', scheduleId),
+        where('orgId', '==', userData!.orgId)
       );
       const tasksSnapshot = await getDocs(tasksQuery);
       console.log('Tasks found:', tasksSnapshot.docs.length);
