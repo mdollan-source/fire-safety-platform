@@ -2,8 +2,9 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { db } from '@/lib/firebase/config';
+import { db, storage } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -16,7 +17,7 @@ import {
   EMERGENCY_LIGHTING_TYPES,
   getAssetTypeDefinition
 } from '@/data/asset-types';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Camera, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 
 export default function EditAssetPage() {
@@ -48,6 +49,11 @@ export default function EditAssetPage() {
   const [installDate, setInstallDate] = useState('');
   const [lastServiceDate, setLastServiceDate] = useState('');
   const [nextServiceDate, setNextServiceDate] = useState('');
+
+  // Photo upload
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState<string>('');
 
   useEffect(() => {
     if (userData?.orgId) {
@@ -128,12 +134,36 @@ export default function EditAssetPage() {
           setNextServiceDate((nextServiceObj as Date).toISOString().split('T')[0]);
         }
       }
+
+      // Pre-fill existing photo
+      if (asset.photoUrl) {
+        setExistingPhotoUrl(asset.photoUrl);
+        setPhotoPreview(asset.photoUrl);
+      }
     } catch (err) {
       console.error('Error fetching asset:', err);
       setError('Failed to load asset');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview('');
+    setExistingPhotoUrl('');
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -195,6 +225,20 @@ export default function EditAssetPage() {
       // Only add serviceDates if there are properties
       if (Object.keys(serviceDates).length > 0) {
         updateData.serviceDates = serviceDates;
+      }
+
+      // Upload new photo if provided
+      if (photo) {
+        const photoRef = ref(storage, `assets/${userData.orgId}/${assetId}/photo.jpg`);
+        await uploadBytes(photoRef, photo);
+        const photoUrl = await getDownloadURL(photoRef);
+        updateData.photoUrl = photoUrl;
+      } else if (existingPhotoUrl) {
+        // Keep existing photo if no new photo uploaded
+        updateData.photoUrl = existingPhotoUrl;
+      } else if (!photoPreview) {
+        // Remove photo if it was deleted
+        updateData.photoUrl = null;
       }
 
       // Update asset document
@@ -325,6 +369,45 @@ export default function EditAssetPage() {
               disabled={saving}
               helperText="Floor, room, or specific location"
             />
+
+            {/* Photo Upload */}
+            <div>
+              <label className="block text-sm font-medium text-brand-900 mb-2">
+                Asset Photo
+              </label>
+              <p className="text-xs text-brand-600 mb-3">
+                Upload a photo to help identify this asset during checks
+              </p>
+              {photoPreview ? (
+                <div className="relative inline-block">
+                  <img
+                    src={photoPreview}
+                    alt="Asset preview"
+                    className="w-48 h-48 object-cover border border-brand-300 rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    disabled={saving}
+                    className="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700 disabled:opacity-50"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-brand-300 rounded text-brand-700 hover:bg-brand-50 cursor-pointer transition-colors">
+                  <Camera className="w-5 h-5" />
+                  <span className="text-sm font-medium">Upload Photo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    disabled={saving}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
 
             {/* Type-Specific Fields */}
             {assetType === 'extinguisher' && (

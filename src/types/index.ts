@@ -165,6 +165,7 @@ export interface Asset {
     nextService?: Date;
   };
   qrCode?: string;                    // Optional QR code for scanning
+  photoUrl?: string;                  // Optional photo for visual identification
   status: 'active' | 'inactive' | 'decommissioned';
   createdAt: Date;
   updatedAt: Date;

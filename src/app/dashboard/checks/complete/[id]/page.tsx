@@ -484,6 +484,19 @@ export default function CompleteCheckPage() {
               </div>
             </div>
           </div>
+          {asset?.photoUrl && (
+            <div className="mt-6 pt-6 border-t border-brand-200">
+              <div className="text-sm font-medium text-brand-900 mb-3">Asset Photo</div>
+              <img
+                src={asset.photoUrl}
+                alt={asset.name || 'Asset'}
+                className="w-64 h-64 object-cover border border-brand-300 rounded"
+              />
+              <p className="text-xs text-brand-600 mt-2">
+                Verify this is the correct equipment before completing the check
+              </p>
+            </div>
+          )}
         </Card.Content>
       </Card>
 
