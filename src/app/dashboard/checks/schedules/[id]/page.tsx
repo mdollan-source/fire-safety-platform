@@ -65,7 +65,7 @@ export default function ScheduleDetailPage() {
 
       const scheduleData = scheduleDoc.data() as CheckSchedule;
       setSchedule(scheduleData);
-      setFrequency(scheduleData.frequency || 'weekly');
+      setFrequency((scheduleData as any).frequency || 'weekly');
       setActive(scheduleData.active);
 
       if (scheduleData.startDate) {
@@ -345,7 +345,7 @@ export default function ScheduleDetailPage() {
                     <Calendar className="w-5 h-5 text-brand-500 mt-0.5" />
                     <div>
                       <div className="text-sm text-brand-600">Frequency</div>
-                      <div className="font-medium text-brand-900 capitalize">{schedule.frequency}</div>
+                      <div className="font-medium text-brand-900 capitalize">{(schedule as any).frequency}</div>
                     </div>
                   </div>
 
@@ -463,7 +463,7 @@ export default function ScheduleDetailPage() {
                           variant={
                             task.status === 'completed'
                               ? 'pass'
-                              : task.status === 'failed'
+                              : task.status === 'overdue'
                               ? 'fail'
                               : 'pending'
                           }

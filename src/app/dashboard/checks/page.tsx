@@ -384,7 +384,7 @@ export default function ChecksPage() {
                           : getAssetName((schedule as any).assetId)}
                       </span>
                       <span>•</span>
-                      <span className="capitalize">{schedule.frequency}</span>
+                      <span className="capitalize">{(schedule as any).frequency}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
