@@ -214,6 +214,10 @@ export default function ChecksPage() {
     });
   };
 
+  const getInProgressTasks = () => {
+    return tasks.filter((task) => task.status === 'in_progress');
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -227,6 +231,7 @@ export default function ChecksPage() {
   const completedTasks = getCompletedTasks();
   const pendingTasks = getPendingTasks();
   const claimedByMeTasks = getClaimedByMeTasks();
+  const inProgressTasks = getInProgressTasks();
 
   return (
     <div className="space-y-6">
@@ -521,6 +526,58 @@ export default function ChecksPage() {
           )}
         </Card.Content>
       </Card>
+
+      {/* Incomplete Checks */}
+      {inProgressTasks.length > 0 && (
+        <Card>
+          <Card.Header>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                Incomplete Checks
+              </div>
+              <span className="text-sm text-brand-600">{inProgressTasks.length} incomplete</span>
+            </div>
+          </Card.Header>
+          <Card.Content>
+            <div className="space-y-3">
+              {inProgressTasks.map((task) => {
+                const startedDate = task.claimedAt instanceof Date
+                  ? task.claimedAt
+                  : (task.claimedAt as any)?.toDate();
+
+                return (
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between p-4 border border-brand-200 hover:bg-brand-50 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/dashboard/checks/complete/${task.id}`)}
+                  >
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-brand-900 mb-1">
+                        {getTemplateName(task.templateId)}
+                      </h4>
+                      <div className="flex items-center gap-4 text-sm text-brand-600">
+                        <span>{getAssetName(task.assetId)}</span>
+                        <span>•</span>
+                        {startedDate && (
+                          <span>Started: {formatUKDate(startedDate, 'dd/MM/yyyy HH:mm')}</span>
+                        )}
+                        {task.claimedByName && (
+                          <>
+                            <span>•</span>
+                            <span>By: {task.claimedByName}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <Badge variant="warning">Incomplete</Badge>
+                  </div>
+                );
+              })}
+            </div>
+          </Card.Content>
+        </Card>
+      )}
 
       {/* Completed Checks */}
       <Card>

@@ -90,6 +90,7 @@ export default function CompleteCheckPage() {
           claimedBy: userData.id,
           claimedByName: userData.name,
           claimedAt: new Date(),
+          status: 'in_progress',
           updatedAt: new Date(),
         });
 
@@ -97,6 +98,14 @@ export default function CompleteCheckPage() {
         taskData.claimedBy = userData.id;
         taskData.claimedByName = userData.name;
         taskData.claimedAt = new Date();
+        taskData.status = 'in_progress';
+      } else if (taskData.status === 'pending' && taskData.claimedBy && userData) {
+        // Task is claimed but still pending - mark as in_progress
+        await updateDoc(doc(db, 'tasks', taskId), {
+          status: 'in_progress',
+          updatedAt: new Date(),
+        });
+        taskData.status = 'in_progress';
       }
 
       setTask(taskData);
