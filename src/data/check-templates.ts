@@ -651,6 +651,96 @@ export const SOUNDER_STROBE_TEST_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 
   ],
 };
 
+export const FINAL_EXIT_DOOR_CHECK_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> = {
+  name: 'Final Exit Door – Weekly Check',
+  description: 'Weekly check of final exit doors to ensure emergency egress is not obstructed or locked',
+  assetType: 'final_exit_door',
+  frequency: 'weekly',
+  rrule: 'FREQ=WEEKLY;BYDAY=MO',
+  requiresEvidence: false,
+  requiresGPS: true,
+  requiresSignature: true,
+  guidance: 'Final exit doors must be openable from the inside without a key during occupied hours. Check all locking mechanisms operate correctly and door can be opened easily in an emergency.',
+  references: ['Fire Safety Order Article 14', 'BS 9999:2017', 'Approved Document B'],
+  version: 1,
+  fields: [
+    {
+      id: 'lock_fastening_type',
+      label: 'Lock/fastening type',
+      type: 'enum',
+      required: true,
+      options: ['Push bar', 'Push pad', 'Thumb turn', 'Push button', 'Keypad', 'Key lock', 'Panic device', 'Other'],
+      guidance: 'Identify the type of locking/release mechanism fitted to this exit',
+    },
+    {
+      id: 'door_opens_without_key',
+      label: 'Can door be opened from inside without key?',
+      type: 'boolean',
+      required: true,
+      guidance: 'Critical: Door must be openable from inside without a key during occupied hours',
+    },
+    {
+      id: 'release_mechanism_works',
+      label: 'Release mechanism operates correctly',
+      type: 'boolean',
+      required: true,
+      guidance: 'Test the push bar/pad/button/thumb turn - should operate smoothly with minimal force',
+    },
+    {
+      id: 'door_locked_secured',
+      label: 'Is the door locked or secured preventing escape?',
+      type: 'boolean',
+      required: true,
+      guidance: 'FAIL if door is locked/secured preventing emergency exit during occupied hours',
+    },
+    {
+      id: 'obstructions',
+      label: 'Obstructions present',
+      type: 'enum',
+      required: true,
+      options: ['None', 'Minor', 'Significant - blocks exit'],
+      guidance: 'Check for items blocking the door, wedges, locks, chains, or other obstructions',
+    },
+    {
+      id: 'signage_present',
+      label: 'Emergency exit signage present and correct',
+      type: 'boolean',
+      required: true,
+      guidance: 'Green running man sign should be clearly visible and illuminated if required',
+    },
+    {
+      id: 'door_condition',
+      label: 'Door physical condition',
+      type: 'enum',
+      required: true,
+      options: ['Good', 'Fair', 'Poor - requires attention'],
+      guidance: 'Check for damage, broken hinges, warping, or other physical defects',
+    },
+    {
+      id: 'opens_full_width',
+      label: 'Door opens to full width',
+      type: 'boolean',
+      required: true,
+      guidance: 'Door must open fully without restriction for effective escape',
+    },
+    {
+      id: 'result',
+      label: 'Overall result',
+      type: 'enum',
+      required: true,
+      options: ['Pass', 'Fail'],
+      guidance: 'FAIL if door is locked, obstructed, or cannot be opened easily from inside',
+    },
+    {
+      id: 'actions',
+      label: 'Actions required',
+      type: 'text',
+      required: false,
+      guidance: 'Note any immediate actions or remedial work required',
+    },
+  ],
+};
+
 // Export all templates as array
 export const DEFAULT_CHECK_TEMPLATES = [
   FIRE_ALARM_WEEKLY_TEMPLATE,
@@ -662,4 +752,5 @@ export const DEFAULT_CHECK_TEMPLATES = [
   TRAINING_DRILL_TEMPLATE,
   DETECTOR_INSPECTION_TEMPLATE,
   SOUNDER_STROBE_TEST_TEMPLATE,
+  FINAL_EXIT_DOOR_CHECK_TEMPLATE,
 ];

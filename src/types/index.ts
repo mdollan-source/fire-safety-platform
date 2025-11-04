@@ -28,6 +28,7 @@ export type AssetType =
   | 'smoke_vent'
   | 'fire_curtain'
   | 'evacuation_chair'
+  | 'final_exit_door'
   | 'assembly_point'
   | 'other';
 

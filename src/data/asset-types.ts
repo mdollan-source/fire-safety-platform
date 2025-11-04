@@ -22,6 +22,7 @@ export type AssetType =
   | 'smoke_vent'
   | 'fire_curtain'
   | 'evacuation_chair'
+  | 'final_exit_door'
   | 'assembly_point'
   | 'other';
 
@@ -187,6 +188,14 @@ export const ASSET_TYPES: AssetTypeDefinition[] = [
     icon: 'Armchair',
     description: 'Emergency evacuation chair',
     commonAttributes: ['model', 'location', 'weightLimit', 'installDate'],
+  },
+  {
+    id: 'final_exit_door',
+    name: 'Final Exit Door',
+    category: 'evacuation',
+    icon: 'DoorOpen',
+    description: 'Final exit door from building (emergency egress)',
+    commonAttributes: ['location', 'lockType', 'releaseType', 'signage', 'lastChecked'],
   },
   {
     id: 'assembly_point',
