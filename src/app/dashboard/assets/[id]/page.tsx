@@ -89,9 +89,14 @@ export default function AssetDetailPage() {
       };
       setAsset(assetWithDates as Asset);
 
-      // Set site
+      // Set site with date conversion
       if (responseData.site) {
-        setSite(responseData.site as Site);
+        const siteWithDates = {
+          ...responseData.site,
+          createdAt: responseData.site.createdAt ? new Date(responseData.site.createdAt) : null,
+          updatedAt: responseData.site.updatedAt ? new Date(responseData.site.updatedAt) : null,
+        };
+        setSite(siteWithDates as Site);
       }
 
       // Set defects with proper date conversion from ISO strings

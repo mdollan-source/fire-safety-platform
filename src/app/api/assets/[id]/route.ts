@@ -58,7 +58,14 @@ export async function GET(
     if (assetData?.siteId) {
       const siteDoc = await adminDb().collection('sites').doc(assetData.siteId).get();
       if (siteDoc.exists) {
-        siteData = { id: siteDoc.id, ...siteDoc.data() };
+        const siteDataRaw = siteDoc.data();
+        siteData = {
+          id: siteDoc.id,
+          ...siteDataRaw,
+          // Convert Firestore timestamps to ISO strings for JSON serialization
+          createdAt: siteDataRaw?.createdAt?.toDate?.()?.toISOString() || null,
+          updatedAt: siteDataRaw?.updatedAt?.toDate?.()?.toISOString() || null,
+        };
       }
     }
 
