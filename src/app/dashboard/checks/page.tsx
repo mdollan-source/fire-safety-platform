@@ -182,6 +182,7 @@ export default function ChecksPage() {
   const getDueTodayTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
+      if (!task.dueAt) return false;
       const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
       return isToday(dueDate);
     });
@@ -190,6 +191,7 @@ export default function ChecksPage() {
   const getOverdueTasks = () => {
     return tasks.filter((task) => {
       if (task.status !== 'pending') return false;
+      if (!task.dueAt) return false;
       const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
       return isPast(startOfDay(dueDate)) && !isToday(dueDate);
     });
@@ -420,6 +422,8 @@ export default function ChecksPage() {
           ) : (
             <div className="space-y-3">
               {pendingTasks.slice(0, 10).map((task) => {
+                // Skip tasks without due dates
+                if (!task.dueAt) return null;
                 const dueDate = task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate();
                 const isDueToday = isToday(dueDate);
                 const isOverdue = isPast(startOfDay(dueDate)) && !isDueToday;
