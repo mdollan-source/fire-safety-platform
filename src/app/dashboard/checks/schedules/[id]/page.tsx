@@ -56,6 +56,13 @@ export default function ScheduleDetailPage() {
     try {
       setLoading(true);
       console.log('Fetching schedule:', scheduleId);
+      console.log('User data:', userData);
+      console.log('User orgId:', userData?.orgId);
+
+      if (!userData?.orgId) {
+        setError('User organization not loaded. Please refresh the page.');
+        return;
+      }
 
       // Fetch schedule
       const scheduleDoc = await getDoc(doc(db, 'check_schedules', scheduleId));

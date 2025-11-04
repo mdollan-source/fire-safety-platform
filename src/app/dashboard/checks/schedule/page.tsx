@@ -133,7 +133,7 @@ export default function ScheduleCheckPage() {
         frequency: frequency,
         rrule: rrule,
         startDate: new Date(startDate),
-        enabled: enabled,
+        active: enabled,
         createdAt: new Date(),
         updatedAt: new Date(),
         createdBy: user.uid,
