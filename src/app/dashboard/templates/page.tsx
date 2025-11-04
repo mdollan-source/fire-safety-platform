@@ -40,6 +40,224 @@ const FIELD_TYPE_OPTIONS = [
   { value: 'date', label: 'Date' },
 ];
 
+// Template Form Component (moved outside to prevent re-creation on each render)
+const TemplateForm = ({
+  formData,
+  setFormData,
+  error,
+  onSubmit,
+  isEdit,
+  onCancel,
+  onOpenFieldsModal,
+  onEditField,
+  onDeleteField,
+  onMoveField,
+}: {
+  formData: any;
+  setFormData: (data: any) => void;
+  error: string;
+  onSubmit: (e: React.FormEvent) => void;
+  isEdit: boolean;
+  onCancel: () => void;
+  onOpenFieldsModal: () => void;
+  onEditField: (field: CheckField) => void;
+  onDeleteField: (fieldId: string) => void;
+  onMoveField: (index: number, direction: 'up' | 'down') => void;
+}) => (
+  <form onSubmit={onSubmit} className="space-y-4">
+    {error && <FormError message={error} />}
+
+    <div>
+      <label className="block text-sm font-medium text-brand-900 mb-2">Template Name *</label>
+      <input
+        type="text"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        placeholder="e.g., Monthly Fire Door Check"
+        required
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-brand-900 mb-2">Description</label>
+      <textarea
+        value={formData.description}
+        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        rows={2}
+        placeholder="Brief description of this check"
+      />
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <label className="block text-sm font-medium text-brand-900 mb-2">Asset Type</label>
+        <select
+          value={formData.assetType}
+          onChange={(e) => setFormData({ ...formData, assetType: e.target.value as any })}
+          className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          {ASSET_TYPE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-brand-900 mb-2">Frequency *</label>
+        <select
+          value={formData.frequency}
+          onChange={(e) => setFormData({ ...formData, frequency: e.target.value as any })}
+          className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+          required
+        >
+          {FREQUENCY_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-brand-900 mb-2">Guidance</label>
+      <textarea
+        value={formData.guidance}
+        onChange={(e) => setFormData({ ...formData, guidance: e.target.value })}
+        className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        rows={3}
+        placeholder="Instructions for completing this check"
+      />
+    </div>
+
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-brand-900">Requirements</label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={formData.requiresEvidence}
+          onChange={(e) => setFormData({ ...formData, requiresEvidence: e.target.checked })}
+          className="rounded border-brand-300"
+        />
+        <span className="text-sm text-brand-700">Requires photo evidence</span>
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={formData.requiresGPS}
+          onChange={(e) => setFormData({ ...formData, requiresGPS: e.target.checked })}
+          className="rounded border-brand-300"
+        />
+        <span className="text-sm text-brand-700">Requires GPS location</span>
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={formData.requiresSignature}
+          onChange={(e) => setFormData({ ...formData, requiresSignature: e.target.checked })}
+          className="rounded border-brand-300"
+        />
+        <span className="text-sm text-brand-700">Requires signature</span>
+      </label>
+    </div>
+
+    {/* Check Fields Section */}
+    <div className="border-t border-brand-200 pt-4">
+      <div className="flex items-center justify-between mb-3">
+        <label className="block text-sm font-medium text-brand-900">
+          Check Fields * ({formData.fields.length})
+        </label>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={onOpenFieldsModal}
+        >
+          <Plus className="w-3 h-3 mr-1" />
+          Add Field
+        </Button>
+      </div>
+
+      {formData.fields.length === 0 ? (
+        <p className="text-xs text-brand-600 bg-brand-50 p-3 rounded">
+          No fields added yet. Add at least one field for technicians to complete.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {formData.fields.map((field: CheckField, index: number) => (
+            <div
+              key={field.id}
+              className="flex items-center gap-2 p-2 bg-brand-50 rounded text-sm"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-brand-900 truncate">
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-1">*</span>}
+                </p>
+                <p className="text-xs text-brand-600">
+                  {field.type === 'enum' ? `Multiple choice (${field.options?.length || 0} options)` : field.type}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => onMoveField(index, 'up')}
+                  disabled={index === 0}
+                  className="p-1 text-brand-600 hover:bg-brand-100 rounded disabled:opacity-30"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onMoveField(index, 'down')}
+                  disabled={index === formData.fields.length - 1}
+                  className="p-1 text-brand-600 hover:bg-brand-100 rounded disabled:opacity-30"
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onEditField(field);
+                    onOpenFieldsModal();
+                  }}
+                  className="p-1 text-brand-600 hover:bg-brand-100 rounded"
+                >
+                  <Edit2 className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDeleteField(field.id)}
+                  className="p-1 text-red-600 hover:bg-red-50 rounded"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div className="flex items-center gap-3 pt-4">
+      <Button type="submit" variant="primary" className="flex-1">
+        {isEdit ? 'Save Changes' : 'Create Template'}
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onCancel}
+      >
+        Cancel
+      </Button>
+    </div>
+  </form>
+);
+
 export default function TemplatesPage() {
   const { userData } = useAuth();
   const [customTemplates, setCustomTemplates] = useState<CheckTemplate[]>([]);
@@ -337,209 +555,6 @@ export default function TemplatesPage() {
     );
   }
 
-  const TemplateForm = ({ onSubmit, isEdit }: { onSubmit: (e: React.FormEvent) => void; isEdit: boolean }) => (
-    <form onSubmit={onSubmit} className="space-y-4">
-      {error && <FormError message={error} />}
-
-      <div>
-        <label className="block text-sm font-medium text-brand-900 mb-2">Template Name *</label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-          placeholder="e.g., Monthly Fire Door Check"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-brand-900 mb-2">Description</label>
-        <textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-          rows={2}
-          placeholder="Brief description of this check"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-brand-900 mb-2">Asset Type</label>
-          <select
-            value={formData.assetType}
-            onChange={(e) => setFormData({ ...formData, assetType: e.target.value as any })}
-            className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-          >
-            {ASSET_TYPE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-brand-900 mb-2">Frequency *</label>
-          <select
-            value={formData.frequency}
-            onChange={(e) => setFormData({ ...formData, frequency: e.target.value as any })}
-            className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-            required
-          >
-            {FREQUENCY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-brand-900 mb-2">Guidance</label>
-        <textarea
-          value={formData.guidance}
-          onChange={(e) => setFormData({ ...formData, guidance: e.target.value })}
-          className="w-full px-3 py-2 border border-brand-300 text-sm text-brand-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-          rows={3}
-          placeholder="Instructions for completing this check"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-brand-900">Requirements</label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.requiresEvidence}
-            onChange={(e) => setFormData({ ...formData, requiresEvidence: e.target.checked })}
-            className="rounded border-brand-300"
-          />
-          <span className="text-sm text-brand-700">Requires photo evidence</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.requiresGPS}
-            onChange={(e) => setFormData({ ...formData, requiresGPS: e.target.checked })}
-            className="rounded border-brand-300"
-          />
-          <span className="text-sm text-brand-700">Requires GPS location</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.requiresSignature}
-            onChange={(e) => setFormData({ ...formData, requiresSignature: e.target.checked })}
-            className="rounded border-brand-300"
-          />
-          <span className="text-sm text-brand-700">Requires signature</span>
-        </label>
-      </div>
-
-      {/* Check Fields Section */}
-      <div className="border-t border-brand-200 pt-4">
-        <div className="flex items-center justify-between mb-3">
-          <label className="block text-sm font-medium text-brand-900">
-            Check Fields * ({formData.fields.length})
-          </label>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => setShowFieldsModal(true)}
-          >
-            <Plus className="w-3 h-3 mr-1" />
-            Add Field
-          </Button>
-        </div>
-
-        {formData.fields.length === 0 ? (
-          <p className="text-xs text-brand-600 bg-brand-50 p-3 rounded">
-            No fields added yet. Add at least one field for technicians to complete.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {formData.fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="flex items-center gap-2 p-2 bg-brand-50 rounded text-sm"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-brand-900 truncate">
-                    {field.label}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
-                  </p>
-                  <p className="text-xs text-brand-600">
-                    {field.type === 'enum' ? `Multiple choice (${field.options?.length || 0} options)` : field.type}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => handleMoveField(index, 'up')}
-                    disabled={index === 0}
-                    className="p-1 text-brand-600 hover:bg-brand-100 rounded disabled:opacity-30"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMoveField(index, 'down')}
-                    disabled={index === formData.fields.length - 1}
-                    className="p-1 text-brand-600 hover:bg-brand-100 rounded disabled:opacity-30"
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleEditField(field);
-                      setShowFieldsModal(true);
-                    }}
-                    className="p-1 text-brand-600 hover:bg-brand-100 rounded"
-                  >
-                    <Edit2 className="w-3 h-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteField(field.id)}
-                    className="p-1 text-red-600 hover:bg-red-50 rounded"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 pt-4">
-        <Button type="submit" variant="primary" className="flex-1">
-          {isEdit ? 'Save Changes' : 'Create Template'}
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => {
-            if (isEdit) {
-              setShowEditModal(false);
-              setEditingTemplate(null);
-            } else {
-              setShowCreateModal(false);
-            }
-            resetForm();
-          }}
-        >
-          Cancel
-        </Button>
-      </div>
-    </form>
-  );
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -699,7 +714,21 @@ export default function TemplatesPage() {
         title="Create Check Template"
         size="lg"
       >
-        <TemplateForm onSubmit={handleCreateTemplate} isEdit={false} />
+        <TemplateForm
+          formData={formData}
+          setFormData={setFormData}
+          error={error}
+          onSubmit={handleCreateTemplate}
+          isEdit={false}
+          onCancel={() => {
+            setShowCreateModal(false);
+            resetForm();
+          }}
+          onOpenFieldsModal={() => setShowFieldsModal(true)}
+          onEditField={handleEditField}
+          onDeleteField={handleDeleteField}
+          onMoveField={handleMoveField}
+        />
       </Modal>
 
       {/* Edit Template Modal */}
@@ -713,7 +742,22 @@ export default function TemplatesPage() {
         title="Edit Check Template"
         size="lg"
       >
-        <TemplateForm onSubmit={handleEditTemplate} isEdit={true} />
+        <TemplateForm
+          formData={formData}
+          setFormData={setFormData}
+          error={error}
+          onSubmit={handleEditTemplate}
+          isEdit={true}
+          onCancel={() => {
+            setShowEditModal(false);
+            setEditingTemplate(null);
+            resetForm();
+          }}
+          onOpenFieldsModal={() => setShowFieldsModal(true)}
+          onEditField={handleEditField}
+          onDeleteField={handleDeleteField}
+          onMoveField={handleMoveField}
+        />
       </Modal>
 
       {/* Field Builder Modal */}
