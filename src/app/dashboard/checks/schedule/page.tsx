@@ -157,7 +157,7 @@ export default function ScheduleCheckPage() {
   const selectedAssetData = assets.find((a) => a.id === selectedAsset);
   const availableTemplates = selectedAssetData
     ? DEFAULT_CHECK_TEMPLATES.filter(
-        (t) => t.assetType === selectedAssetData.type || t.assetType === 'other'
+        (t) => t.assetType === selectedAssetData.type || t.assetType === 'other' || t.assetType === undefined
       )
     : DEFAULT_CHECK_TEMPLATES;
 
