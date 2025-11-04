@@ -376,7 +376,13 @@ export default function ChecksPage() {
                       {getTemplateName(schedule.templateId)}
                     </h4>
                     <div className="flex items-center gap-4 text-sm text-brand-600">
-                      <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : getAssetName(schedule.assetId)}</span>
+                      <span>
+                        {schedule.assetIds && schedule.assetIds.length > 0
+                          ? schedule.assetIds.length === 1
+                            ? getAssetName(schedule.assetIds[0])
+                            : `${schedule.assetIds.length} assets`
+                          : getAssetName((schedule as any).assetId)}
+                      </span>
                       <span>•</span>
                       <span className="capitalize">{schedule.frequency}</span>
                     </div>

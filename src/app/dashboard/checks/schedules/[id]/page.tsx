@@ -76,8 +76,9 @@ export default function ScheduleDetailPage() {
       }
 
       // Fetch asset
-      if (scheduleData.assetId) {
-        const assetDoc = await getDoc(doc(db, 'assets', scheduleData.assetId));
+      const assetId = (scheduleData as any).assetId || (scheduleData.assetIds && scheduleData.assetIds[0]);
+      if (assetId) {
+        const assetDoc = await getDoc(doc(db, 'assets', assetId));
         if (assetDoc.exists()) {
           setAsset(assetDoc.data() as Asset);
 
