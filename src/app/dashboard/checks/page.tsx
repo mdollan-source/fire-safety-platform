@@ -369,24 +369,16 @@ export default function ChecksPage() {
                 <div
                   key={schedule.id}
                   className="flex items-center justify-between p-4 border border-brand-200 hover:bg-brand-50 transition-colors cursor-pointer"
-                  onClick={() => {
-                    // For now, allow user to toggle active status
-                    // TODO: Create dedicated schedule edit page
-                    const newActiveStatus = !schedule.active;
-                    updateDoc(doc(db, 'check_schedules', schedule.id), {
-                      active: newActiveStatus,
-                      updatedAt: new Date(),
-                    }).then(() => fetchData());
-                  }}
+                  onClick={() => router.push(`/dashboard/checks/schedules/${schedule.id}`)}
                 >
                   <div className="flex-1">
                     <h4 className="font-semibold text-brand-900 mb-1">
                       {getTemplateName(schedule.templateId)}
                     </h4>
                     <div className="flex items-center gap-4 text-sm text-brand-600">
-                      <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : 'All assets'}</span>
+                      <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : getAssetName(schedule.assetId)}</span>
                       <span>•</span>
-                      <span className="text-xs italic">Click to {schedule.active ? 'pause' : 'activate'}</span>
+                      <span className="capitalize">{schedule.frequency}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
