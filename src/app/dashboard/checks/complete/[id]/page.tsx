@@ -103,9 +103,15 @@ export default function CompleteCheckPage() {
 
       // Fetch asset if assetId exists
       if (taskData.assetId) {
-        const assetDoc = await getDoc(doc(db, 'assets', taskData.assetId));
-        if (assetDoc.exists()) {
-          setAsset(assetDoc.data() as Asset);
+        try {
+          const response = await fetch(`/api/assets/${taskData.assetId}`);
+          if (response.ok) {
+            const data = await response.json();
+            setAsset(data.asset);
+          }
+        } catch (err) {
+          console.error('Error fetching asset:', err);
+          // Continue without asset data - it's not critical for completing the check
         }
       }
     } catch (err) {
