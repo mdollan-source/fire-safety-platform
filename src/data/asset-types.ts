@@ -7,6 +7,12 @@ export type AssetType =
   | 'fire_door'
   | 'fire_alarm'
   | 'call_point'
+  | 'smoke_detector'
+  | 'heat_detector'
+  | 'co_detector'
+  | 'sounder'
+  | 'strobe'
+  | 'sounder_strobe'
   | 'emergency_lighting'
   | 'extinguisher'
   | 'sprinkler_system'
@@ -45,6 +51,54 @@ export const ASSET_TYPES: AssetTypeDefinition[] = [
     icon: 'AlertTriangle',
     description: 'Break glass call point',
     commonAttributes: ['location', 'type', 'address'],
+  },
+  {
+    id: 'smoke_detector',
+    name: 'Smoke Detector',
+    category: 'detection',
+    icon: 'CloudFog',
+    description: 'Optical or ionisation smoke detector',
+    commonAttributes: ['detectorType', 'location', 'zoneAddress', 'installDate', 'lastService'],
+  },
+  {
+    id: 'heat_detector',
+    name: 'Heat Detector',
+    category: 'detection',
+    icon: 'Thermometer',
+    description: 'Fixed temperature or rate-of-rise heat detector',
+    commonAttributes: ['detectorType', 'location', 'zoneAddress', 'installDate', 'lastService'],
+  },
+  {
+    id: 'co_detector',
+    name: 'CO Detector',
+    category: 'detection',
+    icon: 'Wind',
+    description: 'Carbon monoxide detector',
+    commonAttributes: ['location', 'zoneAddress', 'installDate', 'expiryDate'],
+  },
+  {
+    id: 'sounder',
+    name: 'Sounder',
+    category: 'detection',
+    icon: 'Volume2',
+    description: 'Audible fire alarm sounder/bell',
+    commonAttributes: ['location', 'zoneAddress', 'soundType', 'installDate'],
+  },
+  {
+    id: 'strobe',
+    name: 'Visual Alarm (Strobe)',
+    category: 'detection',
+    icon: 'Flashlight',
+    description: 'Visual alarm device (strobe/beacon)',
+    commonAttributes: ['location', 'zoneAddress', 'installDate'],
+  },
+  {
+    id: 'sounder_strobe',
+    name: 'Sounder/Strobe (Combined)',
+    category: 'detection',
+    icon: 'Speaker',
+    description: 'Combined audible and visual alarm device',
+    commonAttributes: ['location', 'zoneAddress', 'soundType', 'installDate'],
   },
 
   // Emergency Lighting

@@ -46,7 +46,7 @@ export const AssetsReportDocument: React.FC<AssetsReportProps> = ({ data, startD
         <Text style={styles.sectionTitle}>Assets by Type</Text>
         {Object.keys(assetsByType).map((type) => (
           <Text key={type} style={styles.text}>
-            {type.replace(/_/g, ' ').toUpperCase()}: {assetsByType[type].length}
+            {type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}: {assetsByType[type].length}
           </Text>
         ))}
 

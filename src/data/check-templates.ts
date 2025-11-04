@@ -524,6 +524,133 @@ export const TRAINING_DRILL_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 'crea
   ],
 };
 
+export const DETECTOR_INSPECTION_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> = {
+  name: 'Smoke/Heat Detector – Visual Inspection',
+  description: 'Visual inspection of fire detection devices',
+  assetType: 'smoke_detector',
+  frequency: 'monthly',
+  rrule: 'FREQ=MONTHLY',
+  requiresEvidence: false,
+  requiresGPS: true,
+  requiresSignature: true,
+  guidance: 'Visually inspect detector for damage, obstruction, and ensure indicator lights are functioning. Do not disturb detector head.',
+  references: ['BS 5839-1:2017 Clause 25'],
+  version: 1,
+  fields: [
+    {
+      id: 'detector_address',
+      label: 'Detector Address/Zone',
+      type: 'text',
+      required: true,
+      guidance: 'Enter the device address or zone number',
+    },
+    {
+      id: 'indicator_light',
+      label: 'Indicator light functioning',
+      type: 'enum',
+      required: true,
+      options: ['Yes', 'No', 'N/A'],
+    },
+    {
+      id: 'physical_condition',
+      label: 'Physical condition',
+      type: 'enum',
+      required: true,
+      options: ['Good', 'Dirty/Dusty', 'Damaged', 'Missing'],
+    },
+    {
+      id: 'obstruction',
+      label: 'Free from obstruction',
+      type: 'boolean',
+      required: true,
+      guidance: 'Check no furniture, equipment or decorations obstruct the detector',
+    },
+    {
+      id: 'secure_mounting',
+      label: 'Securely mounted',
+      type: 'boolean',
+      required: true,
+    },
+    {
+      id: 'result',
+      label: 'Overall result',
+      type: 'enum',
+      required: true,
+      options: ['Pass', 'Fail'],
+    },
+    {
+      id: 'notes',
+      label: 'Notes',
+      type: 'text',
+      required: false,
+      guidance: 'Note any issues or maintenance required',
+    },
+  ],
+};
+
+export const SOUNDER_STROBE_TEST_TEMPLATE: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> = {
+  name: 'Sounder/Strobe – Function Test',
+  description: 'Test audible and visual alarm devices during alarm test',
+  assetType: 'sounder',
+  frequency: 'weekly',
+  rrule: 'FREQ=WEEKLY;BYDAY=MO',
+  requiresEvidence: false,
+  requiresGPS: true,
+  requiresSignature: true,
+  guidance: 'During weekly alarm test, verify sounder operates correctly and visual device (if fitted) flashes. Check volume is adequate.',
+  references: ['BS 5839-1:2017'],
+  version: 1,
+  fields: [
+    {
+      id: 'device_address',
+      label: 'Device Address/Zone',
+      type: 'text',
+      required: true,
+    },
+    {
+      id: 'sounder_operated',
+      label: 'Sounder operated',
+      type: 'enum',
+      required: true,
+      options: ['Yes - Loud', 'Yes - Quiet', 'No', 'N/A'],
+    },
+    {
+      id: 'visual_operated',
+      label: 'Visual indicator operated (if fitted)',
+      type: 'enum',
+      required: true,
+      options: ['Yes', 'No', 'N/A'],
+    },
+    {
+      id: 'audible_throughout',
+      label: 'Audible throughout area',
+      type: 'boolean',
+      required: true,
+      guidance: 'Verify sounder can be heard clearly in the protected area',
+    },
+    {
+      id: 'physical_condition',
+      label: 'Physical condition',
+      type: 'enum',
+      required: true,
+      options: ['Good', 'Damaged', 'Missing'],
+    },
+    {
+      id: 'result',
+      label: 'Result',
+      type: 'enum',
+      required: true,
+      options: ['Pass', 'Fail'],
+    },
+    {
+      id: 'actions',
+      label: 'Actions required',
+      type: 'text',
+      required: false,
+    },
+  ],
+};
+
 // Export all templates as array
 export const DEFAULT_CHECK_TEMPLATES = [
   FIRE_ALARM_WEEKLY_TEMPLATE,
@@ -533,4 +660,6 @@ export const DEFAULT_CHECK_TEMPLATES = [
   SPRINKLER_WEEKLY_TEMPLATE,
   FALSE_ALARM_LOG_TEMPLATE,
   TRAINING_DRILL_TEMPLATE,
+  DETECTOR_INSPECTION_TEMPLATE,
+  SOUNDER_STROBE_TEST_TEMPLATE,
 ];
