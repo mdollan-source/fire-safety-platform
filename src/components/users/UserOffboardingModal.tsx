@@ -370,7 +370,7 @@ export default function UserOffboardingModal({
                     <option value="">Select a user...</option>
                     {availableUsers.map((user) => (
                       <option key={user.id} value={user.id}>
-                        {user.name} ({user.email}) - {user.role.replace(/_/g, ' ')}
+                        {user.name} ({user.email}) - {user.role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                       </option>
                     ))}
                   </select>
