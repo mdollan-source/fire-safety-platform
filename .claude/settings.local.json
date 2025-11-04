@@ -31,7 +31,8 @@
       "Bash(npm run security:migrate:check:*)",
       "Bash(git log:*)",
       "Bash(move \"src\\app\\api\\reports\\generate\\route.ts\" \"src\\app\\api\\reports\\generate\\route.tsx\")",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(time value\" errors on the frontend.\n\nNow properly converting all timestamp fields (asset, defects) to\nISO strings in the API, and parsing them back to Date objects on\nthe frontend.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

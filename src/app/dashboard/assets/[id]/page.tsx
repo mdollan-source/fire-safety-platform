@@ -76,21 +76,31 @@ export default function AssetDetailPage() {
 
       const responseData = await assetResponse.json();
 
-      // Set asset
-      setAsset(responseData.asset as Asset);
+      // Set asset with date conversion
+      const assetWithDates = {
+        ...responseData.asset,
+        createdAt: responseData.asset.createdAt ? new Date(responseData.asset.createdAt) : null,
+        updatedAt: responseData.asset.updatedAt ? new Date(responseData.asset.updatedAt) : null,
+        serviceDates: responseData.asset.serviceDates ? {
+          ...responseData.asset.serviceDates,
+          lastService: responseData.asset.serviceDates.lastService ? new Date(responseData.asset.serviceDates.lastService) : null,
+          nextService: responseData.asset.serviceDates.nextService ? new Date(responseData.asset.serviceDates.nextService) : null,
+        } : null,
+      };
+      setAsset(assetWithDates as Asset);
 
       // Set site
       if (responseData.site) {
         setSite(responseData.site as Site);
       }
 
-      // Set defects with proper date conversion
+      // Set defects with proper date conversion from ISO strings
       const defectsData = responseData.defects.map((defect: any) => ({
         ...defect,
-        createdAt: defect.createdAt?._seconds ? new Date(defect.createdAt._seconds * 1000) : null,
-        updatedAt: defect.updatedAt?._seconds ? new Date(defect.updatedAt._seconds * 1000) : null,
-        targetDate: defect.targetDate?._seconds ? new Date(defect.targetDate._seconds * 1000) : null,
-        resolvedAt: defect.resolvedAt?._seconds ? new Date(defect.resolvedAt._seconds * 1000) : null,
+        createdAt: defect.createdAt ? new Date(defect.createdAt) : null,
+        updatedAt: defect.updatedAt ? new Date(defect.updatedAt) : null,
+        targetDate: defect.targetDate ? new Date(defect.targetDate) : null,
+        resolvedAt: defect.resolvedAt ? new Date(defect.resolvedAt) : null,
       }));
       setDefects(defectsData);
     } catch (err: any) {

@@ -68,16 +68,34 @@ export async function GET(
       .where('assetId', '==', params.id)
       .get();
 
-    const defects = defectsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const defects = defectsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        // Convert Firestore timestamps to ISO strings for JSON serialization
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString() || null,
+        targetDate: data.targetDate?.toDate?.()?.toISOString() || null,
+        resolvedAt: data.resolvedAt?.toDate?.()?.toISOString() || null,
+      };
+    });
+
+    // Convert asset timestamps
+    const assetWithDates = {
+      id: assetDoc.id,
+      ...assetData,
+      createdAt: assetData?.createdAt?.toDate?.()?.toISOString() || null,
+      updatedAt: assetData?.updatedAt?.toDate?.()?.toISOString() || null,
+      serviceDates: assetData?.serviceDates ? {
+        ...assetData.serviceDates,
+        lastService: assetData.serviceDates.lastService?.toDate?.()?.toISOString() || null,
+        nextService: assetData.serviceDates.nextService?.toDate?.()?.toISOString() || null,
+      } : null,
+    };
 
     return NextResponse.json({
-      asset: {
-        id: assetDoc.id,
-        ...assetData,
-      },
+      asset: assetWithDates,
       site: siteData,
       defects: defects,
     });
