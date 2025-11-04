@@ -88,15 +88,25 @@ export default function ScheduleDetailPage() {
 
       // Fetch asset
       const assetId = (scheduleData as any).assetId || (scheduleData.assetIds && scheduleData.assetIds[0]);
+      console.log('Asset ID:', assetId);
+
       if (assetId) {
+        console.log('Fetching asset...');
         const assetDoc = await getDoc(doc(db, 'assets', assetId));
+        console.log('Asset doc exists:', assetDoc.exists());
+
         if (assetDoc.exists()) {
           setAsset(assetDoc.data() as Asset);
 
           // Fetch site
           const assetData = assetDoc.data() as Asset;
+          console.log('Asset siteId:', assetData.siteId);
+
           if (assetData.siteId) {
+            console.log('Fetching site...');
             const siteDoc = await getDoc(doc(db, 'sites', assetData.siteId));
+            console.log('Site doc exists:', siteDoc.exists());
+
             if (siteDoc.exists()) {
               setSite(siteDoc.data() as Site);
             }
@@ -105,11 +115,13 @@ export default function ScheduleDetailPage() {
       }
 
       // Fetch related tasks
+      console.log('Fetching tasks for schedule:', scheduleId);
       const tasksQuery = query(
         collection(db, 'tasks'),
         where('scheduleId', '==', scheduleId)
       );
       const tasksSnapshot = await getDocs(tasksQuery);
+      console.log('Tasks found:', tasksSnapshot.docs.length);
       const tasksData = tasksSnapshot.docs.map((doc) => doc.data() as CheckTask);
       setRelatedTasks(tasksData);
     } catch (err: any) {
