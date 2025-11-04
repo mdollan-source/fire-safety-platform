@@ -10,6 +10,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import FormError from '@/components/ui/FormError';
+import UserOffboardingModal from '@/components/users/UserOffboardingModal';
 import { ArrowLeft, Save, UserX, Shield, MapPin, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { formatUKDate } from '@/lib/utils/date';
 import { Site, UserRole } from '@/types';
@@ -41,6 +42,7 @@ export default function UserDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showOffboardingModal, setShowOffboardingModal] = useState(false);
 
   // Edit mode fields
   const [editMode, setEditMode] = useState(false);
@@ -176,23 +178,36 @@ export default function UserDetailPage() {
   const handleToggleStatus = async () => {
     if (!user) return;
 
+    // If deactivating, show offboarding modal
+    if (user.status === 'active') {
+      setShowOffboardingModal(true);
+      return;
+    }
+
+    // If reactivating, just update status directly
     try {
       setSaving(true);
-      const newStatus = user.status === 'active' ? 'inactive' : 'active';
 
       await updateDoc(doc(db, 'users', userId), {
-        status: newStatus,
+        status: 'active',
         updatedAt: new Date(),
       });
 
-      setUser({ ...user, status: newStatus, updatedAt: new Date() });
-      setSuccessMessage(`User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
+      setUser({ ...user, status: 'active', updatedAt: new Date() });
+      setSuccessMessage('User reactivated successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to update user status');
+      setError(err.message || 'Failed to reactivate user');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleOffboardingComplete = async () => {
+    // Reload user data to reflect deactivation
+    await fetchUserData();
+    setSuccessMessage('User successfully offboarded');
+    setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const handleDelete = async () => {
@@ -616,6 +631,17 @@ export default function UserDetailPage() {
           </Card>
         </div>
       </div>
+
+      {/* Offboarding Modal */}
+      {showOffboardingModal && user && (
+        <UserOffboardingModal
+          userId={user.id}
+          userName={user.name}
+          userOrgId={user.orgId}
+          onClose={() => setShowOffboardingModal(false)}
+          onComplete={handleOffboardingComplete}
+        />
+      )}
     </div>
   );
 }
