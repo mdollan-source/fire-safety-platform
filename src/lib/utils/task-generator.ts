@@ -3,7 +3,7 @@
  * Generates check tasks from schedules based on RRULE recurrence patterns
  */
 
-import { CheckSchedule, CheckTask } from '@/types';
+import { CheckSchedule, CheckTask, CheckTemplate } from '@/types';
 import { addDays, addWeeks, addMonths, addYears, startOfDay, isAfter, isBefore } from 'date-fns';
 
 /**
@@ -76,13 +76,32 @@ export function calculateNextDueDate(
  */
 export function generateTaskFromSchedule(
   schedule: CheckSchedule,
-  dueDate: Date
+  dueDate: Date,
+  template?: CheckTemplate,
+  taskIndexInCycle?: number
 ): Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'> {
   const scheduleAny = schedule as any;
+
+  // Determine assetId based on strategy
+  let assetId = scheduleAny.assetId; // Legacy single asset support
+
+  if (template && scheduleAny.assetIds && scheduleAny.assetIds.length > 0) {
+    if (template.strategy === 'rotate') {
+      // For rotation strategy: pick one asset based on rotation index
+      const rotationIndex = scheduleAny.rotationIndex || 0;
+      const offset = taskIndexInCycle || 0;
+      const assetIndex = (rotationIndex + offset) % scheduleAny.assetIds.length;
+      assetId = scheduleAny.assetIds[assetIndex];
+    } else if (template.strategy === 'all') {
+      // For 'all' strategy: set assetId to undefined (task covers all assets)
+      assetId = undefined;
+    }
+  }
+
   return {
     orgId: scheduleAny.orgId,
     siteId: scheduleAny.siteId,
-    assetId: scheduleAny.assetId,
+    assetId: assetId,
     scheduleId: scheduleAny.id,
     templateId: scheduleAny.templateId,
     dueDate: dueDate,
@@ -137,7 +156,8 @@ export function taskExistsForDate(
 export function generateTasksForSchedule(
   schedule: CheckSchedule,
   existingTasks: CheckTask[],
-  daysAhead: number = 30
+  daysAhead: number = 30,
+  template?: CheckTemplate
 ): Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> {
   const tasks: Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> = [];
 
@@ -147,12 +167,14 @@ export function generateTasksForSchedule(
 
   const endDate = addDays(new Date(), daysAhead);
   let currentDueDate = calculateNextDueDate(schedule, new Date());
+  let taskIndexInCycle = 0;
 
   // Generate tasks up to the end date
   while (currentDueDate && isBefore(currentDueDate, endDate)) {
     // Only create task if it doesn't already exist
     if (!taskExistsForDate(existingTasks, schedule.id, currentDueDate)) {
-      tasks.push(generateTaskFromSchedule(schedule, currentDueDate));
+      tasks.push(generateTaskFromSchedule(schedule, currentDueDate, template, taskIndexInCycle));
+      taskIndexInCycle++;
     }
 
     // Calculate next due date
@@ -160,4 +182,19 @@ export function generateTasksForSchedule(
   }
 
   return tasks;
+}
+
+/**
+ * Get the next rotation index for a schedule
+ * Call this after creating tasks to update the schedule's rotation
+ */
+export function getNextRotationIndex(
+  schedule: CheckSchedule,
+  tasksCreated: number
+): number {
+  const scheduleAny = schedule as any;
+  const currentIndex = scheduleAny.rotationIndex || 0;
+  const assetCount = scheduleAny.assetIds?.length || 1;
+
+  return (currentIndex + tasksCreated) % assetCount;
 }

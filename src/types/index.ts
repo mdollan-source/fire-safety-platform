@@ -199,11 +199,13 @@ export interface CheckTemplate {
   assetType?: AssetType;              // null = applies to all
   frequency: CheckFrequency;
   rrule: string;                      // RFC 5545 recurrence rule
+  strategy: 'all' | 'rotate';         // Check all assets at once or rotate through them
   fields: CheckField[];
   requiresEvidence: boolean;
   requiresGPS: boolean;
   requiresSignature: boolean;
   guidance?: string;                  // Micro-guidance for staff
+  complianceNote?: string;            // Brief explanation of legal requirement
   references?: string[];              // e.g., ["BS 5839-1:2017", "RRO Article 17"]
   version: number;                    // Template versioning
   createdAt: Date;
@@ -230,6 +232,7 @@ export interface CheckField {
 
 export interface Schedule {
   id: string;
+  orgId: string;
   siteId: string;
   templateId: string;
   assetIds?: string[];                // null = all assets of type
@@ -243,6 +246,8 @@ export interface Schedule {
   active: boolean;
   startDate: Date;
   endDate?: Date;
+  rotationIndex?: number;             // Tracks next asset in rotation (for rotate strategy)
+  lastRotatedAt?: Date;               // When rotation last occurred
   createdAt: Date;
   updatedAt: Date;
 }

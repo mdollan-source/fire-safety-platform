@@ -11,7 +11,7 @@ import Badge from '@/components/ui/Badge';
 import { CheckSchedule, Asset, CheckTask } from '@/types';
 import { DEFAULT_CHECK_TEMPLATES } from '@/data/check-templates';
 import { generateTasksForSchedule } from '@/lib/utils/task-generator';
-import { ClipboardCheck, Plus, Calendar, AlertCircle, CheckCircle2, Clock, Zap, User, UserCheck } from 'lucide-react';
+import { ClipboardCheck, Plus, Calendar, AlertCircle, CheckCircle2, Clock, Zap, User, UserCheck, HelpCircle } from 'lucide-react';
 import { formatUKDate } from '@/lib/utils/date';
 import { isToday, isPast, startOfDay, differenceInHours } from 'date-fns';
 
@@ -99,7 +99,12 @@ export default function ChecksPage() {
 
       // Generate tasks for each schedule
       for (const schedule of schedules) {
-        const newTasks = generateTasksForSchedule(schedule, tasks, 30); // Next 30 days
+        // Find the template for this schedule
+        const template = DEFAULT_CHECK_TEMPLATES.find(
+          (t) => t.name === schedule.templateId
+        );
+
+        const newTasks = generateTasksForSchedule(schedule, tasks, 30, template); // Next 30 days
 
         // Create each task in Firestore
         for (const taskData of newTasks) {
@@ -111,6 +116,20 @@ export default function ChecksPage() {
             updatedAt: new Date(),
           });
           createdCount++;
+        }
+
+        // Update rotation index if tasks were created and template has rotate strategy
+        if (newTasks.length > 0 && template?.strategy === 'rotate') {
+          const scheduleAny = schedule as any;
+          const currentIndex = scheduleAny.rotationIndex || 0;
+          const assetCount = scheduleAny.assetIds?.length || 1;
+          const nextIndex = (currentIndex + newTasks.length) % assetCount;
+
+          await updateDoc(doc(db, 'check_schedules', schedule.id), {
+            rotationIndex: nextIndex,
+            lastRotatedAt: new Date(),
+            updatedAt: new Date(),
+          });
         }
       }
 
@@ -244,6 +263,13 @@ export default function ChecksPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => router.push('/dashboard/help/checks')}
+          >
+            <HelpCircle className="w-4 h-4 mr-2" />
+            Help
+          </Button>
           {schedules.length > 0 && (
             <Button
               variant="secondary"

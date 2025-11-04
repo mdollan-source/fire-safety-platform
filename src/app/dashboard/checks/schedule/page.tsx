@@ -298,13 +298,31 @@ export default function ScheduleCheckPage() {
                 ))}
               </select>
               {selectedTemplateData && (
-                <div className="mt-2 p-3 bg-brand-50 border border-brand-200 text-xs">
-                  <p className="text-brand-900 font-medium mb-1">
+                <div className="mt-2 p-3 bg-brand-50 border border-brand-200 text-xs space-y-2">
+                  <p className="text-brand-900 font-medium">
                     {selectedTemplateData.description}
                   </p>
+                  {selectedTemplateData.complianceNote && (
+                    <div className="p-2 bg-blue-50 border border-blue-200">
+                      <p className="text-blue-900 font-medium text-xs mb-1">
+                        📋 Compliance Guidance:
+                      </p>
+                      <p className="text-blue-800 text-xs">
+                        {selectedTemplateData.complianceNote}
+                      </p>
+                    </div>
+                  )}
+                  {selectedTemplateData.strategy && (
+                    <p className="text-brand-700">
+                      <span className="font-medium">Strategy:</span>{' '}
+                      {selectedTemplateData.strategy === 'rotate'
+                        ? 'Rotates through assets - checks one asset per period'
+                        : 'Checks all assets each period'}
+                    </p>
+                  )}
                   {selectedTemplateData.references && (
                     <p className="text-brand-600">
-                      Standards: {selectedTemplateData.references.join(', ')}
+                      <span className="font-medium">Standards:</span> {selectedTemplateData.references.join(', ')}
                     </p>
                   )}
                 </div>
