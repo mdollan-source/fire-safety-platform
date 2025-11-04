@@ -77,7 +77,7 @@ export function calculateNextDueDate(
 export function generateTaskFromSchedule(
   schedule: CheckSchedule,
   dueDate: Date,
-  template?: CheckTemplate,
+  template?: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> | CheckTemplate,
   taskIndexInCycle?: number
 ): Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'> {
   const scheduleAny = schedule as any;
@@ -157,7 +157,7 @@ export function generateTasksForSchedule(
   schedule: CheckSchedule,
   existingTasks: CheckTask[],
   daysAhead: number = 30,
-  template?: CheckTemplate
+  template?: Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> | CheckTemplate
 ): Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> {
   const tasks: Array<Omit<CheckTask, 'id' | 'createdAt' | 'updatedAt'>> = [];
 
