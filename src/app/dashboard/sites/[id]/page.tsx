@@ -99,70 +99,24 @@ export default function SiteDetailPage() {
       setEditCountry(siteObj.address.country);
       setEditManagerIds(siteObj.managerIds || []);
 
-      // Debug: First, let's fetch ALL assets for this org to see what siteIds they have
-      const allAssetsSnapshot = await getDocs(query(
-        collection(db, 'assets'),
-        where('orgId', '==', currentUser!.orgId)
-      ));
-
-      console.log('=== ASSETS DEBUG ===');
-      console.log('Current site ID:', siteId);
-      console.log('Site ID type:', typeof siteId);
-      console.log('All assets in org:', allAssetsSnapshot.size);
-
-      allAssetsSnapshot.docs.forEach((doc, index) => {
-        const data = doc.data();
-        console.log(`Asset ${index}:`, {
-          id: doc.id,
-          assetId: data.id,
-          siteId: data.siteId,
-          siteIdType: typeof data.siteId,
-          match: data.siteId === siteId,
-          name: data.name,
-          tag: data.tag
-        });
-      });
-
-      // Fetch related data with individual error handling
-      let usersSnapshot: any;
-      let assetsSnapshot: any;
-      let defectsSnapshot: any;
-
-      try {
-        usersSnapshot = await getDocs(query(
+      // Fetch related data in parallel
+      const [usersSnapshot, assetsSnapshot, defectsSnapshot] = await Promise.all([
+        getDocs(query(
           collection(db, 'users'),
           where('orgId', '==', currentUser!.orgId)
-        ));
-        console.log('Users query succeeded:', usersSnapshot.size, 'documents');
-      } catch (err) {
-        console.error('Users query failed:', err);
-        usersSnapshot = { docs: [] };
-      }
-
-      try {
-        assetsSnapshot = await getDocs(query(
+        )),
+        getDocs(query(
           collection(db, 'assets'),
           where('orgId', '==', currentUser!.orgId),
           where('siteId', '==', siteId)
-        ));
-        console.log('Assets query with siteId filter succeeded:', assetsSnapshot.size, 'documents');
-      } catch (err) {
-        console.error('Assets query failed:', err);
-        assetsSnapshot = { docs: [] };
-      }
-
-      try {
-        defectsSnapshot = await getDocs(query(
+        )),
+        getDocs(query(
           collection(db, 'defects'),
           where('orgId', '==', currentUser!.orgId),
           where('siteId', '==', siteId),
           where('status', 'in', ['open', 'in_progress'])
-        ));
-        console.log('Defects query succeeded:', defectsSnapshot.size, 'documents');
-      } catch (err) {
-        console.error('Defects query failed:', err);
-        defectsSnapshot = { docs: [] };
-      }
+        )),
+      ]);
 
       setUsers(usersSnapshot.docs.map((doc: any) => ({
         id: doc.id,
@@ -172,15 +126,12 @@ export default function SiteDetailPage() {
         lastLogin: doc.data().lastLogin?.toDate(),
       })) as User[]);
 
-      const assetsData = assetsSnapshot.docs.map((doc: any) => ({
+      setAssets(assetsSnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
         updatedAt: doc.data().updatedAt?.toDate(),
-      })) as Asset[];
-
-      console.log('Processed assets:', assetsData.length, assetsData);
-      setAssets(assetsData);
+      })) as Asset[]);
 
       setDefects(defectsSnapshot.docs.map((doc: any) => ({
         id: doc.id,
