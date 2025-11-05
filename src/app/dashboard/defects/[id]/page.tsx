@@ -13,6 +13,7 @@ import { ArrowLeft, Save, AlertTriangle, MapPin, Calendar, User, CheckCircle2 } 
 import { useRouter, useParams } from 'next/navigation';
 import { formatUKDate } from '@/lib/utils/date';
 import { isPast } from 'date-fns';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function DefectDetailPage() {
   const { user } = useAuth();
@@ -23,6 +24,7 @@ export default function DefectDetailPage() {
   const [defect, setDefect] = useState<Defect | null>(null);
   const [asset, setAsset] = useState<Asset | null>(null);
   const [site, setSite] = useState<Site | null>(null);
+  const [createdByUser, setCreatedByUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState('');
@@ -71,6 +73,14 @@ export default function DefectDetailPage() {
         const assetDoc = await getDoc(doc(db, 'assets', defectData.assetId));
         if (assetDoc.exists()) {
           setAsset(assetDoc.data() as Asset);
+        }
+      }
+
+      // Fetch user who created the defect
+      if (defectData.createdBy) {
+        const userDoc = await getDoc(doc(db, 'users', defectData.createdBy));
+        if (userDoc.exists()) {
+          setCreatedByUser({ id: userDoc.id, ...userDoc.data() });
         }
       }
     } catch (error: any) {
@@ -398,7 +408,7 @@ export default function DefectDetailPage() {
                   <div>
                     <div className="text-xs text-brand-600">Raised By</div>
                     <div className="text-sm font-medium text-brand-900">
-                      {defect.createdBy || 'Unknown'}
+                      {createdByUser?.name || 'Unknown'}
                     </div>
                   </div>
                 </div>

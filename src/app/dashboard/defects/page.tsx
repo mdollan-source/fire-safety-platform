@@ -18,6 +18,7 @@ export default function DefectsPage() {
   const router = useRouter();
   const [defects, setDefects] = useState<Defect[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<DefectStatus | 'all'>('all');
   const [severityFilter, setSeverityFilter] = useState<DefectSeverity | 'all'>('all');
@@ -50,14 +51,23 @@ export default function DefectsPage() {
       });
       setDefects(defectsData);
 
-      // Fetch assets for names
-      const assetsQuery = query(
-        collection(db, 'assets'),
-        where('orgId', '==', userData!.orgId)
-      );
-      const assetsSnapshot = await getDocs(assetsQuery);
+      // Fetch assets and users for names
+      const [assetsSnapshot, usersSnapshot] = await Promise.all([
+        getDocs(query(
+          collection(db, 'assets'),
+          where('orgId', '==', userData!.orgId)
+        )),
+        getDocs(query(
+          collection(db, 'users'),
+          where('orgId', '==', userData!.orgId)
+        )),
+      ]);
+
       const assetsData = assetsSnapshot.docs.map((doc) => doc.data() as Asset);
       setAssets(assetsData);
+
+      const usersData = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setUsers(usersData);
     } catch (error) {
       console.error('Error fetching defects:', error);
     } finally {
@@ -69,6 +79,12 @@ export default function DefectsPage() {
     if (!assetId) return 'General Site';
     const asset = assets.find((a) => a.id === assetId);
     return asset?.name || 'Unknown Asset';
+  };
+
+  const getUserName = (userId?: string) => {
+    if (!userId) return 'Unknown';
+    const user = users.find((u) => u.id === userId);
+    return user?.name || 'Unknown User';
   };
 
   const getSeverityBadgeVariant = (severity: DefectSeverity): 'fail' | 'warning' | 'pending' => {
@@ -368,7 +384,7 @@ export default function DefectsPage() {
                         {defect.createdBy && (
                           <>
                             <span>•</span>
-                            <span>By: {defect.createdBy}</span>
+                            <span>By: {getUserName(defect.createdBy)}</span>
                           </>
                         )}
                       </div>
