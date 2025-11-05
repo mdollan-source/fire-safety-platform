@@ -142,6 +142,7 @@ export default function SiteDetailPage() {
       try {
         assetsSnapshot = await getDocs(query(
           collection(db, 'assets'),
+          where('orgId', '==', currentUser!.orgId),
           where('siteId', '==', siteId)
         ));
         console.log('Assets query with siteId filter succeeded:', assetsSnapshot.size, 'documents');
@@ -153,6 +154,7 @@ export default function SiteDetailPage() {
       try {
         defectsSnapshot = await getDocs(query(
           collection(db, 'defects'),
+          where('orgId', '==', currentUser!.orgId),
           where('siteId', '==', siteId),
           where('status', 'in', ['open', 'in_progress'])
         ));
