@@ -123,26 +123,46 @@ export default function SiteDetailPage() {
         });
       });
 
-      // Fetch related data in parallel
-      const [usersSnapshot, assetsSnapshot, defectsSnapshot] = await Promise.all([
-        getDocs(query(
+      // Fetch related data with individual error handling
+      let usersSnapshot: any;
+      let assetsSnapshot: any;
+      let defectsSnapshot: any;
+
+      try {
+        usersSnapshot = await getDocs(query(
           collection(db, 'users'),
           where('orgId', '==', currentUser!.orgId)
-        )),
-        getDocs(query(
+        ));
+        console.log('Users query succeeded:', usersSnapshot.size, 'documents');
+      } catch (err) {
+        console.error('Users query failed:', err);
+        usersSnapshot = { docs: [] };
+      }
+
+      try {
+        assetsSnapshot = await getDocs(query(
           collection(db, 'assets'),
           where('siteId', '==', siteId)
-        )),
-        getDocs(query(
+        ));
+        console.log('Assets query with siteId filter succeeded:', assetsSnapshot.size, 'documents');
+      } catch (err) {
+        console.error('Assets query failed:', err);
+        assetsSnapshot = { docs: [] };
+      }
+
+      try {
+        defectsSnapshot = await getDocs(query(
           collection(db, 'defects'),
           where('siteId', '==', siteId),
           where('status', 'in', ['open', 'in_progress'])
-        )),
-      ]);
+        ));
+        console.log('Defects query succeeded:', defectsSnapshot.size, 'documents');
+      } catch (err) {
+        console.error('Defects query failed:', err);
+        defectsSnapshot = { docs: [] };
+      }
 
-      console.log('Assets query with siteId filter returned:', assetsSnapshot.size, 'documents');
-
-      setUsers(usersSnapshot.docs.map((doc) => ({
+      setUsers(usersSnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
@@ -150,7 +170,7 @@ export default function SiteDetailPage() {
         lastLogin: doc.data().lastLogin?.toDate(),
       })) as User[]);
 
-      const assetsData = assetsSnapshot.docs.map((doc) => ({
+      const assetsData = assetsSnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
@@ -160,7 +180,7 @@ export default function SiteDetailPage() {
       console.log('Processed assets:', assetsData.length, assetsData);
       setAssets(assetsData);
 
-      setDefects(defectsSnapshot.docs.map((doc) => ({
+      setDefects(defectsSnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
