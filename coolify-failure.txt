@@ -1,137 +1,492 @@
 Oops something is not okay, are you okay? 😢
 #0 building with "default" instance using docker driver
 #1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 2.70kB done
+#1 transferring dockerfile: 2.72kB done
 #1 DONE 0.0s
 #2 [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
-#2 DONE 0.6s
+#2 DONE 0.4s
 #3 [internal] load .dockerignore
 #3 transferring context: 2B done
 #3 DONE 0.0s
-#4 [stage-0  1/11] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+#4 [ 1/11] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
 #4 DONE 0.0s
-#5 [internal] load build context
-#5 transferring context: 2.48MB 0.0s done
-#5 DONE 0.0s
-#6 [stage-0  2/11] WORKDIR /app/
-#6 CACHED
-#7 [stage-0  4/11] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
-#7 CACHED
-#8 [stage-0  3/11] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
-#8 CACHED
-#9 [stage-0  5/11] RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends curl wget
-#9 CACHED
-#10 [stage-0  6/11] COPY . /app/.
-#10 DONE 0.1s
-#11 [stage-0  7/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-/root/npm,target=/root/.npm npm ci
-#11 0.154 npm warn config production Use `--omit=dev` instead.
-#11 1.149 npm warn EBADENGINE Unsupported engine {
-#11 1.149 npm warn EBADENGINE   package: '@firebase/component@0.7.0',
-#11 1.149 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-#11 1.149 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.149 npm warn EBADENGINE }
-#11 1.149 npm warn EBADENGINE Unsupported engine {
-#11 1.149 npm warn EBADENGINE   package: '@firebase/database@1.1.0',
-#11 1.149 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-#11 1.149 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.149 npm warn EBADENGINE }
-#11 1.150 npm warn EBADENGINE Unsupported engine {
-#11 1.150 npm warn EBADENGINE   package: '@firebase/database-compat@2.1.0',
-#11 1.150 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-#11 1.150 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.150 npm warn EBADENGINE }
-#11 1.150 npm warn EBADENGINE Unsupported engine {
-#11 1.150 npm warn EBADENGINE   package: '@firebase/logger@0.5.0',
-#11 1.150 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-#11 1.150 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.150 npm warn EBADENGINE }
-#11 1.150 npm warn EBADENGINE Unsupported engine {
-#11 1.150 npm warn EBADENGINE   package: '@firebase/util@1.13.0',
-#11 1.150 npm warn EBADENGINE   required: { node: '>=20.0.0' },
-#11 1.150 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.150 npm warn EBADENGINE }
-#11 1.152 npm warn EBADENGINE Unsupported engine {
-#11 1.152 npm warn EBADENGINE   package: 'pdfjs-dist@5.4.296',
-#11 1.152 npm warn EBADENGINE   required: { node: '>=20.16.0 || >=22.3.0' },
-#11 1.152 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
-#11 1.152 npm warn EBADENGINE }
-#11 8.154 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-#11 8.261 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
-#11 8.314 npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
-#11 8.519 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-#11 8.522 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-#11 8.524 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-#11 8.630 npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
-#11 9.039 npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
-#11 9.111 npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
-#11 9.114 npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
-#11 26.56
-#11 26.56 added 980 packages, and audited 981 packages in 26s
-#11 26.56
-#11 26.56 163 packages are looking for funding
-#11 26.56   run `npm fund` for details
-#11 27.71
-#11 27.71 13 vulnerabilities (11 moderate, 2 high)
-#11 27.71
-#11 27.71 To address issues that do not require attention, run:
-#11 27.71   npm audit fix
-#11 27.71
-#11 27.71 To address all issues possible (including breaking changes), run:
-#11 27.71   npm audit fix --force
-#11 27.71
-#11 27.71 Some issues need review, and may require choosing
-#11 27.71 a different dependency.
-#11 27.71
-#11 27.71 Run `npm audit` for details.
-#11 DONE 28.3s
-#12 [stage-0  8/11] COPY . /app/.
+#5 [ 2/11] WORKDIR /app/
+#5 CACHED
+#6 [internal] load build context
+#6 transferring context: 2.54MB 0.0s done
+#6 DONE 0.0s
+#7 [ 3/11] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+#7 DONE 0.1s
+#8 [ 4/11] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+#8 0.096 unpacking 'https://github.com/NixOS/nixpkgs/archive/ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.tar.gz' into the Git cache...
+#8 34.95 unpacking 'https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz' into the Git cache...
+#8 35.66 installing 'ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7-env'
+#8 36.75 these 5 derivations will be built:
+#8 36.75   /nix/store/6vy68gykpxfphbmmyd59ya88xvrwvvaa-npm-9.9.4.tgz.drv
+#8 36.75   /nix/store/kmkgqwwal88b9lch9dl53iqa3wsm6vdb-libraries.drv
+#8 36.75   /nix/store/91aaayacr12psqb9fmp8arg1xafgg9v2-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7-env.drv
+#8 36.75   /nix/store/w9h0z1lhfwxc0m38f3w5brfdqrzm4wyj-npm.drv
+#8 36.75   /nix/store/94vg625x6afnxrskgihra9amqyxwn38q-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7-env.drv
+#8 36.75 these 82 paths will be fetched (117.89 MiB download, 563.18 MiB unpacked):
+#8 36.75   /nix/store/cf7gkacyxmm66lwl5nj6j6yykbrg4q5c-acl-2.3.2
+#8 36.75   /nix/store/a9jgnlhkjkxav6qrc3rzg2q84pkl2wvr-attr-2.5.2
+#8 36.75   /nix/store/5mh7kaj2fyv8mk4sfq1brwxgc02884wi-bash-5.2p37
+#8 36.75   /nix/store/j7p46r8v9gcpbxx89pbqlh61zhd33gzv-binutils-2.43.1
+#8 36.75   /nix/store/df2a8k58k00f2dh2x930dg6xs6g6mliv-binutils-2.43.1-lib
+#8 36.75   /nix/store/srcmmqi8kxjfygd0hyy42c8hv6cws83b-binutils-wrapper-2.43.1
+#8 36.75   /nix/store/wf5zj2gbib3gjqllkabxaw4dh0gzcla3-builder.pl
+#8 36.75   /nix/store/ivl2v8rgg7qh1jkj5pwpqycax3rc2hnl-bzip2-1.0.8
+#8 36.75   /nix/store/mglixp03lsp0w986svwdvm7vcy17rdax-bzip2-1.0.8-bin
+#8 36.75   /nix/store/4s9rah4cwaxflicsk5cndnknqlk9n4p3-coreutils-9.5
+#8 36.75   /nix/store/pkc7mb4a4qvyz73srkqh4mwl70w98dsv-curl-8.11.0
+#8 36.75   /nix/store/p123cq20klajcl9hj8jnkjip5nw6awhz-curl-8.11.0-bin
+#8 36.75   /nix/store/5f5linrxzhhb3mrclkwdpm9bd8ygldna-curl-8.11.0-dev
+#8 36.75   /nix/store/agvks3qmzja0yj54szi3vja6vx3cwkkw-curl-8.11.0-man
+#8 36.75   /nix/store/00g69vw7c9lycy63h45ximy0wmzqx5y6-diffutils-3.10
+#8 36.75   /nix/store/74h4z8k82pmp24xryflv4lxkz8jlpqqd-ed-1.20.2
+#8 36.75   /nix/store/qbry6090vlr9ar33kdmmbq2p5apzbga8-expand-response-params
+#8 36.75   /nix/store/c4rj90r2m89rxs64hmm857mipwjhig5d-file-5.46
+#8 36.75   /nix/store/jqrz1vq5nz4lnv9pqzydj0ir58wbjfy1-findutils-4.10.0
+#8 36.75   /nix/store/a3c47r5z1q2c4rz0kvq8hlilkhx2s718-gawk-5.3.1
+#8 36.75   /nix/store/l89iqc7am6i60y8vk507zwrzxf0wcd3v-gcc-14-20241116
+#8 36.75   /nix/store/bpq1s72cw9qb2fs8mnmlw6hn2c7iy0ss-gcc-14-20241116-lib
+#8 36.75   /nix/store/17v0ywnr3akp85pvdi56gwl99ljv95kx-gcc-14-20241116-libgcc
+#8 36.75   /nix/store/xcn9p4xxfbvlkpah7pwchpav4ab9d135-gcc-wrapper-14-20241116
+#8 36.75   /nix/store/65h17wjrrlsj2rj540igylrx7fqcd6vq-glibc-2.40-36
+#8 36.75   /nix/store/1c6bmxrrhm8bd26ai2rjqld2yyjrxhds-glibc-2.40-36-bin
+#8 36.75   /nix/store/kj8hbqx4ds9qm9mq7hyikxyfwwg13kzj-glibc-2.40-36-dev
+#8 36.75   /nix/store/kryrg7ds05iwcmy81amavk8w13y4lxbs-gmp-6.3.0
+#8 36.75   /nix/store/a2byxfv4lc8f2g5xfzw8cz5q8k05wi29-gmp-with-cxx-6.3.0
+#8 36.75   /nix/store/1m67ipsk39xvhyqrxnzv2m2p48pil8kl-gnu-config-2024-01-01
+#8 36.75   /nix/store/aap6cq56amx4mzbyxp2wpgsf1kqjcr1f-gnugrep-3.11
+#8 36.75   /nix/store/fp6cjl1zcmm6mawsnrb5yak1wkz2ma8l-gnumake-4.4.1
+#8 36.75   /nix/store/abm77lnrkrkb58z6xp1qwjcr1xgkcfwm-gnused-4.9
+#8 36.75   /nix/store/9cwwj1c9csmc85l2cqzs3h9hbf1vwl6c-gnutar-1.35
+#8 36.75   /nix/store/nvvj6sk0k6px48436drlblf4gafgbvzr-gzip-1.13
+#8 36.75   /nix/store/wwipgdqb4p2fr46kmw9c5wlk799kbl68-icu4c-74.2
+#8 36.75   /nix/store/m8w3mf0i4862q22bxad0wspkgdy4jnkk-icu4c-74.2-dev
+#8 36.75   /nix/store/xmbv8s4p4i4dbxgkgdrdfb0ym25wh6gk-isl-0.20
+#8 36.75   /nix/store/2wh1gqyzf5xsvxpdz2k0bxiz583wwq29-keyutils-1.6.3-lib
+#8 36.75   /nix/store/milph81dilrh96isyivh5n50agpx39k2-krb5-1.21.3
+#8 36.75   /nix/store/b56mswksrql15knpb1bnhv3ysif340kd-krb5-1.21.3-dev
+#8 36.75   /nix/store/v9c1s50x7magpiqgycxxkn36avzbcg0g-krb5-1.21.3-lib
+#8 36.75   /nix/store/nlqind4szw3amcmhgy4pd2n0894558gg-libX11-1.8.10
+#8 36.75   /nix/store/hjbxiwsc587b8dc6v6pisa34aj10hq23-libXau-1.0.11
+#8 36.75   /nix/store/c9gk656q2x8av467r06hcjag31drjfzh-libXdmcp-1.1.5
+#8 36.75   /nix/store/r87iqz07igmwfvb12mgr6rmpb6353ys4-libXext-1.3.6
+#8 36.75   /nix/store/5mb70vg3kdzkyn0zqdgm4f87mdi0yi4i-libglvnd-1.7.0
+#8 36.75   /nix/store/34z2792zyd4ayl5186vx0s98ckdaccz9-libidn2-2.3.7
+#8 36.75   /nix/store/2a3anh8vl3fcgk0fvaravlimrqawawza-libmpc-1.3.1
+#8 36.75   /nix/store/8675pnfr4fqnwv4pzjl67hdwls4q13aa-libssh2-1.11.1
+#8 36.75   /nix/store/d7zhcrcc7q3yfbm3qkqpgc3daq82spwi-libssh2-1.11.1-dev
+#8 36.75   /nix/store/xcqcgqazykf6s7fsn08k0blnh0wisdcl-libunistring-1.3
+#8 36.75   /nix/store/r9ac2hwnmb0nxwsrvr6gi9wsqf2whfqj-libuv-1.49.2
+#8 36.75   /nix/store/ll14czvpxglf6nnwmmrmygplm830fvlv-libuv-1.49.2-dev
+#8 36.75   /nix/store/2j3c18398phz5c1376x2qvva8gx9g551-libxcb-1.17.0
+#8 36.75   /nix/store/6cr0spsvymmrp1hj5n0kbaxw55w1lqyp-libxcrypt-4.4.36
+#8 36.75   /nix/store/pc74azbkr19rkd5bjalq2xwx86cj3cga-linux-headers-6.12
+#8 36.75   /nix/store/fv7gpnvg922frkh81w5hkdhpz0nw3iiz-mirrors-list
+#8 36.75   /nix/store/qs22aazzrdd4dnjf9vffl0n31hvls43h-mpfr-4.2.1
+#8 36.75   /nix/store/grixvx878884hy8x3xs0c0s1i00j632k-nghttp2-1.64.0
+#8 36.75   /nix/store/dz97fw51rm5bl9kz1vg0haj1j1a7r1mr-nghttp2-1.64.0-dev
+#8 36.75   /nix/store/qcghigzrz56vczwlzg9c02vbs6zr9jkz-nghttp2-1.64.0-lib
+#8 36.75   /nix/store/wlpq101dsifq98z2bk300x4dk80wcybr-nodejs-18.20.5
+#8 36.75   /nix/store/9l9n7a0v4aibcz0sgd0crs209an9p7dz-openssl-3.3.2
+#8 36.75   /nix/store/h1ydpxkw9qhjdxjpic1pdc2nirggyy6f-openssl-3.3.2
+#8 36.75   /nix/store/lygl27c44xv73kx1spskcgvzwq7z337c-openssl-3.3.2-bin
+#8 36.75   /nix/store/qq5q0alyzywdazhmybi7m69akz0ppk05-openssl-3.3.2-bin
+#8 36.75   /nix/store/kqm7wpqkzc4bwjlzqizcbz0mgkj06a9x-openssl-3.3.2-dev
+#8 36.75   /nix/store/pp2zf8bdgyz60ds8vcshk2603gcjgp72-openssl-3.3.2-dev
+#8 36.75   /nix/store/5yja5dpk2qw1v5mbfbl2d7klcdfrh90w-patch-2.7.6
+#8 36.75   /nix/store/srfxqk119fijwnprgsqvn68ys9kiw0bn-patchelf-0.15.0
+#8 36.75   /nix/store/3j1p598fivxs69wx3a657ysv3rw8k06l-pcre2-10.44
+#8 36.75   /nix/store/1i003ijlh9i0mzp6alqby5hg3090pjdx-perl-5.40.0
+#8 36.75   /nix/store/4ig84cyqi6qy4n0sanrbzsw1ixa497jx-stdenv-linux
+#8 36.75   /nix/store/d0gfdcag8bxzvg7ww4s7px4lf8sxisyx-stdenv-linux
+#8 36.75   /nix/store/d29r1bdmlvwmj52apgcdxfl1mm9c5782-update-autotools-gnu-config-scripts-hook
+#8 36.75   /nix/store/2phvd8h14vwls0da1kmsxc73vzmhkm3b-util-linux-minimal-2.39.4-lib
+#8 36.75   /nix/store/acfkqzj5qrqs88a4a6ixnybbjxja663d-xgcc-14-20241116-libgcc
+#8 36.75   /nix/store/c2njy6bv84kw1i4bjf5k5gn7gz8hn57n-xz-5.6.3
+#8 36.75   /nix/store/h18s640fnhhj2qdh5vivcfbxvz377srg-xz-5.6.3-bin
+#8 36.75   /nix/store/cqlaa2xf6lslnizyj9xqa8j0ii1yqw0x-zlib-1.3.1
+#8 36.75   /nix/store/1lggwqzapn5mn49l9zy4h566ysv9kzdb-zlib-1.3.1-dev
+#8 36.76 copying path '/nix/store/wf5zj2gbib3gjqllkabxaw4dh0gzcla3-builder.pl' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/17v0ywnr3akp85pvdi56gwl99ljv95kx-gcc-14-20241116-libgcc' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/1m67ipsk39xvhyqrxnzv2m2p48pil8kl-gnu-config-2024-01-01' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/acfkqzj5qrqs88a4a6ixnybbjxja663d-xgcc-14-20241116-libgcc' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/xcqcgqazykf6s7fsn08k0blnh0wisdcl-libunistring-1.3' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/pc74azbkr19rkd5bjalq2xwx86cj3cga-linux-headers-6.12' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/fv7gpnvg922frkh81w5hkdhpz0nw3iiz-mirrors-list' from 'https://cache.nixos.org'...
+#8 36.77 copying path '/nix/store/agvks3qmzja0yj54szi3vja6vx3cwkkw-curl-8.11.0-man' from 'https://cache.nixos.org'...
+#8 36.78 copying path '/nix/store/grixvx878884hy8x3xs0c0s1i00j632k-nghttp2-1.64.0' from 'https://cache.nixos.org'...
+#8 36.79 copying path '/nix/store/d29r1bdmlvwmj52apgcdxfl1mm9c5782-update-autotools-gnu-config-scripts-hook' from 'https://cache.nixos.org'...
+#8 36.84 copying path '/nix/store/34z2792zyd4ayl5186vx0s98ckdaccz9-libidn2-2.3.7' from 'https://cache.nixos.org'...
+#8 36.87 copying path '/nix/store/65h17wjrrlsj2rj540igylrx7fqcd6vq-glibc-2.40-36' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/a9jgnlhkjkxav6qrc3rzg2q84pkl2wvr-attr-2.5.2' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/5mh7kaj2fyv8mk4sfq1brwxgc02884wi-bash-5.2p37' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/ivl2v8rgg7qh1jkj5pwpqycax3rc2hnl-bzip2-1.0.8' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/a3c47r5z1q2c4rz0kvq8hlilkhx2s718-gawk-5.3.1' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/qbry6090vlr9ar33kdmmbq2p5apzbga8-expand-response-params' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/fp6cjl1zcmm6mawsnrb5yak1wkz2ma8l-gnumake-4.4.1' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/hjbxiwsc587b8dc6v6pisa34aj10hq23-libXau-1.0.11' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/c9gk656q2x8av467r06hcjag31drjfzh-libXdmcp-1.1.5' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/kryrg7ds05iwcmy81amavk8w13y4lxbs-gmp-6.3.0' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/74h4z8k82pmp24xryflv4lxkz8jlpqqd-ed-1.20.2' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/2wh1gqyzf5xsvxpdz2k0bxiz583wwq29-keyutils-1.6.3-lib' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/abm77lnrkrkb58z6xp1qwjcr1xgkcfwm-gnused-4.9' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/1c6bmxrrhm8bd26ai2rjqld2yyjrxhds-glibc-2.40-36-bin' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/r9ac2hwnmb0nxwsrvr6gi9wsqf2whfqj-libuv-1.49.2' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/bpq1s72cw9qb2fs8mnmlw6hn2c7iy0ss-gcc-14-20241116-lib' from 'https://cache.nixos.org'...
+#8 37.37 copying path '/nix/store/6cr0spsvymmrp1hj5n0kbaxw55w1lqyp-libxcrypt-4.4.36' from 'https://cache.nixos.org'...
+#8 37.40 copying path '/nix/store/qcghigzrz56vczwlzg9c02vbs6zr9jkz-nghttp2-1.64.0-lib' from 'https://cache.nixos.org'...
+#8 37.40 copying path '/nix/store/9l9n7a0v4aibcz0sgd0crs209an9p7dz-openssl-3.3.2' from 'https://cache.nixos.org'...
+#8 37.44 copying path '/nix/store/h1ydpxkw9qhjdxjpic1pdc2nirggyy6f-openssl-3.3.2' from 'https://cache.nixos.org'...
+#8 37.45 copying path '/nix/store/mglixp03lsp0w986svwdvm7vcy17rdax-bzip2-1.0.8-bin' from 'https://cache.nixos.org'...
+#8 37.45 copying path '/nix/store/c2njy6bv84kw1i4bjf5k5gn7gz8hn57n-xz-5.6.3' from 'https://cache.nixos.org'...
+#8 37.45 copying path '/nix/store/2phvd8h14vwls0da1kmsxc73vzmhkm3b-util-linux-minimal-2.39.4-lib' from 'https://cache.nixos.org'...
+#8 37.45 copying path '/nix/store/3j1p598fivxs69wx3a657ysv3rw8k06l-pcre2-10.44' from 'https://cache.nixos.org'...
+#8 37.45 copying path '/nix/store/cf7gkacyxmm66lwl5nj6j6yykbrg4q5c-acl-2.3.2' from 'https://cache.nixos.org'...
+#8 37.46 copying path '/nix/store/dz97fw51rm5bl9kz1vg0haj1j1a7r1mr-nghttp2-1.64.0-dev' from 'https://cache.nixos.org'...
+#8 37.46 copying path '/nix/store/2j3c18398phz5c1376x2qvva8gx9g551-libxcb-1.17.0' from 'https://cache.nixos.org'...
+#8 37.49 copying path '/nix/store/xmbv8s4p4i4dbxgkgdrdfb0ym25wh6gk-isl-0.20' from 'https://cache.nixos.org'...
+#8 37.49 copying path '/nix/store/ll14czvpxglf6nnwmmrmygplm830fvlv-libuv-1.49.2-dev' from 'https://cache.nixos.org'...
+#8 37.49 copying path '/nix/store/nvvj6sk0k6px48436drlblf4gafgbvzr-gzip-1.13' from 'https://cache.nixos.org'...
+#8 37.51 copying path '/nix/store/5yja5dpk2qw1v5mbfbl2d7klcdfrh90w-patch-2.7.6' from 'https://cache.nixos.org'...
+#8 37.52 copying path '/nix/store/qs22aazzrdd4dnjf9vffl0n31hvls43h-mpfr-4.2.1' from 'https://cache.nixos.org'...
+#8 37.53 copying path '/nix/store/h18s640fnhhj2qdh5vivcfbxvz377srg-xz-5.6.3-bin' from 'https://cache.nixos.org'...
+#8 37.53 copying path '/nix/store/cqlaa2xf6lslnizyj9xqa8j0ii1yqw0x-zlib-1.3.1' from 'https://cache.nixos.org'...
+#8 37.53 copying path '/nix/store/9cwwj1c9csmc85l2cqzs3h9hbf1vwl6c-gnutar-1.35' from 'https://cache.nixos.org'...
+#8 37.56 copying path '/nix/store/kj8hbqx4ds9qm9mq7hyikxyfwwg13kzj-glibc-2.40-36-dev' from 'https://cache.nixos.org'...
+#8 37.58 copying path '/nix/store/1lggwqzapn5mn49l9zy4h566ysv9kzdb-zlib-1.3.1-dev' from 'https://cache.nixos.org'...
+#8 37.58 copying path '/nix/store/aap6cq56amx4mzbyxp2wpgsf1kqjcr1f-gnugrep-3.11' from 'https://cache.nixos.org'...
+#8 37.58 copying path '/nix/store/c4rj90r2m89rxs64hmm857mipwjhig5d-file-5.46' from 'https://cache.nixos.org'...
+#8 37.58 copying path '/nix/store/df2a8k58k00f2dh2x930dg6xs6g6mliv-binutils-2.43.1-lib' from 'https://cache.nixos.org'...
+#8 37.60 copying path '/nix/store/2a3anh8vl3fcgk0fvaravlimrqawawza-libmpc-1.3.1' from 'https://cache.nixos.org'...
+#8 37.60 copying path '/nix/store/nlqind4szw3amcmhgy4pd2n0894558gg-libX11-1.8.10' from 'https://cache.nixos.org'...
+#8 37.63 copying path '/nix/store/qq5q0alyzywdazhmybi7m69akz0ppk05-openssl-3.3.2-bin' from 'https://cache.nixos.org'...
+#8 37.64 copying path '/nix/store/8675pnfr4fqnwv4pzjl67hdwls4q13aa-libssh2-1.11.1' from 'https://cache.nixos.org'...
+#8 37.64 copying path '/nix/store/v9c1s50x7magpiqgycxxkn36avzbcg0g-krb5-1.21.3-lib' from 'https://cache.nixos.org'...
+#8 37.70 copying path '/nix/store/kqm7wpqkzc4bwjlzqizcbz0mgkj06a9x-openssl-3.3.2-dev' from 'https://cache.nixos.org'...
+#8 37.75 copying path '/nix/store/lygl27c44xv73kx1spskcgvzwq7z337c-openssl-3.3.2-bin' from 'https://cache.nixos.org'...
+#8 37.76 copying path '/nix/store/milph81dilrh96isyivh5n50agpx39k2-krb5-1.21.3' from 'https://cache.nixos.org'...
+#8 37.76 copying path '/nix/store/pkc7mb4a4qvyz73srkqh4mwl70w98dsv-curl-8.11.0' from 'https://cache.nixos.org'...
+#8 37.77 copying path '/nix/store/r87iqz07igmwfvb12mgr6rmpb6353ys4-libXext-1.3.6' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/j7p46r8v9gcpbxx89pbqlh61zhd33gzv-binutils-2.43.1' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/l89iqc7am6i60y8vk507zwrzxf0wcd3v-gcc-14-20241116' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/srfxqk119fijwnprgsqvn68ys9kiw0bn-patchelf-0.15.0' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/wwipgdqb4p2fr46kmw9c5wlk799kbl68-icu4c-74.2' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/a2byxfv4lc8f2g5xfzw8cz5q8k05wi29-gmp-with-cxx-6.3.0' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/d7zhcrcc7q3yfbm3qkqpgc3daq82spwi-libssh2-1.11.1-dev' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/5mb70vg3kdzkyn0zqdgm4f87mdi0yi4i-libglvnd-1.7.0' from 'https://cache.nixos.org'...
+#8 37.78 copying path '/nix/store/pp2zf8bdgyz60ds8vcshk2603gcjgp72-openssl-3.3.2-dev' from 'https://cache.nixos.org'...
+#8 37.81 copying path '/nix/store/b56mswksrql15knpb1bnhv3ysif340kd-krb5-1.21.3-dev' from 'https://cache.nixos.org'...
+#8 37.84 copying path '/nix/store/p123cq20klajcl9hj8jnkjip5nw6awhz-curl-8.11.0-bin' from 'https://cache.nixos.org'...
+#8 37.85 copying path '/nix/store/4s9rah4cwaxflicsk5cndnknqlk9n4p3-coreutils-9.5' from 'https://cache.nixos.org'...
+#8 37.96 copying path '/nix/store/5f5linrxzhhb3mrclkwdpm9bd8ygldna-curl-8.11.0-dev' from 'https://cache.nixos.org'...
+#8 38.05 copying path '/nix/store/1i003ijlh9i0mzp6alqby5hg3090pjdx-perl-5.40.0' from 'https://cache.nixos.org'...
+#8 38.05 copying path '/nix/store/jqrz1vq5nz4lnv9pqzydj0ir58wbjfy1-findutils-4.10.0' from 'https://cache.nixos.org'...
+#8 38.05 copying path '/nix/store/00g69vw7c9lycy63h45ximy0wmzqx5y6-diffutils-3.10' from 'https://cache.nixos.org'...
+#8 38.19 copying path '/nix/store/4ig84cyqi6qy4n0sanrbzsw1ixa497jx-stdenv-linux' from 'https://cache.nixos.org'...
+#8 38.22 building '/nix/store/kmkgqwwal88b9lch9dl53iqa3wsm6vdb-libraries.drv'...
+#8 38.26 building '/nix/store/6vy68gykpxfphbmmyd59ya88xvrwvvaa-npm-9.9.4.tgz.drv'...
+#8 38.47 building '/nix/store/91aaayacr12psqb9fmp8arg1xafgg9v2-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7-env.drv'...
+#8 38.47 copying path '/nix/store/srcmmqi8kxjfygd0hyy42c8hv6cws83b-binutils-wrapper-2.43.1' from 'https://cache.nixos.org'...
+#8 38.55
+#8 38.55 trying https://registry.npmjs.org/npm/-/npm-9.9.4.tgz
+#8 38.56   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+#8 38.56                                  Dload  Upload   Total   Spent    Left  Speed
+#8 38.62 100 2648k  100 2648k    0     0  41.8M      0 --:--:-- --:--:-- --:--:-- 42.3M
+#8 38.69 copying path '/nix/store/m8w3mf0i4862q22bxad0wspkgdy4jnkk-icu4c-74.2-dev' from 'https://cache.nixos.org'...
+#8 38.79 copying path '/nix/store/wlpq101dsifq98z2bk300x4dk80wcybr-nodejs-18.20.5' from 'https://cache.nixos.org'...
+#8 41.62 copying path '/nix/store/xcn9p4xxfbvlkpah7pwchpav4ab9d135-gcc-wrapper-14-20241116' from 'https://cache.nixos.org'...
+#8 41.64 copying path '/nix/store/d0gfdcag8bxzvg7ww4s7px4lf8sxisyx-stdenv-linux' from 'https://cache.nixos.org'...
+#8 41.67 building '/nix/store/w9h0z1lhfwxc0m38f3w5brfdqrzm4wyj-npm.drv'...
+#8 41.74 Running phase: unpackPhase
+#8 41.74 unpacking source archive /nix/store/fkd1ma3nify8r9wp463yg5rqz9hdcyf1-npm-9.9.4.tgz
+#8 41.87 source root is package
+#8 41.94 setting SOURCE_DATE_EPOCH to timestamp 499162500 of file package/package.json
+#8 41.94 Running phase: installPhase
+#8 42.75 building '/nix/store/94vg625x6afnxrskgihra9amqyxwn38q-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7-env.drv'...
+#8 42.84 created 33 symlinks in user environment
+#8 43.02 building '/nix/store/x1k5kvj9qb09z16sk5akkrbvvfjcls3n-user-environment.drv'...
+#8 43.18 removing old generations of profile /nix/var/nix/profiles/per-user/root/profile
+#8 43.18 removing profile version 1
+#8 43.18 removing old generations of profile /nix/var/nix/profiles/per-user/root/channels
+#8 43.18 removing old generations of profile /nix/var/nix/profiles/per-user/root/profile
+#8 43.18 removing old generations of profile /nix/var/nix/profiles/per-user/root/channels
+#8 43.18 finding garbage collector roots...
+#8 43.18 removing stale link from '/nix/var/nix/gcroots/auto/lzjbmb2ry0z7lma2fvpqprb12921pnb5' to '/nix/var/nix/profiles/per-user/root/profile-1-link'
+#8 43.18 deleting garbage...
+#8 43.19 deleting '/nix/store/a9qf4wwhympzs35ncp80r185j6a21w07-user-environment'
+#8 43.19 deleting '/nix/store/253kwn1730vnay87xkjgxa2v97w3y079-user-environment.drv'
+#8 43.19 deleting '/nix/store/hn5mrh362n52x8wwab9s1v6bgn4n5c94-env-manifest.nix'
+#8 43.21 deleting '/nix/store/d0gfdcag8bxzvg7ww4s7px4lf8sxisyx-stdenv-linux'
+#8 43.21 deleting '/nix/store/xcn9p4xxfbvlkpah7pwchpav4ab9d135-gcc-wrapper-14-20241116'
+#8 43.21 deleting '/nix/store/srcmmqi8kxjfygd0hyy42c8hv6cws83b-binutils-wrapper-2.43.1'
+#8 43.21 deleting '/nix/store/j7p46r8v9gcpbxx89pbqlh61zhd33gzv-binutils-2.43.1'
+#8 43.21 deleting '/nix/store/df2a8k58k00f2dh2x930dg6xs6g6mliv-binutils-2.43.1-lib'
+#8 43.21 deleting '/nix/store/l89iqc7am6i60y8vk507zwrzxf0wcd3v-gcc-14-20241116'
+#8 43.23 deleting '/nix/store/kj8hbqx4ds9qm9mq7hyikxyfwwg13kzj-glibc-2.40-36-dev'
+#8 43.24 deleting '/nix/store/qbry6090vlr9ar33kdmmbq2p5apzbga8-expand-response-params'
+#8 43.24 deleting '/nix/store/5f5linrxzhhb3mrclkwdpm9bd8ygldna-curl-8.11.0-dev'
+#8 43.24 deleting '/nix/store/p123cq20klajcl9hj8jnkjip5nw6awhz-curl-8.11.0-bin'
+#8 43.24 deleting '/nix/store/pkc7mb4a4qvyz73srkqh4mwl70w98dsv-curl-8.11.0'
+#8 43.24 deleting '/nix/store/d7zhcrcc7q3yfbm3qkqpgc3daq82spwi-libssh2-1.11.1-dev'
+#8 43.24 deleting '/nix/store/kqm7wpqkzc4bwjlzqizcbz0mgkj06a9x-openssl-3.3.2-dev'
+#8 43.24 deleting '/nix/store/qq5q0alyzywdazhmybi7m69akz0ppk05-openssl-3.3.2-bin'
+#8 43.24 deleting '/nix/store/8675pnfr4fqnwv4pzjl67hdwls4q13aa-libssh2-1.11.1'
+#8 43.24 deleting '/nix/store/b56mswksrql15knpb1bnhv3ysif340kd-krb5-1.21.3-dev'
+#8 43.25 deleting '/nix/store/milph81dilrh96isyivh5n50agpx39k2-krb5-1.21.3'
+#8 43.25 deleting '/nix/store/v9c1s50x7magpiqgycxxkn36avzbcg0g-krb5-1.21.3-lib'
+#8 43.25 deleting '/nix/store/9l9n7a0v4aibcz0sgd0crs209an9p7dz-openssl-3.3.2'
+#8 43.25 deleting '/nix/store/4ig84cyqi6qy4n0sanrbzsw1ixa497jx-stdenv-linux'
+#8 43.25 deleting '/nix/store/h18s640fnhhj2qdh5vivcfbxvz377srg-xz-5.6.3-bin'
+#8 43.25 deleting '/nix/store/xmbv8s4p4i4dbxgkgdrdfb0ym25wh6gk-isl-0.20'
+#8 43.25 deleting '/nix/store/2a3anh8vl3fcgk0fvaravlimrqawawza-libmpc-1.3.1'
+#8 43.25 deleting '/nix/store/qs22aazzrdd4dnjf9vffl0n31hvls43h-mpfr-4.2.1'
+#8 43.25 deleting '/nix/store/kryrg7ds05iwcmy81amavk8w13y4lxbs-gmp-6.3.0'
+#8 43.25 deleting '/nix/store/aap6cq56amx4mzbyxp2wpgsf1kqjcr1f-gnugrep-3.11'
+#8 43.26 deleting '/nix/store/1c6bmxrrhm8bd26ai2rjqld2yyjrxhds-glibc-2.40-36-bin'
+#8 43.26 deleting '/nix/store/2wh1gqyzf5xsvxpdz2k0bxiz583wwq29-keyutils-1.6.3-lib'
+#8 43.26 deleting '/nix/store/a3c47r5z1q2c4rz0kvq8hlilkhx2s718-gawk-5.3.1'
+#8 43.26 deleting '/nix/store/5yja5dpk2qw1v5mbfbl2d7klcdfrh90w-patch-2.7.6'
+#8 43.26 deleting '/nix/store/74h4z8k82pmp24xryflv4lxkz8jlpqqd-ed-1.20.2'
+#8 43.26 deleting '/nix/store/fkd1ma3nify8r9wp463yg5rqz9hdcyf1-npm-9.9.4.tgz'
+#8 43.26 deleting '/nix/store/jqrz1vq5nz4lnv9pqzydj0ir58wbjfy1-findutils-4.10.0'
+#8 43.26 deleting '/nix/store/c2njy6bv84kw1i4bjf5k5gn7gz8hn57n-xz-5.6.3'
+#8 43.26 deleting '/nix/store/mglixp03lsp0w986svwdvm7vcy17rdax-bzip2-1.0.8-bin'
+#8 43.27 deleting '/nix/store/nvvj6sk0k6px48436drlblf4gafgbvzr-gzip-1.13'
+#8 43.27 deleting '/nix/store/1i003ijlh9i0mzp6alqby5hg3090pjdx-perl-5.40.0'
+#8 43.29 deleting '/nix/store/abm77lnrkrkb58z6xp1qwjcr1xgkcfwm-gnused-4.9'
+#8 43.30 deleting '/nix/store/6cr0spsvymmrp1hj5n0kbaxw55w1lqyp-libxcrypt-4.4.36'
+#8 43.30 deleting '/nix/store/srfxqk119fijwnprgsqvn68ys9kiw0bn-patchelf-0.15.0'
+#8 43.30 deleting '/nix/store/agvks3qmzja0yj54szi3vja6vx3cwkkw-curl-8.11.0-man'
+#8 43.30 deleting '/nix/store/lwi59jcfwk2lnrakmm1y5vw85hj3n1bi-source'
+#8 45.32 deleting '/nix/store/rqsx4vk32ga32b6yxzhifpx9j2xcn6q6-source'
+#8 45.32 deleting '/nix/store/9cwwj1c9csmc85l2cqzs3h9hbf1vwl6c-gnutar-1.35'
+#8 45.33 deleting '/nix/store/fv7gpnvg922frkh81w5hkdhpz0nw3iiz-mirrors-list'
+#8 45.33 deleting '/nix/store/dz97fw51rm5bl9kz1vg0haj1j1a7r1mr-nghttp2-1.64.0-dev'
+#8 45.33 deleting '/nix/store/fp6cjl1zcmm6mawsnrb5yak1wkz2ma8l-gnumake-4.4.1'
+#8 45.33 deleting '/nix/store/c4rj90r2m89rxs64hmm857mipwjhig5d-file-5.46'
+#8 45.33 deleting '/nix/store/d29r1bdmlvwmj52apgcdxfl1mm9c5782-update-autotools-gnu-config-scripts-hook'
+#8 45.33 deleting '/nix/store/wf5zj2gbib3gjqllkabxaw4dh0gzcla3-builder.pl'
+#8 45.33 deleting '/nix/store/1m67ipsk39xvhyqrxnzv2m2p48pil8kl-gnu-config-2024-01-01'
+#8 45.33 deleting '/nix/store/qcghigzrz56vczwlzg9c02vbs6zr9jkz-nghttp2-1.64.0-lib'
+#8 45.33 deleting '/nix/store/3j1p598fivxs69wx3a657ysv3rw8k06l-pcre2-10.44'
+#8 45.33 deleting '/nix/store/pc74azbkr19rkd5bjalq2xwx86cj3cga-linux-headers-6.12'
+#8 45.35 deleting '/nix/store/00g69vw7c9lycy63h45ximy0wmzqx5y6-diffutils-3.10'
+#8 45.35 deleting '/nix/store/grixvx878884hy8x3xs0c0s1i00j632k-nghttp2-1.64.0'
+#8 45.35 deleting '/nix/store/1m82cbxhdbb85h3lykjpry4mnvyq5x0m-libraries'
+#8 45.35 deleting '/nix/store/ivl2v8rgg7qh1jkj5pwpqycax3rc2hnl-bzip2-1.0.8'
+#8 45.35 deleting unused links...
+#8 48.10 note: currently hard linking saves 1.60 MiB
+#8 48.14 61 store paths deleted, 559.37 MiB freed
+#8 DONE 48.3s
+#9 [ 5/11] RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends curl wget
+#9 0.208 Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+#9 0.370 Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+#9 0.409 Get:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1638 kB]
+#9 0.570 Get:4 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2703 kB]
+#9 0.613 Get:5 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [33.1 kB]
+#9 0.613 Get:6 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1170 kB]
+#9 0.878 Get:7 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#9 1.003 Get:8 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+#9 1.130 Get:9 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+#9 1.218 Get:10 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+#9 1.256 Get:11 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+#9 1.453 Get:12 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+#9 2.085 Get:13 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [35.9 kB]
+#9 2.086 Get:14 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2842 kB]
+#9 2.152 Get:15 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [2005 kB]
+#9 2.227 Get:16 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1939 kB]
+#9 2.285 Get:17 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [33.9 kB]
+#9 2.286 Get:18 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.4 kB]
+#9 3.054 Fetched 34.7 MB in 3s (11.9 MB/s)
+#9 3.054 Reading package lists...
+#9 4.160 Reading package lists...
+#9 5.329 Building dependency tree...
+#9 5.679 Reading state information...
+#9 6.179 curl is already the newest version (8.5.0-2ubuntu10.6).
+#9 6.179 The following NEW packages will be installed:
+#9 6.179   wget
+#9 6.278 0 upgraded, 1 newly installed, 0 to remove and 40 not upgraded.
+#9 6.278 Need to get 334 kB of archives.
+#9 6.278 After this operation, 938 kB of additional disk space will be used.
+#9 6.278 Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 wget amd64 1.21.4-1ubuntu4.1 [334 kB]
+#9 6.623 debconf: delaying package configuration, since apt-utils is not installed
+#9 6.669 Fetched 334 kB in 0s (1513 kB/s)
+#9 6.687 Selecting previously unselected package wget.
+#9 6.687 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 9511 files and directories currently installed.)
+#9 6.718 Preparing to unpack .../wget_1.21.4-1ubuntu4.1_amd64.deb ...
+#9 6.719 Unpacking wget (1.21.4-1ubuntu4.1) ...
+#9 6.744 Setting up wget (1.21.4-1ubuntu4.1) ...
+#9 DONE 6.8s
+#10 [ 6/11] COPY . /app/.
+#10 DONE 0.0s
+#11 [ 7/11] RUN  npm ci
+#11 1.163 npm warn EBADENGINE Unsupported engine {
+#11 1.163 npm warn EBADENGINE   package: '@firebase/component@0.7.0',
+#11 1.163 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.163 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.163 npm warn EBADENGINE }
+#11 1.164 npm warn EBADENGINE Unsupported engine {
+#11 1.164 npm warn EBADENGINE   package: '@firebase/database@1.1.0',
+#11 1.164 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.164 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.164 npm warn EBADENGINE }
+#11 1.168 npm warn EBADENGINE Unsupported engine {
+#11 1.168 npm warn EBADENGINE   package: '@firebase/database-compat@2.1.0',
+#11 1.168 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.168 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.168 npm warn EBADENGINE }
+#11 1.168 npm warn EBADENGINE Unsupported engine {
+#11 1.168 npm warn EBADENGINE   package: '@firebase/logger@0.5.0',
+#11 1.168 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.168 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.168 npm warn EBADENGINE }
+#11 1.169 npm warn EBADENGINE Unsupported engine {
+#11 1.169 npm warn EBADENGINE   package: '@firebase/util@1.13.0',
+#11 1.169 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#11 1.169 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.169 npm warn EBADENGINE }
+#11 1.172 npm warn EBADENGINE Unsupported engine {
+#11 1.172 npm warn EBADENGINE   package: 'pdfjs-dist@5.4.296',
+#11 1.172 npm warn EBADENGINE   required: { node: '>=20.16.0 || >=22.3.0' },
+#11 1.172 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+#11 1.172 npm warn EBADENGINE }
+#11 4.193 npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+#11 4.483 npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+#11 4.529 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+#11 4.860 npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+#11 5.429 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 5.748 npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
+#11 8.888 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 8.970 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 9.045 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 9.339 npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+#11 135.9
+#11 135.9 added 813 packages, and audited 814 packages in 2m
+#11 135.9
+#11 135.9 143 packages are looking for funding
+#11 135.9   run `npm fund` for details
+#11 137.0
+#11 137.0 13 vulnerabilities (11 moderate, 2 high)
+#11 137.0
+#11 137.0 To address issues that do not require attention, run:
+#11 137.0   npm audit fix
+#11 137.0
+#11 137.0 To address all issues possible (including breaking changes), run:
+#11 137.0   npm audit fix --force
+#11 137.0
+#11 137.0 Some issues need review, and may require choosing
+#11 137.0 a different dependency.
+#11 137.0
+#11 137.0 Run `npm audit` for details.
+#11 137.0 npm notice
+#11 137.0 npm notice New major version of npm available! 10.8.2 -> 11.6.2
+#11 137.0 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+#11 137.0 npm notice To update run: npm install -g npm@11.6.2
+#11 137.0 npm notice
+#11 DONE 137.6s
+#12 [ 8/11] COPY . /app/.
 #12 DONE 0.1s
-#13 [stage-0  9/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build
-#13 0.182 npm warn config production Use `--omit=dev` instead.
-#13 0.216
-#13 0.216 > fire-safety-log@0.1.0 build
-#13 0.216 > next build
-#13 0.216
-#13 1.720   ▲ Next.js 14.2.33
-#13 1.720   - Experiments (use with caution):
-#13 1.720     · missingSuspenseWithCSRBailout
-#13 1.720
-#13 1.775    Creating an optimized production build ...
-#13 2.245 > [PWA] Compile server
-#13 2.246 > [PWA] Compile server
-#13 2.247 > [PWA] Compile client (static)
-#13 2.248 > [PWA] Auto register service worker with: /app/node_modules/next-pwa/register.js
-#13 2.248 > [PWA] Service worker: /app/public/sw.js
-#13 2.248 > [PWA]   url: /sw.js
-#13 2.248 > [PWA]   scope: /
-#13 19.55  ✓ Compiled successfully
-#13 19.55    Linting and checking validity of types ...
-#13 33.52 Failed to compile.
-#13 33.52
-#13 33.52 ./src/app/dashboard/checks/page.tsx:379:215
-#13 33.52 Type error: Property 'assetId' does not exist on type 'Schedule'. Did you mean 'assetIds'?
-#13 33.52
-#13 33.52   377 |                     </h4>
-#13 33.52   378 |                     <div className="flex items-center gap-4 text-sm text-brand-600">
-#13 33.52 > 379 |                       <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : getAssetName(schedule.assetId)}</span>
-#13 33.52       |                                                                                                                                                                                                                       ^
-#13 33.52   380 |                       <span>•</span>
-#13 33.52   381 |                       <span className="capitalize">{schedule.frequency}</span>
-#13 33.52   382 |                     </div>
-#13 33.59 Next.js build worker exited with code: 1 and signal: null
+#13 [ 9/11] RUN  npm run build
+#13 0.232
+#13 0.232 > fire-safety-log@0.1.0 build
+#13 0.232 > next build
+#13 0.232
+#13 1.814 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#13 1.815 This information is used to shape Next.js' roadmap and prioritize features.
+#13 1.815 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#13 1.815 https://nextjs.org/telemetry
+#13 1.815
+#13 1.907   ▲ Next.js 14.2.33
+#13 1.907   - Experiments (use with caution):
+#13 1.907     · missingSuspenseWithCSRBailout
+#13 1.907
+#13 1.959    Creating an optimized production build ...
+#13 2.249 > [PWA] Compile server
+#13 2.251 > [PWA] Compile server
+#13 2.252 > [PWA] Compile client (static)
+#13 2.252 > [PWA] Auto register service worker with: /app/node_modules/next-pwa/register.js
+#13 2.252 > [PWA] Service worker: /app/public/sw.js
+#13 2.252 > [PWA]   url: /sw.js
+#13 2.253 > [PWA]   scope: /
+#13 34.57 Failed to compile.
+#13 34.57
+#13 34.57 ./src/app/api/assets/[id]/route.ts
+#13 34.57 Module not found: Can't resolve 'firebase-admin/auth'
+#13 34.57
+#13 34.57 https://nextjs.org/docs/messages/module-not-found
+#13 34.57
+#13 34.57 ./src/lib/firebase/admin.ts
+#13 34.57 Module not found: Can't resolve 'firebase-admin/app'
+#13 34.57
+#13 34.57 https://nextjs.org/docs/messages/module-not-found
+#13 34.57
+#13 34.57 Import trace for requested module:
+#13 34.57 ./src/app/api/debug-asset/route.ts
+#13 34.57
+#13 34.57 ./src/lib/firebase/admin.ts
+#13 34.57 Module not found: Can't resolve 'firebase-admin/auth'
+#13 34.57
+#13 34.57 https://nextjs.org/docs/messages/module-not-found
+#13 34.57
+#13 34.57 Import trace for requested module:
+#13 34.57 ./src/app/api/debug-asset/route.ts
+#13 34.57
+#13 34.57 ./src/lib/firebase/admin.ts
+#13 34.57 Module not found: Can't resolve 'firebase-admin/firestore'
+#13 34.57
+#13 34.57 https://nextjs.org/docs/messages/module-not-found
+#13 34.57
+#13 34.57 Import trace for requested module:
+#13 34.57 ./src/app/api/debug-asset/route.ts
+#13 34.57
+#13 34.57 ./src/lib/firebase/admin.ts
+#13 34.57 Module not found: Can't resolve 'firebase-admin/storage'
+#13 34.57
+#13 34.57 https://nextjs.org/docs/messages/module-not-found
+#13 34.57
+#13 34.57 Import trace for requested module:
+#13 34.57 ./src/app/api/debug-asset/route.ts
+#13 34.57
+#13 34.57
+#13 34.57 > Build failed because of webpack errors
 #13 ERROR: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
 ------
-> [stage-0  9/11] RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build:
-33.52 Type error: Property 'assetId' does not exist on type 'Schedule'. Did you mean 'assetIds'?
-33.52
-33.52   377 |                     </h4>
-33.52   378 |                     <div className="flex items-center gap-4 text-sm text-brand-600">
-33.52 > 379 |                       <span>{schedule.assetIds && schedule.assetIds.length > 0 ? (schedule.assetIds.length === 1 ? getAssetName(schedule.assetIds[0]) : `${schedule.assetIds.length} assets`) : getAssetName(schedule.assetId)}</span>
-33.52       |                                                                                                                                                                                                                       ^
-33.52   380 |                       <span>•</span>
-33.52   381 |                       <span className="capitalize">{schedule.frequency}</span>
-33.52   382 |                     </div>
-33.59 Next.js build worker exited with code: 1 and signal: null
+> [ 9/11] RUN  npm run build:
+34.57 ./src/lib/firebase/admin.ts
+34.57 Module not found: Can't resolve 'firebase-admin/storage'
+34.57
+34.57 https://nextjs.org/docs/messages/module-not-found
+34.57
+34.57 Import trace for requested module:
+34.57 ./src/app/api/debug-asset/route.ts
+34.57
+34.57
+34.57 > Build failed because of webpack errors
 ------
 1 warning found (use docker --debug to expand):
 - UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 18)
@@ -139,15 +494,15 @@ Dockerfile:24
 --------------------
 22 |     # build phase
 23 |     COPY . /app/.
-24 | >>> RUN --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-next/cache,target=/app/.next/cache --mount=type=cache,id=j4wwgkckk0k04o4okcwk4o0w-node_modules/cache,target=/app/node_modules/.cache npm run build
+24 | >>> RUN  npm run build
 25 |
 26 |
 --------------------
 ERROR: failed to build: failed to solve: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
 exit status 1
 Deployment failed. Removing the new version of your application.
-Gracefully shutting down build container: kgcwwg4w8kgkc0oswgk88c4k
-[CMD]: docker stop --time=30 kgcwwg4w8kgkc0oswgk88c4k
-kgcwwg4w8kgkc0oswgk88c4k
-[CMD]: docker rm -f kgcwwg4w8kgkc0oswgk88c4k
-Error response from daemon: No such container: kgcwwg4w8kgkc0oswgk88c4k
+Gracefully shutting down build container: ic00cwcs8oggc4080scs00ck
+[CMD]: docker stop --time=30 ic00cwcs8oggc4080scs00ck
+ic00cwcs8oggc4080scs00ck
+[CMD]: docker rm -f ic00cwcs8oggc4080scs00ck
+Error response from daemon: No such container: ic00cwcs8oggc4080scs00ck

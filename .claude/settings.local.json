@@ -5,7 +5,10 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nFix site date serialization causing RangeError on asset pages\n\nConverts Firestore Timestamps in site data to ISO strings in the API route and properly parses them as Date objects on the client side. This fixes the \"Invalid time value\" error that was occurring when date-fns tried to format improperly serialized timestamp objects.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
       "Bash(git commit:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
