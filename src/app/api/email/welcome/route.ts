@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { adminAuth } from '@/lib/firebase/admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
+    // Authentication check
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Missing authentication token' },
+        { status: 401 }
+      );
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+
+    try {
+      await adminAuth().verifyIdToken(idToken);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid authentication token' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { email, name, organisationName } = body;
 

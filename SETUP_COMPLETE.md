@@ -7,10 +7,15 @@ Your Fire Safety Log Book platform is ready to develop!
 ## ✅ What's Been Completed
 
 ### 1. Environment Configuration
-- ✅ Resend API key added: `re_gChcWnM7_7gxJnDCR1Nmeu4kuJrKppamC`
-- ✅ JWT_SECRET generated: `8c4e741df3ac48e61ac8720ccf304433fb6fb66fd9ad968c788b859195b6fd7e`
-- ✅ ENCRYPTION_KEY generated: `23ba2b544e88fd892150ccae83c9ba6bebbfb8cacc83dda67ae3512b049c23ac`
+- ✅ Resend API key configured (starts with `re_...`)
+- ✅ JWT_SECRET generated (32-byte random hex string)
+- ✅ ENCRYPTION_KEY generated (32-byte random hex string)
 - ✅ Email FROM address set: `onboarding@resend.dev` (Resend test domain)
+
+**Note:** All secrets have been redacted from this document for security. Generate new secrets using:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
 ### 2. Dependencies
 - ✅ All npm packages installed (447 packages)

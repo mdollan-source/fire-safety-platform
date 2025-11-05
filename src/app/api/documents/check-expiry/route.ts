@@ -10,8 +10,16 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
-    // Optional: Add authentication check here for production
-    // For now, this endpoint can be called by a cron service
+    // Check for CRON secret authorization
+    const authHeader = request.headers.get('Authorization');
+    const expectedAuth = `Bearer ${process.env.CRON_SECRET}`;
+
+    if (!authHeader || authHeader !== expectedAuth) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid or missing CRON secret' },
+        { status: 401 }
+      );
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

@@ -1,12 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
+import { adminAuth } from '@/lib/firebase/admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
+    // Authentication check
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Missing authentication token' },
+        { status: 401 }
+      );
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    let decodedToken;
+
+    try {
+      decodedToken = await adminAuth().verifyIdToken(idToken);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid authentication token' },
+        { status: 401 }
+      );
+    }
+
+    // Check if user has permission to invite (responsible_person, site_manager, or super_admin)
+    const allowedRoles = ['responsible_person', 'site_manager', 'super_admin'];
+    const userRole = decodedToken.role;
+
+    if (!userRole || !allowedRoles.includes(userRole)) {
+      return NextResponse.json(
+        { error: 'Forbidden - Insufficient permissions to invite users' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { name, email, role, siteIds, orgId, invitedBy } = body;
 
@@ -15,6 +48,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // Verify user is inviting to their own organization (unless super_admin)
+    if (userRole !== 'super_admin' && decodedToken.orgId !== orgId) {
+      return NextResponse.json(
+        { error: 'Forbidden - Cannot invite users to other organizations' },
+        { status: 403 }
       );
     }
 

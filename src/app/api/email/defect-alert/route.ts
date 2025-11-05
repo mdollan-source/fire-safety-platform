@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { adminDb } from '@/lib/firebase/admin';
+import { adminDb, adminAuth } from '@/lib/firebase/admin';
 
 // Mark this route as dynamic (don't pre-render during build)
 export const dynamic = 'force-dynamic';
@@ -9,6 +9,27 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
+    // Authentication check
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Missing authentication token' },
+        { status: 401 }
+      );
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    let decodedToken;
+
+    try {
+      decodedToken = await adminAuth().verifyIdToken(idToken);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid authentication token' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { defectId, defectTitle, siteName, severity, orgId } = body;
 
@@ -17,6 +38,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // Verify user is from the same organization (unless super_admin)
+    if (decodedToken.role !== 'super_admin' && decodedToken.orgId !== orgId) {
+      return NextResponse.json(
+        { error: 'Forbidden - Cannot send alerts for other organizations' },
+        { status: 403 }
       );
     }
 

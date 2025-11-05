@@ -6,6 +6,17 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check for CRON secret authorization
+    const authHeader = request.headers.get('Authorization');
+    const expectedAuth = `Bearer ${process.env.CRON_SECRET}`;
+
+    if (!authHeader || authHeader !== expectedAuth) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid or missing CRON secret' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const { recipient, taskId, taskTitle, siteName, assetName, dueDate } = body;

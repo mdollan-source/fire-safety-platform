@@ -21,7 +21,12 @@ The cron job will run every hour and:
 In Coolify (or your deployment system), add this environment variable:
 
 ```bash
-CRON_SECRET=12badace02a5be0eda75b4d0ef414222d32d42d9074af6264fdfe94a6c663f65
+CRON_SECRET=your_secure_random_secret_here
+```
+
+**Generate a secure secret:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 **IMPORTANT:** Make sure to restart your app after adding this variable!
@@ -56,7 +61,7 @@ echo "[$TIMESTAMP] Starting scheduled notifications check..." >> $LOG_FILE
 # Call the API endpoint with authentication
 RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   https://YOUR_DOMAIN/api/notifications/process-scheduled \
-  -H "Authorization: Bearer 12badace02a5be0eda75b4d0ef414222d32d42d9074af6264fdfe94a6c663f65" \
+  -H "Authorization: Bearer YOUR_CRON_SECRET_HERE" \
   -H "Content-Type: application/json")
 
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
