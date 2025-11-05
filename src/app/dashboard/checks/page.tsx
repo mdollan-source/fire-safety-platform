@@ -8,7 +8,7 @@ import { collection, query, where, getDocs, setDoc, doc, updateDoc } from 'fireb
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { CheckSchedule, Asset, CheckTask } from '@/types';
+import { CheckSchedule, Asset, CheckTask, CheckTemplate } from '@/types';
 import { DEFAULT_CHECK_TEMPLATES } from '@/data/check-templates';
 import { generateTasksForSchedule } from '@/lib/utils/task-generator';
 import { ClipboardCheck, Plus, Calendar, AlertCircle, CheckCircle2, Clock, Zap, User, UserCheck, HelpCircle } from 'lucide-react';
@@ -102,7 +102,7 @@ export default function ChecksPage() {
         // Find the template for this schedule
         const template = DEFAULT_CHECK_TEMPLATES.find(
           (t) => t.name === schedule.templateId
-        );
+        ) as Omit<CheckTemplate, 'id' | 'orgId' | 'createdAt' | 'updatedAt'> | undefined;
 
         const newTasks = generateTasksForSchedule(schedule, tasks, 30, template); // Next 30 days
 

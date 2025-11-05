@@ -30,143 +30,203 @@ export default function Home() {
   // Show landing page for unauthenticated users
   return (
     <MarketingLayout>
-      {/* Hero Section */}
-      <section className="border-b border-black">
-        <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-7xl font-bold text-black mb-6 leading-tight">
-              Fire safety compliance made simple
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Digital platform for managing fire safety checks, defects, and compliance records across all your UK premises.
+      {/* Hero Section - Trello-inspired */}
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
+                Fire safety management that works
+              </h1>
+              <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+                Keep your premises compliant with digital fire safety checks, asset tracking, and automated reporting.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/sign-up">
+                  <Button variant="primary" className="bg-black text-white hover:bg-gray-900 text-base px-6 py-3">
+                    Get started — it's free
+                  </Button>
+                </Link>
+                <InstallButton
+                  variant="ghost"
+                  className="text-base px-6 py-3 border-2 border-gray-300 hover:border-gray-400"
+                />
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg p-12 min-h-[400px] flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <div className="text-6xl mb-4">📱</div>
+                <p className="text-sm">Product screenshot placeholder</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="bg-gray-50 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+              Everything you need to stay compliant
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Designed for UK fire safety professionals following the Regulatory Reform (Fire Safety) Order 2005
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/sign-up">
-                <Button variant="primary" className="bg-black text-white hover:bg-gray-900 text-lg px-8 py-6">
-                  Start Free Trial
-                </Button>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-black text-white rounded flex items-center justify-center text-2xl mb-4">
+                ✓
+              </div>
+              <h3 className="text-xl font-bold text-black mb-3">Digital Checks</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Complete fire alarm tests, emergency lighting inspections, fire door checks, and extinguisher servicing on any device.
+              </p>
+              <Link href="/features" className="text-black font-medium hover:underline">
+                Learn more →
               </Link>
-              <Link href="/features">
-                <Button variant="ghost" className="text-lg px-8 py-6 border border-black hover:bg-gray-50">
-                  View Features
-                </Button>
+            </div>
+
+            <div className="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-black text-white rounded flex items-center justify-center text-2xl mb-4">
+                📊
+              </div>
+              <h3 className="text-xl font-bold text-black mb-3">Defect Tracking</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Log and monitor safety defects with severity ratings, target dates, and automatic escalation for critical issues.
+              </p>
+              <Link href="/features" className="text-black font-medium hover:underline">
+                Learn more →
               </Link>
-              <InstallButton
-                variant="ghost"
-                className="text-lg px-8 py-6 border border-black hover:bg-gray-50"
-              />
+            </div>
+
+            <div className="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-black text-white rounded flex items-center justify-center text-2xl mb-4">
+                📋
+              </div>
+              <h3 className="text-xl font-bold text-black mb-3">Audit Trail</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Immutable records with photo evidence, GPS location data, and timestamps for complete regulatory compliance.
+              </p>
+              <Link href="/features" className="text-black font-medium hover:underline">
+                Learn more →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Showcase */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+            <div className="order-2 md:order-1 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg p-12 min-h-[350px] flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <div className="text-5xl mb-4">🔍</div>
+                <p className="text-sm">Asset management screenshot placeholder</p>
+              </div>
+            </div>
+            <div className="order-1 md:order-2">
+              <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+                Track every asset in one place
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Register your fire doors, alarms, extinguishers, and emergency lighting systems. Attach documents, set inspection schedules, and never miss a compliance deadline.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">Unlimited sites and assets</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">Document attachments</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">QR code labels</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+                Complete checks on any device
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Use mobile or desktop to record inspections. Capture photos, log defects, and generate instant reports. Works offline with automatic sync.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">Pre-built check templates</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">Photo evidence capture</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-black font-bold">✓</span>
+                  <span className="text-gray-700">GPS location tracking</span>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg p-12 min-h-[350px] flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <div className="text-5xl mb-4">📝</div>
+                <p className="text-sm">Check completion screenshot placeholder</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="border-b border-black">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="border-r border-black last:border-r-0">
-              <div className="text-4xl md:text-5xl font-bold text-black mb-2">100%</div>
-              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">Compliant</div>
-            </div>
-            <div className="border-r border-black last:border-r-0">
-              <div className="text-4xl md:text-5xl font-bold text-black mb-2">24/7</div>
-              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">Access</div>
-            </div>
-            <div className="border-r border-black last:border-r-0">
-              <div className="text-4xl md:text-5xl font-bold text-black mb-2">Unlimited</div>
-              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">Sites</div>
+      <section className="bg-black text-white py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl md:text-5xl font-bold mb-2">100%</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wider">Compliant</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-black mb-2">UK</div>
-              <div className="text-sm font-medium text-gray-600 uppercase tracking-wider">Based</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Value Proposition */}
-      <section className="border-b border-black">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-              Built for UK fire safety professionals
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Comprehensive compliance management aligned with the Regulatory Reform (Fire Safety) Order 2005.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black">
-            <div className="bg-white p-8">
-              <h3 className="text-2xl font-bold text-black mb-4">Digital Checks</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Complete fire alarm tests, emergency lighting inspections, fire door checks, and extinguisher servicing on any device.
-              </p>
-            </div>
-            <div className="bg-white p-8">
-              <h3 className="text-2xl font-bold text-black mb-4">Defect Tracking</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Log and monitor safety defects with severity ratings, target dates, and automatic escalation for critical issues.
-              </p>
-            </div>
-            <div className="bg-white p-8">
-              <h3 className="text-2xl font-bold text-black mb-4">Audit Trail</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Immutable records with photo evidence, GPS location data, and timestamps for complete regulatory compliance.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="border-b border-black">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-              Three steps to compliance
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-              <div className="text-6xl font-bold text-black mb-4">01</div>
-              <h3 className="text-2xl font-bold text-black mb-4">Register Assets</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Add your fire doors, alarms, extinguishers, and emergency lighting systems. Attach documents and set inspection schedules.
-              </p>
+              <div className="text-4xl md:text-5xl font-bold mb-2">24/7</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wider">Access</div>
             </div>
             <div>
-              <div className="text-6xl font-bold text-black mb-4">02</div>
-              <h3 className="text-2xl font-bold text-black mb-4">Complete Checks</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Use mobile or desktop to record inspections. Capture photos, log defects, and generate instant reports.
-              </p>
+              <div className="text-4xl md:text-5xl font-bold mb-2">Unlimited</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wider">Sites</div>
             </div>
             <div>
-              <div className="text-6xl font-bold text-black mb-4">03</div>
-              <h3 className="text-2xl font-bold text-black mb-4">Stay Compliant</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Monitor overdue checks, track open defects, and export compliance packs for audits and inspections.
-              </p>
+              <div className="text-4xl md:text-5xl font-bold mb-2">UK</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wider">Based</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-black text-white">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Start your free trial today
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              No credit card required. Full access to all features for 30 days.
-            </p>
+      <section className="bg-gradient-to-b from-white to-gray-50 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
+            Ready to simplify fire safety compliance?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Start your free 30-day trial today. No credit card required.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/sign-up">
-              <Button variant="primary" className="bg-white text-black hover:bg-gray-100 text-lg px-8 py-6">
-                Get Started Free
+              <Button variant="primary" className="bg-black text-white hover:bg-gray-900 text-lg px-8 py-4">
+                Get started free
+              </Button>
+            </Link>
+            <Link href="/features">
+              <Button variant="ghost" className="text-lg px-8 py-4 border-2 border-gray-300 hover:border-gray-400">
+                View all features
               </Button>
             </Link>
           </div>
