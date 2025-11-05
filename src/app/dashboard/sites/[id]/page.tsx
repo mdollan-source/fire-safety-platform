@@ -116,6 +116,13 @@ export default function SiteDetailPage() {
         )),
       ]);
 
+      // Debug logging
+      console.log('Site ID:', siteId);
+      console.log('Assets query returned:', assetsSnapshot.size, 'documents');
+      if (assetsSnapshot.size > 0) {
+        console.log('First asset data:', assetsSnapshot.docs[0].data());
+      }
+
       setUsers(usersSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -124,10 +131,15 @@ export default function SiteDetailPage() {
         lastLogin: doc.data().lastLogin?.toDate(),
       })) as User[]);
 
-      setAssets(assetsSnapshot.docs.map((doc) => ({
+      const assetsData = assetsSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Asset[]);
+        createdAt: doc.data().createdAt?.toDate(),
+        updatedAt: doc.data().updatedAt?.toDate(),
+      })) as Asset[];
+
+      console.log('Processed assets:', assetsData.length, assetsData);
+      setAssets(assetsData);
 
       setDefects(defectsSnapshot.docs.map((doc) => ({
         id: doc.id,
