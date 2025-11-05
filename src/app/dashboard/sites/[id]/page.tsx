@@ -99,6 +99,30 @@ export default function SiteDetailPage() {
       setEditCountry(siteObj.address.country);
       setEditManagerIds(siteObj.managerIds || []);
 
+      // Debug: First, let's fetch ALL assets for this org to see what siteIds they have
+      const allAssetsSnapshot = await getDocs(query(
+        collection(db, 'assets'),
+        where('orgId', '==', currentUser!.orgId)
+      ));
+
+      console.log('=== ASSETS DEBUG ===');
+      console.log('Current site ID:', siteId);
+      console.log('Site ID type:', typeof siteId);
+      console.log('All assets in org:', allAssetsSnapshot.size);
+
+      allAssetsSnapshot.docs.forEach((doc, index) => {
+        const data = doc.data();
+        console.log(`Asset ${index}:`, {
+          id: doc.id,
+          assetId: data.id,
+          siteId: data.siteId,
+          siteIdType: typeof data.siteId,
+          match: data.siteId === siteId,
+          name: data.name,
+          tag: data.tag
+        });
+      });
+
       // Fetch related data in parallel
       const [usersSnapshot, assetsSnapshot, defectsSnapshot] = await Promise.all([
         getDocs(query(
@@ -116,12 +140,7 @@ export default function SiteDetailPage() {
         )),
       ]);
 
-      // Debug logging
-      console.log('Site ID:', siteId);
-      console.log('Assets query returned:', assetsSnapshot.size, 'documents');
-      if (assetsSnapshot.size > 0) {
-        console.log('First asset data:', assetsSnapshot.docs[0].data());
-      }
+      console.log('Assets query with siteId filter returned:', assetsSnapshot.size, 'documents');
 
       setUsers(usersSnapshot.docs.map((doc) => ({
         id: doc.id,
