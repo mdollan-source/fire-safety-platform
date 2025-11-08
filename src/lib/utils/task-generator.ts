@@ -107,28 +107,7 @@ export function generateTaskFromSchedule(
     dueAt: dueDate,
     status: 'pending',
     assigneeId: null, // Can be assigned later
-    priority: calculatePriority(dueDate),
   } as any;
-}
-
-/**
- * Calculate task priority based on due date
- */
-function calculatePriority(dueDate: Date): 'low' | 'medium' | 'high' | 'urgent' {
-  const now = new Date();
-  const diffDays = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 0) {
-    return 'urgent'; // Overdue
-  } else if (diffDays === 0) {
-    return 'urgent'; // Due today
-  } else if (diffDays <= 1) {
-    return 'high'; // Due tomorrow
-  } else if (diffDays <= 3) {
-    return 'medium'; // Due within 3 days
-  } else {
-    return 'low'; // Due later
-  }
 }
 
 /**

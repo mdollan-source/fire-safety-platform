@@ -258,7 +258,7 @@ export interface Task {
   templateId: string;
   siteId: string;
   assetId?: string;
-  assigneeId: string;
+  assigneeId?: string | null;      // Optional - tasks can be unassigned when created
   dueAt: Date;
   status: TaskStatus;
   completedAt?: Date;
