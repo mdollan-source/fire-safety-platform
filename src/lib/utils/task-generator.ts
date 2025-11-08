@@ -104,7 +104,7 @@ export function generateTaskFromSchedule(
     assetId: assetId,
     scheduleId: scheduleAny.id,
     templateId: scheduleAny.templateId,
-    dueDate: dueDate,
+    dueAt: dueDate,
     status: 'pending',
     assigneeId: null, // Can be assigned later
     priority: calculatePriority(dueDate),
