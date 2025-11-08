@@ -355,11 +355,11 @@ export default function ProfilePage() {
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       zip.file('data-export.xlsx', excelBuffer);
 
-      // Fetch uploaded files from Storage
-      setExportProgress('Fetching uploaded files...');
+      // Fetch uploaded files from Storage using server-side API (bypasses CORS)
+      setExportProgress('Downloading files...');
       const documentsFolder = zip.folder('documents');
       let filesDownloaded = 0;
-      let filesFailedToDownload: Array<{fileName: string, url: string}> = [];
+      let filesFailedToDownload: string[] = [];
 
       if (documentsData.length === 0) {
         setExportProgress('No documents to download');
@@ -368,49 +368,36 @@ export default function ProfilePage() {
           try {
             if (!document.storageUrl) {
               console.warn(`Document ${document.fileName} has no storageUrl`);
+              filesFailedToDownload.push(document.fileName);
               continue;
             }
 
-            const fileRef = ref(storage, document.storageUrl);
-            const downloadURL = await getDownloadURL(fileRef);
-            const response = await fetch(downloadURL);
+            setExportProgress(`Downloading files... (${filesDownloaded + 1}/${documentsData.length})`);
+
+            // Use server-side API to download file (bypasses CORS)
+            const response = await fetch('/api/download-file', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                storageUrl: document.storageUrl,
+              }),
+            });
 
             if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              const error = await response.json();
+              throw new Error(error.error || `HTTP error! status: ${response.status}`);
             }
 
             const blob = await response.blob();
             documentsFolder?.file(document.fileName, blob);
             filesDownloaded++;
-            setExportProgress(`Downloading files... (${filesDownloaded}/${documentsData.length})`);
           } catch (err: any) {
             console.error(`Failed to download ${document.fileName}:`, err);
-            // Store the download URL for manual download
-            try {
-              const fileRef = ref(storage, document.storageUrl);
-              const downloadURL = await getDownloadURL(fileRef);
-              filesFailedToDownload.push({fileName: document.fileName, url: downloadURL});
-            } catch (urlErr) {
-              console.error(`Failed to get URL for ${document.fileName}:`, urlErr);
-            }
+            filesFailedToDownload.push(document.fileName);
           }
         }
-      }
-
-      // If files failed to download (CORS issue), create a document with download links
-      if (filesFailedToDownload.length > 0) {
-        let linksContent = `Document Download Links\n`;
-        linksContent += `========================\n\n`;
-        linksContent += `${filesFailedToDownload.length} file(s) could not be downloaded automatically due to browser security restrictions.\n`;
-        linksContent += `Please use the links below to download these files manually:\n\n`;
-
-        filesFailedToDownload.forEach((doc, index) => {
-          linksContent += `${index + 1}. ${doc.fileName}\n`;
-          linksContent += `   ${doc.url}\n\n`;
-        });
-
-        linksContent += `\nNote: These links will expire after a period of time. Download them as soon as possible.\n`;
-        zip.file('DOCUMENT-DOWNLOAD-LINKS.txt', linksContent);
       }
 
       // Create README
@@ -477,8 +464,9 @@ For questions or support, please contact support@firesafetylog.co.uk
       summary += `\nFiles Downloaded: ${filesDownloaded}/${documentsData.length}`;
 
       if (filesFailedToDownload.length > 0) {
-        summary += `\n\n⚠️ IMPORTANT: ${filesFailedToDownload.length} file(s) could not be downloaded automatically due to browser security (CORS).`;
-        summary += `\n\nA file called "DOCUMENT-DOWNLOAD-LINKS.txt" has been included in your export with direct download links for these files. Please download them manually.`;
+        summary += `\n\n⚠️ Warning: ${filesFailedToDownload.length} file(s) could not be downloaded.`;
+        summary += `\n\nFailed files: ${filesFailedToDownload.join(', ')}`;
+        summary += `\n\nCheck the browser console for error details.`;
       }
 
       alert(summary);
