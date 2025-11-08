@@ -202,13 +202,29 @@ export default function ProfilePage() {
       const workbook = XLSX.utils.book_new();
 
       // Sites sheet
-      const sitesExport = sitesData.map((site: any) => ({
-        'Site ID': site.id,
-        'Name': site.name,
-        'Address': site.address,
-        'Postcode': site.postcode,
-        'Created': site.createdAt ? formatUKDate(site.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
-      }));
+      const sitesExport = sitesData.map((site: any) => {
+        const addressParts = [
+          site.address?.line1,
+          site.address?.line2,
+          site.address?.city,
+          site.address?.postcode,
+          site.address?.country
+        ].filter(Boolean);
+        const fullAddress = addressParts.join(', ');
+
+        return {
+          'Site ID': site.id,
+          'Name': site.name,
+          'Address Line 1': site.address?.line1 || '',
+          'Address Line 2': site.address?.line2 || '',
+          'City': site.address?.city || '',
+          'Postcode': site.address?.postcode || '',
+          'Country': site.address?.country || '',
+          'Full Address': fullAddress,
+          'Status': site.status || 'active',
+          'Created': site.createdAt ? formatUKDate(site.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        };
+      });
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sitesExport), 'Sites');
 
       // Assets sheet
@@ -227,26 +243,34 @@ export default function ProfilePage() {
       // Checks sheet
       const checksExport = checksData.map((check: any) => ({
         'Check ID': check.id,
-        'Asset ID': check.assetId,
-        'Template ID': check.templateId,
-        'Status': check.status,
-        'Due Date': check.dueDate ? formatUKDate(check.dueDate.toDate(), 'dd/MM/yyyy') : '',
+        'Asset ID': check.assetId || '',
+        'Template ID': check.templateId || '',
+        'Status': check.status || '',
+        'Due Date': check.dueAt ? formatUKDate(check.dueAt.toDate(), 'dd/MM/yyyy') : '',
         'Completed Date': check.completedAt ? formatUKDate(check.completedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
-        'Completed By': check.completedByName || '',
-        'Site ID': check.siteId,
+        'Completed By': check.completedByName || check.completedBy || '',
+        'Claimed By': check.claimedByName || '',
+        'Site ID': check.siteId || '',
+        'Schedule ID': check.scheduleId || '',
+        'Created': check.createdAt ? formatUKDate(check.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
       }));
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(checksExport), 'Checks');
 
       // Entries sheet
       const entriesExport = entriesData.map((entry: any) => ({
         'Entry ID': entry.id,
-        'Asset ID': entry.assetId,
-        'Task ID': entry.taskId,
-        'Outcome': entry.outcome,
-        'Notes': entry.notes || '',
-        'Completed': entry.completedAt ? formatUKDate(entry.completedAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
-        'Completed By': entry.completedByName || '',
-        'Site ID': entry.siteId,
+        'Task ID': entry.taskId || '',
+        'Template ID': entry.templateId || '',
+        'Asset ID': entry.assetId || '',
+        'Site ID': entry.siteId || '',
+        'Completed': entry.completedAt ? formatUKDate(entry.completedAt.toDate(), 'dd/MM/yyyy HH:mm') :
+                     entry.createdAt ? formatUKDate(entry.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+        'Completed By': entry.completedByName || entry.createdBy || '',
+        'Has Signature': entry.signatureUrl || entry.signatureDataUrl ? 'Yes' : 'No',
+        'Has GPS': entry.gpsLocation ? 'Yes' : 'No',
+        'Evidence Count': entry.evidenceUrls ? entry.evidenceUrls.length : 0,
+        'Version': entry.version || 1,
+        'Hash': entry.hash || '',
       }));
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(entriesExport), 'Entries');
 
@@ -335,18 +359,35 @@ export default function ProfilePage() {
       setExportProgress('Fetching uploaded files...');
       const documentsFolder = zip.folder('documents');
       let filesDownloaded = 0;
+      let filesFailedToDownload: string[] = [];
 
-      for (const document of documentsData) {
-        try {
-          const fileRef = ref(storage, document.storageUrl);
-          const downloadURL = await getDownloadURL(fileRef);
-          const response = await fetch(downloadURL);
-          const blob = await response.blob();
-          documentsFolder?.file(document.fileName, blob);
-          filesDownloaded++;
-          setExportProgress(`Downloading files... (${filesDownloaded}/${documentsData.length})`);
-        } catch (err) {
-          console.error(`Failed to download ${document.fileName}:`, err);
+      if (documentsData.length === 0) {
+        setExportProgress('No documents to download');
+      } else {
+        for (const document of documentsData) {
+          try {
+            if (!document.storageUrl) {
+              console.warn(`Document ${document.fileName} has no storageUrl`);
+              filesFailedToDownload.push(document.fileName);
+              continue;
+            }
+
+            const fileRef = ref(storage, document.storageUrl);
+            const downloadURL = await getDownloadURL(fileRef);
+            const response = await fetch(downloadURL);
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            documentsFolder?.file(document.fileName, blob);
+            filesDownloaded++;
+            setExportProgress(`Downloading files... (${filesDownloaded}/${documentsData.length})`);
+          } catch (err: any) {
+            console.error(`Failed to download ${document.fileName}:`, err);
+            filesFailedToDownload.push(document.fileName);
+          }
         }
       }
 
@@ -398,7 +439,26 @@ For questions or support, please contact support@firesafetylog.co.uk
       URL.revokeObjectURL(link.href);
 
       setExportProgress('');
-      alert('Data export completed successfully!');
+
+      // Show summary
+      let summary = `Data export completed successfully!\n\n`;
+      summary += `Sites: ${sitesData.length}\n`;
+      summary += `Assets: ${assetsData.length}\n`;
+      summary += `Check Tasks: ${checksData.length}\n`;
+      summary += `Entries: ${entriesData.length}\n`;
+      summary += `Defects: ${defectsData.length}\n`;
+      summary += `Fire Drills: ${drillsData.length}\n`;
+      summary += `Training Records: ${trainingData.length}\n`;
+      summary += `Documents: ${documentsData.length}\n`;
+      summary += `Users: ${usersData.length}\n`;
+      summary += `Check Schedules: ${schedulesData.length}\n`;
+      summary += `\nFiles Downloaded: ${filesDownloaded}/${documentsData.length}`;
+
+      if (filesFailedToDownload.length > 0) {
+        summary += `\n\nWarning: ${filesFailedToDownload.length} file(s) failed to download. Check browser console for details.`;
+      }
+
+      alert(summary);
     } catch (err: any) {
       console.error('Export error:', err);
       alert(`Failed to export data: ${err.message}`);
