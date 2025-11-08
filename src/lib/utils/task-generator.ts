@@ -121,6 +121,9 @@ export function taskExistsForDate(
   const dueDateStr = startOfDay(dueDate).toISOString();
 
   return existingTasks.some((task) => {
+    // Skip tasks without a dueAt field
+    if (!task.dueAt) return false;
+
     const taskDueDateStr = startOfDay(
       task.dueAt instanceof Date ? task.dueAt : (task.dueAt as any).toDate()
     ).toISOString();
