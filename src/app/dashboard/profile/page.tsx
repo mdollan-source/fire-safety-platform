@@ -374,11 +374,18 @@ export default function ProfilePage() {
 
             setExportProgress(`Downloading files... (${filesDownloaded + 1}/${documentsData.length})`);
 
+            // Get user's auth token for secure API call
+            const idToken = await user?.getIdToken();
+            if (!idToken) {
+              throw new Error('Not authenticated');
+            }
+
             // Use server-side API to download file (bypasses CORS)
             const response = await fetch('/api/download-file', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
               },
               body: JSON.stringify({
                 storageUrl: document.storageUrl,
