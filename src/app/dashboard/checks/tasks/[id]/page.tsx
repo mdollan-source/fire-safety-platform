@@ -34,6 +34,7 @@ export default function TaskDetailPage() {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [error, setError] = useState('');
+  const [fieldsExpanded, setFieldsExpanded] = useState(false);
 
   useEffect(() => {
     fetchTaskDetails();
@@ -281,7 +282,7 @@ export default function TaskDetailPage() {
                       Check Fields ({template.fields.length})
                     </div>
                     <div className="space-y-2">
-                      {template.fields.slice(0, 5).map((field) => (
+                      {(fieldsExpanded ? template.fields : template.fields.slice(0, 5)).map((field) => (
                         <div key={field.id} className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-brand-400 mt-0.5" />
                           <div className="text-sm">
@@ -293,9 +294,14 @@ export default function TaskDetailPage() {
                         </div>
                       ))}
                       {template.fields.length > 5 && (
-                        <div className="text-xs text-brand-600">
-                          + {template.fields.length - 5} more fields
-                        </div>
+                        <button
+                          onClick={() => setFieldsExpanded(!fieldsExpanded)}
+                          className="text-xs text-brand-600 hover:text-brand-700 underline"
+                        >
+                          {fieldsExpanded
+                            ? 'Show less'
+                            : `+ ${template.fields.length - 5} more fields`}
+                        </button>
                       )}
                     </div>
                   </div>
