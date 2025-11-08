@@ -577,21 +577,35 @@ export default function CompleteCheckPage() {
                     )}
 
                     {photos.length < 5 && (
-                      <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-brand-300 text-brand-700 hover:bg-brand-50 cursor-pointer transition-colors">
-                        <Upload className="w-5 h-5" />
-                        <span className="text-sm font-medium">
-                          {photos.length === 0 ? 'Upload Photos' : 'Add More Photos'}
-                        </span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          capture="environment"
-                          multiple
-                          onChange={handlePhotoChange}
-                          className="hidden"
-                          disabled={submitting}
-                        />
-                      </label>
+                      <div className="flex gap-3">
+                        {/* Take Photo Button */}
+                        <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-brand-500 bg-brand-50 text-brand-700 hover:bg-brand-100 cursor-pointer transition-colors">
+                          <Camera className="w-5 h-5" />
+                          <span className="text-sm font-medium">Take Photo</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                            disabled={submitting}
+                          />
+                        </label>
+
+                        {/* Upload Photos Button */}
+                        <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-brand-300 text-brand-700 hover:bg-brand-50 cursor-pointer transition-colors">
+                          <Upload className="w-5 h-5" />
+                          <span className="text-sm font-medium">Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                            disabled={submitting}
+                          />
+                        </label>
+                      </div>
                     )}
                   </div>
                 </div>
