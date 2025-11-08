@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://firesafetylog.co.uk", "https://www.firesafetylog.co.uk"],
+    "method": ["GET", "HEAD"],
+    "maxAgeSeconds": 3600
+  }
+]

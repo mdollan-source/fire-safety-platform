@@ -359,7 +359,7 @@ export default function ProfilePage() {
       setExportProgress('Fetching uploaded files...');
       const documentsFolder = zip.folder('documents');
       let filesDownloaded = 0;
-      let filesFailedToDownload: string[] = [];
+      let filesFailedToDownload: Array<{fileName: string, url: string}> = [];
 
       if (documentsData.length === 0) {
         setExportProgress('No documents to download');
@@ -368,7 +368,6 @@ export default function ProfilePage() {
           try {
             if (!document.storageUrl) {
               console.warn(`Document ${document.fileName} has no storageUrl`);
-              filesFailedToDownload.push(document.fileName);
               continue;
             }
 
@@ -386,9 +385,32 @@ export default function ProfilePage() {
             setExportProgress(`Downloading files... (${filesDownloaded}/${documentsData.length})`);
           } catch (err: any) {
             console.error(`Failed to download ${document.fileName}:`, err);
-            filesFailedToDownload.push(document.fileName);
+            // Store the download URL for manual download
+            try {
+              const fileRef = ref(storage, document.storageUrl);
+              const downloadURL = await getDownloadURL(fileRef);
+              filesFailedToDownload.push({fileName: document.fileName, url: downloadURL});
+            } catch (urlErr) {
+              console.error(`Failed to get URL for ${document.fileName}:`, urlErr);
+            }
           }
         }
+      }
+
+      // If files failed to download (CORS issue), create a document with download links
+      if (filesFailedToDownload.length > 0) {
+        let linksContent = `Document Download Links\n`;
+        linksContent += `========================\n\n`;
+        linksContent += `${filesFailedToDownload.length} file(s) could not be downloaded automatically due to browser security restrictions.\n`;
+        linksContent += `Please use the links below to download these files manually:\n\n`;
+
+        filesFailedToDownload.forEach((doc, index) => {
+          linksContent += `${index + 1}. ${doc.fileName}\n`;
+          linksContent += `   ${doc.url}\n\n`;
+        });
+
+        linksContent += `\nNote: These links will expire after a period of time. Download them as soon as possible.\n`;
+        zip.file('DOCUMENT-DOWNLOAD-LINKS.txt', linksContent);
       }
 
       // Create README
@@ -455,7 +477,8 @@ For questions or support, please contact support@firesafetylog.co.uk
       summary += `\nFiles Downloaded: ${filesDownloaded}/${documentsData.length}`;
 
       if (filesFailedToDownload.length > 0) {
-        summary += `\n\nWarning: ${filesFailedToDownload.length} file(s) failed to download. Check browser console for details.`;
+        summary += `\n\n⚠️ IMPORTANT: ${filesFailedToDownload.length} file(s) could not be downloaded automatically due to browser security (CORS).`;
+        summary += `\n\nA file called "DOCUMENT-DOWNLOAD-LINKS.txt" has been included in your export with direct download links for these files. Please download them manually.`;
       }
 
       alert(summary);
