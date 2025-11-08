@@ -193,6 +193,10 @@ export default function ProfilePage() {
       const usersSnapshot = await getDocs(query(collection(db, 'users'), where('orgId', '==', userData.orgId)));
       const usersData = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
+      setExportProgress('Fetching check schedules...');
+      const schedulesSnapshot = await getDocs(query(collection(db, 'check_schedules'), where('orgId', '==', userData.orgId)));
+      const schedulesData = schedulesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
       // Create Excel workbook with all data
       setExportProgress('Creating Excel workbook...');
       const workbook = XLSX.utils.book_new();
@@ -308,6 +312,21 @@ export default function ProfilePage() {
       }));
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(usersExport), 'Users');
 
+      // Check Schedules sheet
+      const schedulesExport = schedulesData.map((schedule: any) => ({
+        'Schedule ID': schedule.id,
+        'Template ID': schedule.templateId,
+        'Site ID': schedule.siteId,
+        'Asset IDs': schedule.assetIds ? schedule.assetIds.join(', ') : schedule.assetId || '',
+        'Frequency': schedule.frequency || '',
+        'Active': schedule.active ? 'Yes' : 'No',
+        'Start Date': schedule.startDate ? formatUKDate(schedule.startDate.toDate(), 'dd/MM/yyyy') : '',
+        'Strategy': schedule.strategy || '',
+        'Rotation Index': schedule.rotationIndex || 0,
+        'Created': schedule.createdAt ? formatUKDate(schedule.createdAt.toDate(), 'dd/MM/yyyy HH:mm') : '',
+      }));
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(schedulesExport), 'Check Schedules');
+
       // Write Excel to buffer
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       zip.file('data-export.xlsx', excelBuffer);
@@ -345,13 +364,14 @@ Contents:
 - data-export.xlsx: Complete data export with the following sheets:
   * Sites: All site locations
   * Assets: All fire safety assets
-  * Checks: All scheduled checks
+  * Checks: All scheduled check tasks
   * Entries: All completed check entries
   * Defects: All defect records
   * Fire Drills: All fire drill records
   * Training: All training records
   * Documents: List of uploaded documents
   * Users: All user accounts
+  * Check Schedules: All recurring check schedules
 
 - documents/: Folder containing all uploaded documents and photos
 
@@ -660,7 +680,7 @@ For questions or support, please contact support@firesafetylog.co.uk
                 <div className="text-sm font-medium text-brand-900">Export All Data</div>
               </div>
               <p className="text-sm text-brand-600 mb-4">
-                Download a complete copy of all your organisation's data including assets, checks, defects, training records, and all uploaded documents.
+                Download a complete copy of all your organisation's data including sites, assets, check schedules, check tasks, check entries, defects, fire drills, training records, documents, users, and all uploaded files.
                 Perfect for backup, migration, or account closure.
               </p>
 
